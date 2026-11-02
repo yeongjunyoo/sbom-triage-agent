@@ -284,7 +284,7 @@ def triage_one(f: dict, repo: pathlib.Path, out: pathlib.Path, a) -> dict:
         d["decision"], d["why"] = "REVIEW", "실제 악용 목록(KEV) 등재 건은 사람이 닫는다"
     elif all(c in CLOSE_CATS for c in cats) and all(c["ok"] for c in checks):
         blocked = [x for o in objs for x in evidence_guard(o, repo, f["cve"])]
-        hold = [c for c in cats if c not in PROOF_CATS] if a.close_scope == "proof" else []
+        hold = [c for c in cats if c not in PROOF_CATS] if a.close_scope == "proof" else (list(cats) if a.close_scope == "none" else [])
         if f.get("callgraph") == "called":
             d["decision"], d["why"] = "REVIEW", "호출 그래프가 취약 함수 호출을 찾아 에이전트의 닫기 판단과 충돌"
         elif blocked:
@@ -390,7 +390,7 @@ def main() -> int:
     ap.add_argument("--parallel", type=int, default=6)
     ap.add_argument("--triage-prompt", default="triage_v1")
     ap.add_argument("--runs", type=int, default=2)
-    ap.add_argument("--close-scope", choices=["proof", "all"], default="proof", help="proof: 없음을 증명하는 범주만 자동으로 닫는다. all: 근거 검사를 통과한 모든 범주")
+    ap.add_argument("--close-scope", choices=["proof", "all", "none"], default="proof", help="proof: 검색으로 확인되는 범주만 자동으로 닫는다. all: 근거 검사를 통과한 모든 범주. none: 자동으로 닫지 않는다(표본 재검사에서 오류가 상한을 넘을 때)")
     a = ap.parse_args()
     repo = pathlib.Path(a.repo).resolve()
     out = pathlib.Path(a.out).resolve()

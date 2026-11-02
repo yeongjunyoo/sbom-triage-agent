@@ -13,7 +13,7 @@ import argparse, itertools, json, pathlib, statistics, sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1] / "agent"))
-from final_score import agree, single
+from final_score import agree, single, wilson
 from guard import evidence_guard
 from verify import parse_obj
 import vex_run, vex_score
@@ -89,8 +89,20 @@ def main() -> int:
                         decs[t] = agree([one(x, t, level), one(y, t, level)])
                 rows.append(measure(decs, gt))
             mean = {k: round(statistics.mean(r[k] for r in rows), 1) for k in rows[0]}
+            mean["pairs"] = [(r["close"], r["close_err"], wilson(r["close_err"], r["close"])[1]) for r in rows]
+            mean["err_rate_pct"] = round(statistics.mean(r["close_err"] / r["close"] * 100 if r["close"] else 0 for r in rows), 1)
             res.setdefault(name, {})[scope] = mean
             print(name, "|", scope, "| 사람", mean["people"], "(조치", mean["open"], "검토", mean["review"], ") 닫음", mean["close"], "오류", mean["close_err"], "스캐너 누락", mean["scanner_drop_err"], "놓침", mean["missed"], "F1 조치", mean["f1_open"], "F1 사람", mean["f1_people"], "재현율 사람", mean["r_people"], "정밀도 사람", mean["p_people"])
+    # 언어별: 현재 기본값, 실제 경로
+    res["by_language"] = {}
+    for lang in sorted({tasks[t]["language"] for t in keep}):
+        sub_keep = [t for t in keep if tasks[t]["language"] == lang]
+        rows = []
+        for x, y in itertools.combinations(rounds, 2):
+            decs = {t: ("DROP" if not flagged.get(t) else agree([one(x, t, 3), one(y, t, 3)])) for t in sub_keep}
+            rows.append(measure(decs, gt))
+        res["by_language"][lang] = {"n": len(sub_keep), "risk": sum(gt[t]["ground_truth"] == "exploitable" for t in sub_keep), "scanner_flagged": sum(bool(flagged.get(t)) for t in sub_keep), **{k: round(statistics.mean(r[k] for r in rows), 1) for k in ("people", "close", "close_err", "missed", "f1_open")}}
+        print(lang, res["by_language"][lang])
     (ROOT / a.out).write_text(json.dumps(res, ensure_ascii=False, indent=1), encoding="utf-8")
     return 0
 
