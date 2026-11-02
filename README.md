@@ -40,6 +40,15 @@ LOTTE AX CHALLENGE 2026 예선 과제 6(롯데이노베이트 SW 공급망 스�
 | + 없음 증명 범주만 닫기 | 17.5 | 0.3 | 20.5 | 11 (8.1) |
 | **+ 호출 그래프 대조(현재 기본값)** | **16.5** | **0.3** | 21.5 | 11 (8.1) |
 
+### 모델을 바꾸면
+
+같은 프롬프트로 OpenAI gpt-6.1-sol 을 개발 세트 25건에 두 번씩 실행했습니다([집계](evidence/openai_compare.json)). 시험 실행에 쓴 1건은 양쪽에서 뺐습니다. 실행기가 달라 시간은 직접 비교하지 않습니다. 한 쌍이고 평가 세트가 아니라 일반화하지 않습니다.
+
+| 개발 세트 25건 | 한 번 판단 F1 | 기본값: 담당자가 볼 건 | 기본값: 조치 대상 | 기본값: 닫음 | 기본값: 잘못 닫음 |
+|---|---:|---:|---:|---:|---:|
+| Claude Sonnet 5.5 | 57.1 | 21 | 5 | 4 | 0 |
+| OpenAI gpt-6.1-sol | 72.8 | 20 | 8 | 5 | 0 |
+
 저장소에 거짓 글을 심는 공격 시험은 [evidence/inject_compare.json](evidence/inject_compare.json), [evidence/inject2_summary.json](evidence/inject2_summary.json), 호출 그래프 대조는 [evidence/govulncheck_score.json](evidence/govulncheck_score.json), 실제 저장소 시연은 [evidence/headscale/report.md](evidence/headscale/report.md) 에 있습니다.
 
 ## 구조
@@ -64,6 +73,7 @@ LOTTE AX CHALLENGE 2026 예선 과제 6(롯데이노베이트 SW 공급망 스�
 | `eval/govulncheck_run.py` | 호출 그래프 판정 |
 | `eval/prompts/triage_v1.md` | 판단 프롬프트 |
 | `eval/verify.py` | 근거 재현 검사(LLM 없음) |
+| `eval/vex_run_openai.py`, `eval/openai_compare.py` | OpenAI 모델 실행과 비교 |
 | `eval/final_score.py` | 봉인 평가 집계(건별 오답을 출력하지 않음) |
 | `eval/inject_run.py`, `eval/inject_score.py` | 심은 글 시험 |
 | `tests/` | 검사기 회귀 시험 |
@@ -97,7 +107,7 @@ python3 eval/vex_run.py --run triage_v1 --prompt triage_v1 --split dev --retry-p
 python3 -m pytest tests
 ```
 
-판단 단계는 Claude Code CLI(`claude -p`)로 돌렸습니다. 토큰 파일을 쓰려면 환경 변수 `AGENT_TOKEN_FILE` 에 경로를 줍니다. 모델 이름은 인자입니다. OpenAI 모델로는 아직 재지 않았습니다.
+판단 단계는 Claude Code CLI(`claude -p`)로 돌렸습니다. 토큰 파일을 쓰려면 환경 변수 `AGENT_TOKEN_FILE` 에 경로를 줍니다. 모델 이름은 인자입니다. OpenAI 모델은 `eval/vex_run_openai.py` 로 돌립니다. 같은 프롬프트와 같은 종류의 도구(읽기, 검색, 글롭, 웹 조회)를 쓰고 명령 실행 도구는 없습니다.
 
 ## 라이선스
 
