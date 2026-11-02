@@ -1,0 +1,21 @@
+"""개발용과 봉인 평가용을 저장소 단위로 나눈다. 결과를 보기 전에 한 번만 만든다.
+
+같은 저장소가 양쪽에 들어가지 않게 repo_url 해시 순으로 넣고, 언어와 라벨 비율이 크게 치우치면 시드를 바꾸는 대신
+경고만 낸다. 봉인 세트는 최종 구성을 고정한 뒤 한 번만 돌리고, 틀린 사례를 프롬프트 수정에 쓰지 않는다.
+"""
+import collections, hashlib, json, pathlib
+
+ROOT = pathlib.Path(__file__).resolve().parents[1]
+rows = [json.loads(l) for l in (ROOT / "vendor/vex-bench/benchmark/tasks/vex_bench.jsonl").read_text(encoding="utf-8").splitlines() if l.strip()]
+repos = sorted({r["repo_url"] for r in rows}, key=lambda u: hashlib.sha256(("lotte-ax-2026:" + u).encode()).hexdigest())
+by = collections.defaultdict(list)
+for r in rows:
+    by[r["repo_url"]].append(r)
+target = round(len(rows) / 3)
+dev, test = [], []
+for u in repos:
+    (dev if len(dev) < target else test).extend(by[u])
+out = {"seed": "lotte-ax-2026", "dev": sorted(r["task_id"] for r in dev), "test": sorted(r["task_id"] for r in test)}
+(ROOT / "eval" / "split.json").write_text(json.dumps(out, ensure_ascii=False, indent=0), encoding="utf-8")
+for name, g in (("dev", dev), ("test", test)):
+    print(name, len(g), "저장소", len({r["repo_url"] for r in g}), dict(collections.Counter(r["metadata"]["language"] for r in g)), dict(collections.Counter(r["ground_truth"] for r in g)))
