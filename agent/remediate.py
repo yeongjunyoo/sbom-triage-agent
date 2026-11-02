@@ -51,13 +51,14 @@ def main() -> int:
     out = pathlib.Path(a.out).resolve()
     findings = {f["id"]: f for f in json.loads((out / "findings.json").read_text(encoding="utf-8"))}
     decisions = json.loads((out / "decisions.json").read_text(encoding="utf-8"))
+    # 조치 대상과 사람 검토 건 모두 조치안을 미리 검증해 둔다. 적용은 사람이 승인한다.
     targets = {}
     for d in decisions.values():
-        if d["decision"] == "OPEN":
+        if d["decision"] in ("OPEN", "REVIEW"):
             f = findings[d["id"]]
             v = choose_fix(f.get("fixed", []), f.get("version", "0"))
             if v and f.get("ecosystem") == "Go":
-                t = targets.setdefault(f["package"], {"version": v, "cves": []})
+                t = targets.setdefault(f["package"], {"version": v, "cves": [], "from": f.get("version")})
                 t["cves"].append(f["cve"])
                 if semver_key(v) > semver_key(t["version"]):
                     t["version"] = v

@@ -8,10 +8,10 @@
   1. sbom     syft 로 CycloneDX SBOM                     bom.cdx.json
   2. scan     osv-scanner 로 취약점 대조                 scan.json, findings.json
   3. enrich   KEV, EPSS 결합. 규칙으로 우선순위          findings.json
-  4. triage   격리된 에이전트가 코드를 읽어 판단          triage/<id>.json
-  5. verify   인용과 검색을 스크립트로 재현              decisions.json
+  4. triage   격리된 에이전트가 코드를 읽어 판단(독립 2회) triage/<id>.json
+  5. verify   인용과 검색을 스크립트로 재현, 2회 모두 통과해야 닫음  decisions.json
   6. output   OpenVEX, 사람 검토 목록, 보고서            vex.json, report.md, audit.jsonl
-LLM 재검토(--with-review)는 층 제거 실험에서 잘못 닫은 건을 못 잡고 맞는 닫기만 뒤집어 기본값에서 뺐다.
+LLM 재검토는 층 제거 실험에서 잘못 닫은 건을 못 잡고 맞는 닫기만 뒤집어 뺐다.
 모델이 실패하면 조용히 넘어가지 않고 REVIEW 로 떨어진다. 코드 수정 권한은 에이전트에게 없다.
 """
 from __future__ import annotations
@@ -210,49 +210,48 @@ def claude(prompt: str, cwd: pathlib.Path, raw: pathlib.Path, model: str, effort
     return {"exit": code, "text": final, "cost": cost, "seconds": round(time.time() - t0, 1), "tool_calls": tools}
 
 
-def triage_one(f: dict, repo: pathlib.Path, out: pathlib.Path, a) -> dict:
-    tdir, rdir = out / "triage", out / "review"
+def one_run(f: dict, repo: pathlib.Path, out: pathlib.Path, a, r: int) -> dict:
+    tdir = out / "triage"
     tdir.mkdir(exist_ok=True)
-    rdir.mkdir(exist_ok=True)
-    meta = tdir / f"{f['id']}.json"
+    tag = f["id"] if r == 0 else f"{f['id']}__r{r}"
+    meta = tdir / f"{tag}.json"
     if meta.exists():
-        m = json.loads(meta.read_text(encoding="utf-8"))
+        return json.loads(meta.read_text(encoding="utf-8"))
+    prompt = (ROOT / "eval/prompts" / f"{a.triage_prompt}.md").read_text(encoding="utf-8").replace("{cve_id}", f["cve"])
+    m = claude(prompt, repo, tdir / f"{tag}.stream.jsonl", a.model, a.effort, a.timeout)
+    if "hit your" in str(m.get("text")) and "limit" in str(m.get("text")):
+        raise SystemExit("모델 한도 초과: 결과로 남기지 않고 멈춘다")
+    if not isinstance(parse_obj(m.get("text")), dict):
+        m = claude(prompt, repo, tdir / f"{tag}.stream.jsonl", a.model, a.effort, a.timeout)
+        m["retried"] = True
+    meta.write_text(json.dumps(m, ensure_ascii=False), encoding="utf-8")
+    return m
+
+
+def triage_one(f: dict, repo: pathlib.Path, out: pathlib.Path, a) -> dict:
+    """같은 판단을 독립으로 a.runs 번 돌린다. 모두 근거 검사를 통과한 닫기일 때만 닫는다."""
+    runs = [one_run(f, repo, out, a, r) for r in range(a.runs)]
+    objs = [parse_obj(m.get("text")) for m in runs]
+    cats = [o.get("category") if isinstance(o, dict) else None for o in objs]
+    checks = [verify(o, repo) for o in objs]
+    main = next((o for o, c in zip(objs, cats) if c == "vulnerable"), objs[0] if isinstance(objs[0], dict) else {})
+    main = main if isinstance(main, dict) else {}
+    d = {
+        "id": f["id"], "cve": f["cve"], "package": f["package"], "categories": cats, "category": main.get("category"), "verify_ok": [c["ok"] for c in checks],
+        "verify_fails": [c["fails"][:2] for c in checks], "reasoning": main.get("reasoning"), "evidence": (main.get("evidence") or [])[:6], "advisory": main.get("advisory"),
+        "cost": sum(m.get("cost") or 0 for m in runs), "seconds": sum(m.get("seconds") or 0 for m in runs),
+    }
+    if "vulnerable" in cats:
+        d["decision"], d["why"] = "OPEN", "코드에서 쓰임이 확인됨"
+    elif all(c in CLOSE_CATS for c in cats) and all(c["ok"] for c in checks):
+        d["decision"], d["why"] = "CLOSE", cats[0]
+    elif any(c is None or c == "uncertain" for c in cats):
+        d["decision"], d["why"] = "REVIEW", "에이전트가 근거 부족으로 판단을 보류함"
+    elif not all(c["ok"] for c in checks):
+        fail = next(x["fails"][0] for x in checks if not x["ok"])
+        d["decision"], d["why"] = "REVIEW", "근거 재현 검사 실패: " + fail
     else:
-        prompt = (ROOT / "eval/prompts" / f"{a.triage_prompt}.md").read_text(encoding="utf-8").replace("{cve_id}", f["cve"])
-        m = claude(prompt, repo, tdir / f"{f['id']}.stream.jsonl", a.model, a.effort, a.timeout)
-        if not isinstance(parse_obj(m.get("text")), dict):
-            m = claude(prompt, repo, tdir / f"{f['id']}.stream.jsonl", a.model, a.effort, a.timeout)
-            m["retried"] = True
-        meta.write_text(json.dumps(m, ensure_ascii=False), encoding="utf-8")
-    o = parse_obj(m.get("text"))
-    cat = o.get("category") if isinstance(o, dict) else None
-    v = verify(o, repo)
-    d = {"id": f["id"], "cve": f["cve"], "package": f["package"], "category": cat, "verify_ok": v["ok"], "verify_fails": v["fails"], "reasoning": (o or {}).get("reasoning") if isinstance(o, dict) else None,
-         "evidence": (o or {}).get("evidence", [])[:6] if isinstance(o, dict) else [], "advisory": (o or {}).get("advisory") if isinstance(o, dict) else None, "cost": m.get("cost") or 0, "seconds": m.get("seconds")}
-    if cat == "vulnerable":
-        d["decision"], d["why"] = "OPEN", "코드에서 쓰임이 확인됨" + ("" if v["ok"] else " (근거 검사 실패 표시)")
-    elif cat not in CLOSE_CATS:
-        d["decision"], d["why"] = "REVIEW", "판단 불가" if cat else "모델 응답 없음"
-    elif not v["ok"]:
-        d["decision"], d["why"] = "REVIEW", "근거 검사 실패: " + "; ".join(v["fails"][:2])
-    elif not a.with_review:
-        d["decision"], d["why"] = "CLOSE", cat
-    else:
-        rmeta = rdir / f"{f['id']}.json"
-        if rmeta.exists():
-            r = json.loads(rmeta.read_text(encoding="utf-8"))
-        else:
-            prompt = (ROOT / "eval/prompts" / f"{a.review_prompt}.md").read_text(encoding="utf-8").replace("{cve_id}", f["cve"]).replace("{prior}", m.get("text") or "")
-            r = claude(prompt, repo, rdir / f"{f['id']}.stream.jsonl", a.model, a.effort, a.timeout)
-            rmeta.write_text(json.dumps(r, ensure_ascii=False), encoding="utf-8")
-        ro = parse_obj(r.get("text"))
-        vd = ro.get("verdict") if isinstance(ro, dict) else None
-        d["review"] = {"verdict": vd, "reason": (ro or {}).get("reason") if isinstance(ro, dict) else None}
-        d["cost"] += r.get("cost") or 0
-        if vd == "uphold":
-            d["decision"], d["why"] = "CLOSE", cat
-        else:
-            d["decision"], d["why"] = "REVIEW", f"두 번째 검토 결과 {vd}"
+        d["decision"], d["why"] = "REVIEW", "판단 불일치"
     return d
 
 
@@ -316,8 +315,7 @@ def main() -> int:
     ap.add_argument("--timeout", type=int, default=600)
     ap.add_argument("--parallel", type=int, default=6)
     ap.add_argument("--triage-prompt", default="triage_v1")
-    ap.add_argument("--review-prompt", default="review_v1")
-    ap.add_argument("--with-review", action="store_true")
+    ap.add_argument("--runs", type=int, default=2)
     a = ap.parse_args()
     repo = pathlib.Path(a.repo).resolve()
     out = pathlib.Path(a.out).resolve()
@@ -339,7 +337,7 @@ def main() -> int:
         res = list(ex.map(lambda f: triage_one(f, repo, out, a), picked))
     decisions = {d["id"]: d for d in res}
     for d in res:
-        log(audit, "decision", id=d["id"], cve=d["cve"], decision=d["decision"], category=d["category"], verify_ok=d["verify_ok"], why=d["why"])
+        log(audit, "decision", id=d["id"], cve=d["cve"], decision=d["decision"], categories=d["categories"], verify_ok=d["verify_ok"], why=d["why"])
     (out / "decisions.json").write_text(json.dumps(decisions, ensure_ascii=False, indent=1), encoding="utf-8")
     write_vex(findings, decisions, out, repo.name)
     write_report(findings, decisions, counts, feeds, out, repo, components, time.time() - t0)
