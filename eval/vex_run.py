@@ -72,7 +72,7 @@ def _parses(text) -> bool:
 
 def agent_env() -> dict:
     env = dict(os.environ)
-    tok = pathlib.Path.home() / ".nova" / "claude_oauth_token"
+    tok = pathlib.Path(os.environ.get("LOTTE_TOKEN_FILE") or pathlib.Path.home() / ".nova" / "claude_oauth_token")
     if not IS_WIN and tok.exists():
         env["CLAUDE_CODE_OAUTH_TOKEN"] = tok.read_text().strip()
     return env
@@ -147,6 +147,9 @@ def run_one(t: dict, a) -> dict:
         "usage": {k: (usage or {}).get(k) for k in ("input_tokens", "cache_read_input_tokens", "cache_creation_input_tokens", "output_tokens")},
     }
     m["retried"] = attempt > 1
+    if "hit your" in str(final) and "limit" in str(final):
+        print("한도 초과, 중단:", str(final)[:90], flush=True)
+        os._exit(75)
     meta_path.write_text(json.dumps(m, ensure_ascii=False, indent=0), encoding="utf-8")
     if a.retry_parse and attempt == 1 and not _parses(final):
         return run_one(t, a)

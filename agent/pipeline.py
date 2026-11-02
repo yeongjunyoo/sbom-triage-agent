@@ -185,7 +185,7 @@ def step_enrich(findings: list[dict], asset: dict) -> tuple[list[dict], dict]:
 
 def claude(prompt: str, cwd: pathlib.Path, raw: pathlib.Path, model: str, effort: str, timeout: int) -> dict:
     env = dict(os.environ)
-    tok = pathlib.Path.home() / ".nova" / "claude_oauth_token"
+    tok = pathlib.Path(os.environ.get("LOTTE_TOKEN_FILE") or pathlib.Path.home() / ".nova" / "claude_oauth_token")
     if not IS_WIN and tok.exists():
         env["CLAUDE_CODE_OAUTH_TOKEN"] = tok.read_text().strip()
     exe = str(pathlib.Path.home() / ".local" / "bin" / f"claude{SUFFIX}")
