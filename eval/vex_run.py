@@ -136,11 +136,15 @@ def main() -> int:
     ap.add_argument("--limit", type=int, default=0)
     ap.add_argument("--repeat", type=int, default=0)
     ap.add_argument("--only-lang", default="")
+    ap.add_argument("--split", default="", choices=["", "dev", "test"])
     ap.add_argument("--claude", default=str(pathlib.Path.home() / ".local" / "bin" / "claude.exe"))
     a = ap.parse_args()
     ts = tasks()
     if a.only_lang:
         ts = [t for t in ts if t["language"] == a.only_lang]
+    if a.split:
+        keep = set(json.loads((ROOT / "eval" / "split.json").read_text(encoding="utf-8"))[a.split])
+        ts = [t for t in ts if t["task_id"] in keep]
     if a.limit:
         by = {}
         for t in ts:

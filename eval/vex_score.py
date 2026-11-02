@@ -64,6 +64,7 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--run", required=True)
     ap.add_argument("--repeat", type=int, default=0)
+    ap.add_argument("--split", default="", choices=["", "dev", "test"])
     ap.add_argument("--json", default="")
     a = ap.parse_args()
     gt = truth()
@@ -83,6 +84,9 @@ def main() -> None:
             if "vex-bench" in s or "vex_bench" in s or "2609.08040" in s or "ground_truth" in s:
                 leak.append((m["task_id"], tool["name"]))
     done = {tid: gt[tid] for tid in (p.stem.split("__r")[0] for p in d.glob(f"*__r{a.repeat}.json"))}
+    if a.split:
+        keep = set(json.loads((ROOT / "eval" / "split.json").read_text(encoding="utf-8"))[a.split])
+        done = {k: v for k, v in done.items() if k in keep}
     r = score(preds, done)
     r["category_counts"] = dict(collections.Counter(cats.values()))
     r["mean_seconds"] = round(statistics.mean(secs), 1) if secs else 0
