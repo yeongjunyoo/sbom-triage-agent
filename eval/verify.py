@@ -46,7 +46,7 @@ def check_quote(repo: pathlib.Path, ev: dict) -> tuple[bool, str]:
 def rerun_search(repo: pathlib.Path, s: dict, timeout: int = 90) -> tuple[bool, str, int | None]:
     pat = str(s.get("pattern") or "")
     scope = str(s.get("scope") or ".").replace("\\", "/")
-    cmd = ["rg", "--count-matches", "--no-messages", "--no-ignore", "--hidden", "--glob", "!.git", "-e", pat]
+    cmd = [str(pathlib.Path(__file__).resolve().parents[1] / "tools" / "rg.exe"), "--count-matches", "--no-messages", "--no-ignore", "--hidden", "--glob", "!.git", "-e", pat]
     target = "."
     if any(c in scope for c in "*?{"):
         cmd += ["--glob", scope]

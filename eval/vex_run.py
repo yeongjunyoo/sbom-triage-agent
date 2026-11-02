@@ -72,6 +72,9 @@ def run_one(t: dict, a) -> dict:
         print("RAM 바닥, 대기", flush=True)
         time.sleep(60)
     prompt = load_prompt(a.prompt).replace("{cve_id}", t["cve_id"]).replace("{language}", t["language"])
+    if a.context_run:
+        prior = json.loads((RESULTS / a.context_run / f"{t['task_id']}__r{a.context_repeat}.json").read_text(encoding="utf-8")).get("final_text") or ""
+        prompt = prompt.replace("{prior}", prior)
     raw = out_dir / f"{tag}.stream.jsonl"
     err = out_dir / f"{tag}.err.txt"
     cmd = [
@@ -137,6 +140,8 @@ def main() -> int:
     ap.add_argument("--repeat", type=int, default=0)
     ap.add_argument("--only-lang", default="")
     ap.add_argument("--split", default="", choices=["", "dev", "test"])
+    ap.add_argument("--context-run", default="", help="앞 단계 실행 이름. {prior} 에 그 결과를 넣고, 닫는 판단이 난 과제만 돌린다")
+    ap.add_argument("--context-repeat", type=int, default=0)
     ap.add_argument("--claude", default=str(pathlib.Path.home() / ".local" / "bin" / "claude.exe"))
     a = ap.parse_args()
     ts = tasks()
@@ -145,6 +150,19 @@ def main() -> int:
     if a.split:
         keep = set(json.loads((ROOT / "eval" / "split.json").read_text(encoding="utf-8"))[a.split])
         ts = [t for t in ts if t["task_id"] in keep]
+    if a.context_run:
+        sys.path.insert(0, str(ROOT / "eval"))
+        from verify import parse_obj
+
+        kept = []
+        for t in ts:
+            f = RESULTS / a.context_run / f"{t['task_id']}__r{a.context_repeat}.json"
+            if not f.exists():
+                continue
+            o = parse_obj(json.loads(f.read_text(encoding="utf-8")).get("final_text"))
+            if isinstance(o, dict) and o.get("category") not in (None, "vulnerable", "uncertain"):
+                kept.append(t)
+        ts = kept
     if a.limit:
         by = {}
         for t in ts:
