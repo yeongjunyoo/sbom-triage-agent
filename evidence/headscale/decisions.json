@@ -55,8 +55,21 @@
   },
   "cost": 0.26460089999999997,
   "seconds": 118.3,
+  "callgraph": "required",
   "decision": "CLOSE",
-  "why": "code_not_reachable"
+  "why": "code_not_reachable",
+  "basis": {
+   "version": "v0.31.0",
+   "advisory_modified": "2026-09-15T10:41:37.077781877Z",
+   "kev": false,
+   "files": {
+    "go.mod": "0699ffe79b8e624a",
+    "go.sum": "c8c300945e1a9033",
+    "hscontrol/app.go": "163ae57f8cce1ba8",
+    "hscontrol/db/api_key.go": "b02f30ecc0ee66a6",
+    "hscontrol/tailsql.go": "4ba7df256f29e388"
+   }
+  }
  },
  "google.golang.org_grpc__CVE-2026-33186": {
   "id": "google.golang.org_grpc__CVE-2026-33186",
@@ -122,8 +135,9 @@
   },
   "cost": 0.20938320000000005,
   "seconds": 104.69999999999999,
+  "callgraph": "called",
   "decision": "REVIEW",
-  "why": "해석이 필요한 범주라 사람이 닫는다: mitigating_control_protected"
+  "why": "호출 그래프가 취약 함수 호출을 찾아 에이전트의 닫기 판단과 충돌"
  },
  "golang.org_x_crypto__CVE-2026-39830": {
   "id": "golang.org_x_crypto__CVE-2026-39830",
@@ -187,8 +201,21 @@
   },
   "cost": 0.26602239999999994,
   "seconds": 122.2,
+  "callgraph": "required",
   "decision": "CLOSE",
-  "why": "code_not_reachable"
+  "why": "code_not_reachable",
+  "basis": {
+   "version": "v0.31.0",
+   "advisory_modified": "2026-09-23T10:41:39.176153896Z",
+   "kev": false,
+   "files": {
+    "go.mod": "0699ffe79b8e624a",
+    "go.sum": "c8c300945e1a9033",
+    "hscontrol/app.go": "163ae57f8cce1ba8",
+    "hscontrol/db/api_key.go": "b02f30ecc0ee66a6",
+    "hscontrol/tailsql.go": "4ba7df256f29e388"
+   }
+  }
  },
  "golang.org_x_crypto__CVE-2026-39832": {
   "id": "golang.org_x_crypto__CVE-2026-39832",
@@ -242,8 +269,21 @@
   },
   "cost": 0.214252,
   "seconds": 118.89999999999999,
+  "callgraph": "required",
   "decision": "CLOSE",
-  "why": "code_not_reachable"
+  "why": "code_not_reachable",
+  "basis": {
+   "version": "v0.31.0",
+   "advisory_modified": "2026-09-15T10:41:37.126500086Z",
+   "kev": false,
+   "files": {
+    "go.mod": "0699ffe79b8e624a",
+    "go.sum": "c8c300945e1a9033",
+    "hscontrol/app.go": "163ae57f8cce1ba8",
+    "hscontrol/db/api_key.go": "b02f30ecc0ee66a6",
+    "hscontrol/tailsql.go": "4ba7df256f29e388"
+   }
+  }
  },
  "github.com_jackc_pgx_v5__CVE-2026-33815": {
   "id": "github.com_jackc_pgx_v5__CVE-2026-33815",
@@ -296,8 +336,19 @@
   },
   "cost": 0.21563119999999997,
   "seconds": 119.5,
+  "callgraph": "imported",
   "decision": "CLOSE",
-  "why": "code_not_reachable"
+  "why": "code_not_reachable",
+  "basis": {
+   "version": "v5.7.1",
+   "advisory_modified": "2026-09-10T03:50:44.892822027Z",
+   "kev": false,
+   "files": {
+    "go.mod": "0699ffe79b8e624a",
+    "go.sum": "c8c300945e1a9033",
+    "hscontrol/db/db.go": "a16b3625e1e45213"
+   }
+  }
  },
  "golang.org_x_crypto__CVE-2026-39834": {
   "id": "golang.org_x_crypto__CVE-2026-39834",
@@ -371,8 +422,21 @@
   },
   "cost": 0.30320349999999996,
   "seconds": 161.10000000000002,
+  "callgraph": "required",
   "decision": "CLOSE",
-  "why": "code_not_reachable"
+  "why": "code_not_reachable",
+  "basis": {
+   "version": "v0.31.0",
+   "advisory_modified": "2026-09-22T10:41:48.726876657Z",
+   "kev": false,
+   "files": {
+    "go.mod": "0699ffe79b8e624a",
+    "go.sum": "c8c300945e1a9033",
+    "hscontrol/app.go": "163ae57f8cce1ba8",
+    "hscontrol/db/api_key.go": "b02f30ecc0ee66a6",
+    "hscontrol/tailsql.go": "4ba7df256f29e388"
+   }
+  }
  },
  "github.com_jackc_pgx_v5__CVE-2026-33816": {
   "id": "github.com_jackc_pgx_v5__CVE-2026-33816",
@@ -425,8 +489,19 @@
   },
   "cost": 0.1799751,
   "seconds": 104.69999999999999,
+  "callgraph": "imported",
   "decision": "CLOSE",
-  "why": "code_not_reachable"
+  "why": "code_not_reachable",
+  "basis": {
+   "version": "v5.7.1",
+   "advisory_modified": "2026-09-10T03:50:43.842159740Z",
+   "kev": false,
+   "files": {
+    "go.mod": "0699ffe79b8e624a",
+    "go.sum": "c8c300945e1a9033",
+    "hscontrol/db/db.go": "a16b3625e1e45213"
+   }
+  }
  },
  "golang.org_x_crypto__CVE-2026-46595": {
   "id": "golang.org_x_crypto__CVE-2026-46595",
@@ -485,8 +560,21 @@
   },
   "cost": 0.2405304,
   "seconds": 116.2,
+  "callgraph": "required",
   "decision": "CLOSE",
-  "why": "code_not_reachable"
+  "why": "code_not_reachable",
+  "basis": {
+   "version": "v0.31.0",
+   "advisory_modified": "2026-09-10T03:50:51.157351033Z",
+   "kev": false,
+   "files": {
+    "go.mod": "0699ffe79b8e624a",
+    "go.sum": "c8c300945e1a9033",
+    "hscontrol/app.go": "163ae57f8cce1ba8",
+    "hscontrol/db/api_key.go": "b02f30ecc0ee66a6",
+    "hscontrol/tailsql.go": "4ba7df256f29e388"
+   }
+  }
  },
  "golang.org_x_crypto__CVE-2026-39831": {
   "id": "golang.org_x_crypto__CVE-2026-39831",
@@ -544,8 +632,21 @@
   },
   "cost": 0.25853329999999997,
   "seconds": 118.9,
+  "callgraph": "required",
   "decision": "CLOSE",
-  "why": "code_not_reachable"
+  "why": "code_not_reachable",
+  "basis": {
+   "version": "v0.31.0",
+   "advisory_modified": "2026-09-17T10:41:36.871169141Z",
+   "kev": false,
+   "files": {
+    "go.mod": "0699ffe79b8e624a",
+    "go.sum": "c8c300945e1a9033",
+    "hscontrol/app.go": "163ae57f8cce1ba8",
+    "hscontrol/db/api_key.go": "b02f30ecc0ee66a6",
+    "hscontrol/tailsql.go": "4ba7df256f29e388"
+   }
+  }
  },
  "golang.org_x_crypto__CVE-2026-39833": {
   "id": "golang.org_x_crypto__CVE-2026-39833",
@@ -610,8 +711,20 @@
   },
   "cost": 0.1985824,
   "seconds": 96.9,
+  "callgraph": "required",
   "decision": "CLOSE",
-  "why": "code_not_reachable"
+  "why": "code_not_reachable",
+  "basis": {
+   "version": "v0.31.0",
+   "advisory_modified": "2026-09-10T03:50:50.029914620Z",
+   "kev": false,
+   "files": {
+    "go.mod": "0699ffe79b8e624a",
+    "go.sum": "c8c300945e1a9033",
+    "hscontrol/app.go": "163ae57f8cce1ba8",
+    "hscontrol/db/api_key.go": "b02f30ecc0ee66a6"
+   }
+  }
  },
  "github.com_opencontainers_runc__CVE-2025-31133": {
   "id": "github.com_opencontainers_runc__CVE-2025-31133",
@@ -672,8 +785,19 @@
   },
   "cost": 0.11660229999999999,
   "seconds": 57.7,
+  "callgraph": "required",
   "decision": "CLOSE",
-  "why": "code_not_reachable"
+  "why": "code_not_reachable",
+  "basis": {
+   "version": "v1.2.3",
+   "advisory_modified": "2026-09-10T03:50:30.785749905Z",
+   "kev": false,
+   "files": {
+    "go.mod": "0699ffe79b8e624a",
+    "go.sum": "c8c300945e1a9033",
+    "integration/dockertestutil/config.go": "9340ef010dc1b7ef"
+   }
+  }
  },
  "golang.org_x_crypto__CVE-2025-22869": {
   "id": "golang.org_x_crypto__CVE-2025-22869",
@@ -742,8 +866,21 @@
   },
   "cost": 0.2834152,
   "seconds": 145.7,
+  "callgraph": "required",
   "decision": "CLOSE",
-  "why": "code_not_reachable"
+  "why": "code_not_reachable",
+  "basis": {
+   "version": "v0.31.0",
+   "advisory_modified": "2026-09-10T03:50:23.913440018Z",
+   "kev": false,
+   "files": {
+    "go.mod": "0699ffe79b8e624a",
+    "go.sum": "c8c300945e1a9033",
+    "hscontrol/app.go": "163ae57f8cce1ba8",
+    "hscontrol/db/api_key.go": "b02f30ecc0ee66a6",
+    "hscontrol/tailsql.go": "4ba7df256f29e388"
+   }
+  }
  },
  "golang.org_x_oauth2__CVE-2025-22868": {
   "id": "golang.org_x_oauth2__CVE-2025-22868",
@@ -797,6 +934,7 @@
   },
   "cost": 0.12085190000000001,
   "seconds": 64.1,
+  "callgraph": "required",
   "decision": "REVIEW",
   "why": "근거 재현 검사 실패: 범위를 읽지 못해 저장소 전체로 다시 찾으니 3건: google\\.golang\\.org/api|cloud\\.google\\.com|oauth2/(jwt|googl @ **/*.go and go.mod"
  },
@@ -863,6 +1001,7 @@
   },
   "cost": 0.3216576,
   "seconds": 182.60000000000002,
+  "callgraph": "called",
   "decision": "REVIEW",
   "why": "에이전트가 근거 부족으로 판단을 보류함"
  },
@@ -910,6 +1049,7 @@
   },
   "cost": 0.1195639,
   "seconds": 75.7,
+  "callgraph": "required",
   "decision": "REVIEW",
   "why": "저장소 글 차단: 사람이 쓴 글을 근거로 인용: integration/dockertestutil/config.go"
  },
@@ -971,8 +1111,9 @@
   },
   "cost": 0.12296039999999998,
   "seconds": 76.3,
-  "decision": "CLOSE",
-  "why": "code_not_reachable"
+  "callgraph": "called",
+  "decision": "REVIEW",
+  "why": "호출 그래프가 취약 함수 호출을 찾아 에이전트의 닫기 판단과 충돌"
  },
  "github.com_go-jose_go-jose_v3__CVE-2026-34986": {
   "id": "github.com_go-jose_go-jose_v3__CVE-2026-34986",
@@ -1034,8 +1175,9 @@
   },
   "cost": 0.21019380000000001,
   "seconds": 136.0,
-  "decision": "CLOSE",
-  "why": "code_not_reachable"
+  "callgraph": "called",
+  "decision": "REVIEW",
+  "why": "호출 그래프가 취약 함수 호출을 찾아 에이전트의 닫기 판단과 충돌"
  },
  "github.com_go-jose_go-jose_v4__CVE-2026-34986": {
   "id": "github.com_go-jose_go-jose_v4__CVE-2026-34986",
@@ -1103,8 +1245,9 @@
   },
   "cost": 0.20250300000000002,
   "seconds": 114.69999999999999,
-  "decision": "CLOSE",
-  "why": "code_not_reachable"
+  "callgraph": "called",
+  "decision": "REVIEW",
+  "why": "호출 그래프가 취약 함수 호출을 찾아 에이전트의 닫기 판단과 충돌"
  },
  "google.golang.org_grpc__CVE-2026-84445": {
   "id": "google.golang.org_grpc__CVE-2026-84445",
@@ -1159,8 +1302,9 @@
   },
   "cost": 0.17695299999999997,
   "seconds": 90.7,
-  "decision": "CLOSE",
-  "why": "code_not_reachable"
+  "callgraph": "called",
+  "decision": "REVIEW",
+  "why": "호출 그래프가 취약 함수 호출을 찾아 에이전트의 닫기 판단과 충돌"
  },
  "google.golang.org_grpc__CVE-2026-84304": {
   "id": "google.golang.org_grpc__CVE-2026-84304",
@@ -1231,8 +1375,9 @@
   },
   "cost": 0.22507950000000002,
   "seconds": 102.0,
+  "callgraph": "called",
   "decision": "REVIEW",
-  "why": "해석이 필요한 범주라 사람이 닫는다: requires_configuration"
+  "why": "호출 그래프가 취약 함수 호출을 찾아 에이전트의 닫기 판단과 충돌"
  },
  "github.com_klauspost_compress__CVE-2026-63209": {
   "id": "github.com_klauspost_compress__CVE-2026-63209",
@@ -1279,8 +1424,19 @@
   },
   "cost": 0.2290469,
   "seconds": 111.6,
+  "callgraph": "required",
   "decision": "CLOSE",
-  "why": "code_not_reachable"
+  "why": "code_not_reachable",
+  "basis": {
+   "version": "v1.17.11",
+   "advisory_modified": "2026-10-20T14:45:03.782718646Z",
+   "kev": false,
+   "files": {
+    "go.mod": "0699ffe79b8e624a",
+    "go.sum": "c8c300945e1a9033",
+    "hscontrol/mapper/mapper.go": "aa55015883806157"
+   }
+  }
  },
  "github.com_docker_cli__CVE-2025-15558": {
   "id": "github.com_docker_cli__CVE-2025-15558",
@@ -1332,8 +1488,19 @@
   },
   "cost": 0.1805455,
   "seconds": 97.19999999999999,
+  "callgraph": "required",
   "decision": "CLOSE",
-  "why": "code_not_reachable"
+  "why": "code_not_reachable",
+  "basis": {
+   "version": "v27.4.0+incompatible",
+   "advisory_modified": "2026-09-10T03:50:39.956404854Z",
+   "kev": false,
+   "files": {
+    "go.mod": "0699ffe79b8e624a",
+    "go.sum": "c8c300945e1a9033",
+    "integration/scenario.go": "733e4a98d67ce98e"
+   }
+  }
  },
  "golang.org_x_crypto__CVE-2026-46597": {
   "id": "golang.org_x_crypto__CVE-2026-46597",
@@ -1400,8 +1567,21 @@
   },
   "cost": 0.2865362,
   "seconds": 164.2,
+  "callgraph": "required",
   "decision": "CLOSE",
-  "why": "code_not_reachable"
+  "why": "code_not_reachable",
+  "basis": {
+   "version": "v0.31.0",
+   "advisory_modified": "2026-09-17T10:41:36.216580513Z",
+   "kev": false,
+   "files": {
+    "go.mod": "0699ffe79b8e624a",
+    "go.sum": "c8c300945e1a9033",
+    "hscontrol/app.go": "163ae57f8cce1ba8",
+    "hscontrol/db/api_key.go": "b02f30ecc0ee66a6",
+    "hscontrol/tailsql.go": "4ba7df256f29e388"
+   }
+  }
  },
  "golang.org_x_crypto__CVE-2026-39829": {
   "id": "golang.org_x_crypto__CVE-2026-39829",
@@ -1473,8 +1653,21 @@
   },
   "cost": 0.3121158,
   "seconds": 185.8,
+  "callgraph": "required",
   "decision": "CLOSE",
-  "why": "code_not_reachable"
+  "why": "code_not_reachable",
+  "basis": {
+   "version": "v0.31.0",
+   "advisory_modified": "2026-09-15T10:41:37.191404367Z",
+   "kev": false,
+   "files": {
+    "go.mod": "0699ffe79b8e624a",
+    "go.sum": "c8c300945e1a9033",
+    "hscontrol/app.go": "163ae57f8cce1ba8",
+    "hscontrol/db/api_key.go": "b02f30ecc0ee66a6",
+    "hscontrol/tailsql.go": "4ba7df256f29e388"
+   }
+  }
  },
  "github.com_go-jose_go-jose_v3__CVE-2026-116587": {
   "id": "github.com_go-jose_go-jose_v3__CVE-2026-116587",
@@ -1546,6 +1739,7 @@
   },
   "cost": 0.2930728,
   "seconds": 175.1,
+  "callgraph": "none",
   "decision": "REVIEW",
   "why": "저장소 글 차단: 사람이 쓴 글을 근거로 인용: config-example.yaml"
  },
@@ -1618,6 +1812,7 @@
   },
   "cost": 0.2341106,
   "seconds": 119.80000000000001,
+  "callgraph": "none",
   "decision": "REVIEW",
   "why": "저장소 글 차단: 사람이 쓴 글을 근거로 인용: config-example.yaml"
  },
@@ -1671,8 +1866,19 @@
   },
   "cost": 0.2086749,
   "seconds": 121.10000000000001,
+  "callgraph": "required",
   "decision": "CLOSE",
-  "why": "code_not_reachable"
+  "why": "code_not_reachable",
+  "basis": {
+   "version": "v27.4.0+incompatible",
+   "advisory_modified": "2026-09-10T03:50:47.998689316Z",
+   "kev": false,
+   "files": {
+    "go.mod": "0699ffe79b8e624a",
+    "go.sum": "c8c300945e1a9033",
+    "integration/integrationutil/util.go": "a4094a73642bb3a9"
+   }
+  }
  },
  "github.com_docker_docker__CVE-2026-42306": {
   "id": "github.com_docker_docker__CVE-2026-42306",
@@ -1730,80 +1936,19 @@
   },
   "cost": 0.1863858,
   "seconds": 110.9,
+  "callgraph": "required",
   "decision": "CLOSE",
-  "why": "code_not_reachable"
- },
- "google.golang.org_grpc__GHSA-hrxh-6v49-42gf": {
-  "id": "google.golang.org_grpc__GHSA-hrxh-6v49-42gf",
-  "cve": "GHSA-hrxh-6v49-42gf",
-  "package": "google.golang.org/grpc",
-  "categories": [
-   "requires_configuration",
-   "requires_configuration"
-  ],
-  "category": "requires_configuration",
-  "verify_ok": [
-   true,
-   true
-  ],
-  "verify_fails": [
-   [],
-   []
-  ],
-  "reasoning": "The advisory GHSA-hrxh-6v49-42gf covers google.golang.org/grpc < 1.82.1. It lists three issues. Two are in the xDS RBAC translation (internal/xds/rbac): unsupported matchers are dropped, which can fail open, and a NOT rule around an unsupported field can panic. The third is a Rapid Reset bypass in internal/transport (HEADERS followed by RST_STREAM), which allows CPU denial of service. The repository resolves grpc to v1.69.0, which is in the affected range.\n\nThe xDS RBAC issues are not reachable. No Go source imports google.golang.org/grpc/xds or any xds package, and the gRPC servers are plain grpc.NewServer instances with a custom authentication interceptor, not xDS-managed servers.\n\nThe transport issue is in code the repository always uses through grpc.NewServer. It has two exposures. The unix-socket gRPC server always starts, but it is local-only. The TCP gRPC server (hscontrol/app.go:719) starts only if TLS is configured or grpc_allow_insecure is true. Both are off by default: grpc_allow_insecure defaults to false and tls_cert_path and tls_letsencrypt_hostname default to empty. So network exposure of the vulnerable transport needs operator configuration that is disabled by default.\n\nCaveat: if an operator enables TLS or insecure gRPC, the DoS applies, because the authentication interceptor is unary-level and does not stop HTTP/2 transport abuse. Upgrading grpc to 1.82.1 or later is still advised.",
-  "evidence": [
-   {
-    "path": "go.mod",
-    "line": 46,
-    "quote": "google.golang.org/grpc v1.69.0",
-    "shows": "version"
-   },
-   {
-    "path": "hscontrol/app.go",
-    "line": 685,
-    "quote": "grpcSocket := grpc.NewServer(",
-    "shows": "call"
-   },
-   {
-    "path": "hscontrol/app.go",
-    "line": 719,
-    "quote": "if tlsConfig != nil || h.cfg.GRPCAllowInsecure {",
-    "shows": "config"
-   },
-   {
-    "path": "hscontrol/app.go",
-    "line": 740,
-    "quote": "grpcServer = grpc.NewServer(grpcOptions...)",
-    "shows": "call"
-   },
-   {
-    "path": "hscontrol/types/config.go",
-    "line": 304,
-    "quote": "viper.SetDefault(\"grpc_allow_insecure\", false)",
-    "shows": "config"
-   },
-   {
-    "path": "config-example.yaml",
-    "line": 225,
-    "quote": "tls_cert_path: \"\"",
-    "shows": "config"
+  "why": "code_not_reachable",
+  "basis": {
+   "version": "v27.4.0+incompatible",
+   "advisory_modified": "2026-09-10T03:50:47.528575532Z",
+   "kev": false,
+   "files": {
+    "go.mod": "0699ffe79b8e624a",
+    "go.sum": "c8c300945e1a9033",
+    "integration/integrationutil/util.go": "a4094a73642bb3a9"
    }
-  ],
-  "advisory": {
-   "package": "google.golang.org/grpc",
-   "ecosystem": "Go",
-   "affected_range": "< 1.82.1",
-   "fixed_version": "1.82.1",
-   "vulnerable_symbols": [
-    "internal/xds/rbac",
-    "internal/transport"
-   ],
-   "source_url": "https://github.com/advisories/GHSA-hrxh-6v49-42gf"
-  },
-  "cost": 0.16870069999999998,
-  "seconds": 85.8,
-  "decision": "REVIEW",
-  "why": "해석이 필요한 범주라 사람이 닫는다: requires_configuration"
+  }
  },
  "google.golang.org_grpc__GO-2026-6061": {
   "id": "google.golang.org_grpc__GO-2026-6061",
@@ -1876,65 +2021,9 @@
   },
   "cost": 0.2004027,
   "seconds": 130.0,
+  "callgraph": "called",
   "decision": "REVIEW",
-  "why": "해석이 필요한 범주라 사람이 닫는다: requires_configuration"
- },
- "github.com_go-viper_mapstructure_v2__GHSA-fv92-fjc5-jj9h": {
-  "id": "github.com_go-viper_mapstructure_v2__GHSA-fv92-fjc5-jj9h",
-  "cve": "GHSA-fv92-fjc5-jj9h",
-  "package": "github.com/go-viper/mapstructure/v2",
-  "categories": [
-   "uncertain",
-   "vulnerable"
-  ],
-  "category": "vulnerable",
-  "verify_ok": [
-   false,
-   true
-  ],
-  "verify_fails": [
-   [
-    "0건 주장이 틀림(5건): mapstructure @ **/*.go"
-   ],
-   []
-  ],
-  "reasoning": "GHSA-fv92-fjc5-jj9h affects github.com/go-viper/mapstructure/v2 < 2.3.0, fixed in 2.3.0. Decode errors can echo the original input value, which is CWE-532 (sensitive data in logs). This repository resolves v2.2.1, which is in the affected range. It is an indirect dependency pulled in by spf13/viper v1.20.0-alpha.6. I did not open viper's source, because the module cache is outside the sandbox. That viper uses mapstructure/v2 is inferred from the indirect v2 entry in go.mod, not verified. First-party code does not call mapstructure directly, with 0 hits for its decode APIs. It reaches the decoder through viper.UnmarshalKey(\"dns.extra_records\", &extraRecords) in hscontrol/types/config.go. That call runs whenever dns.extra_records is set in the config file, and viper decodes with mapstructure. A type mismatch in that config value would put the offending value into the returned error, which wraps it with fmt.Errorf. No in-repo mitigation applies. Practical impact is low: the input is the operator's own config file (a file-parsing surface, not network input), and the values are DNS records, not secrets. I classify it as vulnerable under the strict rubric, but the severity is minimal. Fixing it means bumping mapstructure/v2 to >= 2.3.0.",
-  "evidence": [
-   {
-    "path": "go.mod",
-    "line": 128,
-    "quote": "github.com/go-viper/mapstructure/v2 v2.2.1 // indirect",
-    "shows": "version"
-   },
-   {
-    "path": "go.mod",
-    "line": 34,
-    "quote": "github.com/spf13/viper v1.20.0-alpha.6",
-    "shows": "presence"
-   },
-   {
-    "path": "hscontrol/types/config.go",
-    "line": 644,
-    "quote": "err := viper.UnmarshalKey(\"dns.extra_records\", &extraRecords)",
-    "shows": "call"
-   }
-  ],
-  "advisory": {
-   "package": "github.com/go-viper/mapstructure/v2",
-   "ecosystem": "Go",
-   "affected_range": "< 2.3.0",
-   "fixed_version": "2.3.0",
-   "vulnerable_symbols": [
-    "mapstructure.WeakDecode",
-    "mapstructure.Decode",
-    "decode error handling in mapstructure.go"
-   ],
-   "source_url": "https://github.com/advisories/GHSA-fv92-fjc5-jj9h"
-  },
-  "cost": 0.145889,
-  "seconds": 91.5,
-  "decision": "OPEN",
-  "why": "코드에서 쓰임이 확인됨"
+  "why": "호출 그래프가 취약 함수 호출을 찾아 에이전트의 닫기 판단과 충돌"
  },
  "github.com_go-viper_mapstructure_v2__GO-2025-3787": {
   "id": "github.com_go-viper_mapstructure_v2__GO-2025-3787",
@@ -1999,8 +2088,9 @@
   },
   "cost": 0.2262221,
   "seconds": 122.2,
-  "decision": "CLOSE",
-  "why": "code_not_reachable"
+  "callgraph": "called",
+  "decision": "REVIEW",
+  "why": "호출 그래프가 취약 함수 호출을 찾아 에이전트의 닫기 판단과 충돌"
  },
  "github.com_insomniacslk_dhcp__GO-2026-6237": {
   "id": "github.com_insomniacslk_dhcp__GO-2026-6237",
@@ -2040,8 +2130,19 @@
   },
   "cost": 0.21959199999999998,
   "seconds": 131.2,
+  "callgraph": "none",
   "decision": "CLOSE",
-  "why": "code_not_reachable"
+  "why": "code_not_reachable",
+  "basis": {
+   "version": "v0.0.0-20240129002554-15c9b8791914",
+   "advisory_modified": "2026-08-19T15:41:56.905027993Z",
+   "kev": false,
+   "files": {
+    "go.mod": "0699ffe79b8e624a",
+    "go.sum": "c8c300945e1a9033",
+    "hscontrol/tailsql.go": "4ba7df256f29e388"
+   }
+  }
  },
  "golang.org_x_crypto__GO-2026-5932": {
   "id": "golang.org_x_crypto__GO-2026-5932",
@@ -2099,8 +2200,20 @@
   },
   "cost": 0.170175,
   "seconds": 101.3,
+  "callgraph": "required",
   "decision": "CLOSE",
-  "why": "code_not_reachable"
+  "why": "code_not_reachable",
+  "basis": {
+   "version": "v0.31.0",
+   "advisory_modified": "2026-07-10T05:44:31.101996029Z",
+   "kev": false,
+   "files": {
+    "go.mod": "0699ffe79b8e624a",
+    "go.sum": "c8c300945e1a9033",
+    "hscontrol/app.go": "163ae57f8cce1ba8",
+    "hscontrol/db/api_key.go": "b02f30ecc0ee66a6"
+   }
+  }
  },
  "github.com_docker_docker__CVE-2026-34040": {
   "id": "github.com_docker_docker__CVE-2026-34040",
@@ -2152,8 +2265,9 @@
   },
   "cost": 0.1843862,
   "seconds": 124.3,
-  "decision": "CLOSE",
-  "why": "code_not_reachable"
+  "callgraph": "called",
+  "decision": "REVIEW",
+  "why": "호출 그래프가 취약 함수 호출을 찾아 에이전트의 닫기 판단과 충돌"
  },
  "golang.org_x_net__CVE-2026-39821": {
   "id": "golang.org_x_net__CVE-2026-39821",
@@ -2222,6 +2336,7 @@
   },
   "cost": 0.2383489,
   "seconds": 135.3,
+  "callgraph": "called",
   "decision": "REVIEW",
   "why": "에이전트가 근거 부족으로 판단을 보류함"
  },
@@ -2272,8 +2387,20 @@
   },
   "cost": 0.19098290000000004,
   "seconds": 123.2,
+  "callgraph": "imported",
   "decision": "CLOSE",
-  "why": "code_not_reachable"
+  "why": "code_not_reachable",
+  "basis": {
+   "version": "v0.32.0",
+   "advisory_modified": "2026-03-24T23:55:17.997380Z",
+   "kev": false,
+   "files": {
+    "go.mod": "0699ffe79b8e624a",
+    "go.sum": "c8c300945e1a9033",
+    "hscontrol/noise.go": "9413c7c9bb1eeb0b",
+    "hscontrol/tailsql.go": "4ba7df256f29e388"
+   }
+  }
  },
  "golang.org_x_net__CVE-2026-33814": {
   "id": "golang.org_x_net__CVE-2026-33814",
@@ -2350,6 +2477,7 @@
   },
   "cost": 0.2900658,
   "seconds": 175.3,
+  "callgraph": "called",
   "decision": "OPEN",
   "why": "코드에서 쓰임이 확인됨"
  },
@@ -2414,8 +2542,21 @@
   },
   "cost": 0.1868846,
   "seconds": 118.5,
+  "callgraph": "required",
   "decision": "CLOSE",
-  "why": "code_not_reachable"
+  "why": "code_not_reachable",
+  "basis": {
+   "version": "v0.31.0",
+   "advisory_modified": "2026-05-21T10:29:29.799885348Z",
+   "kev": false,
+   "files": {
+    "go.mod": "0699ffe79b8e624a",
+    "go.sum": "c8c300945e1a9033",
+    "hscontrol/app.go": "163ae57f8cce1ba8",
+    "hscontrol/db/api_key.go": "b02f30ecc0ee66a6",
+    "hscontrol/tailsql.go": "4ba7df256f29e388"
+   }
+  }
  },
  "golang.org_x_net__CVE-2026-78659": {
   "id": "golang.org_x_net__CVE-2026-78659",
@@ -2486,6 +2627,158 @@
   },
   "cost": 0.2744734,
   "seconds": 112.9,
+  "callgraph": "called",
+  "decision": "OPEN",
+  "why": "코드에서 쓰임이 확인됨"
+ },
+ "golang.org_x_net__CVE-2026-78663": {
+  "id": "golang.org_x_net__CVE-2026-78663",
+  "cve": "CVE-2026-78663",
+  "package": "golang.org/x/net",
+  "categories": [
+   "vulnerable",
+   "vulnerable"
+  ],
+  "category": "vulnerable",
+  "verify_ok": [
+   true,
+   true
+  ],
+  "verify_fails": [
+   [],
+   []
+  ],
+  "reasoning": "CVE-2026-78663 (GO-2026-6612) is an HTTP/2 server flaw. It credits connection-level flow control twice for the same data, once when a client resets a stream and again when a handler reads the buffered data. A client can use this to exceed MaxReceiveBufferPerConnection. For golang.org/x/net/http2 the affected range is before v0.60.0, and the vulnerable symbols include Server.ServeConn. The repository pins golang.org/x/net v0.32.0 in go.mod and go.sum, so it is in range. hscontrol/noise.go imports golang.org/x/net/http2 and calls (&http2.Server{}).ServeConn on the connection hijacked from the /ts2021 endpoint. That endpoint is registered on the public HTTP router. Any client that completes the Noise handshake with its own machine key can open HTTP/2 streams and reset them, so the path starts at network input. The repository sets no custom http2.Server limits (the only http2.Server construction is the empty literal at noise.go:107). It has no vendored copy of x/net, and nothing in it mitigates the flaw. Impact is bounded because stream-level flow control and the concurrent stream limit still cap total buffered data, but that is not a mitigation the repository adds. I could not confirm the advisory's fixed version of v0.60.0 against an official x/net release note. It comes from the Go vulnerability database page pkg.go.dev/vuln/GO-2026-6612, whose fixed versions are inferred from the end of the affected ranges.",
+  "evidence": [
+   {
+    "path": "go.mod",
+    "line": 42,
+    "quote": "\tgolang.org/x/net v0.32.0",
+    "shows": "version"
+   },
+   {
+    "path": "go.sum",
+    "line": 585,
+    "quote": "golang.org/x/net v0.32.0 h1:ZqPmj8Kzc+Y6e0+skZsuACbx+wzMgo5MQsJh9Qd6aYI=",
+    "shows": "version"
+   },
+   {
+    "path": "hscontrol/noise.go",
+    "line": 14,
+    "quote": "\t\"golang.org/x/net/http2\"",
+    "shows": "import"
+   },
+   {
+    "path": "hscontrol/noise.go",
+    "line": 107,
+    "quote": "\tnoiseServer.http2Server = &http2.Server{}",
+    "shows": "config"
+   },
+   {
+    "path": "hscontrol/noise.go",
+    "line": 109,
+    "quote": "\tnoiseServer.http2Server.ServeConn(",
+    "shows": "call"
+   },
+   {
+    "path": "hscontrol/app.go",
+    "line": 462,
+    "quote": "\trouter.HandleFunc(ts2021UpgradePath, h.NoiseUpgradeHandler).Methods(http.MethodPost, http.MethodGet)",
+    "shows": "call"
+   }
+  ],
+  "advisory": {
+   "package": "golang.org/x/net",
+   "ecosystem": "Go",
+   "affected_range": "golang.org/x/net/http2 before v0.60.0 (stdlib net/http before go1.26.9; go1.27.0-0 up to go1.27.2)",
+   "fixed_version": "v0.60.0 (x/net); go1.26.9 / go1.27.2 (stdlib)",
+   "vulnerable_symbols": [
+    "golang.org/x/net/http2.Server.ServeConn",
+    "golang.org/x/net/http2.ConfigureServer",
+    "golang.org/x/net/http2.Transport.RoundTrip"
+   ],
+   "source_url": "https://pkg.go.dev/vuln/GO-2026-6612"
+  },
+  "cost": 0.2636158,
+  "seconds": 146.89999999999998,
+  "callgraph": "called",
+  "decision": "OPEN",
+  "why": "코드에서 쓰임이 확인됨"
+ },
+ "golang.org_x_net__CVE-2026-78669": {
+  "id": "golang.org_x_net__CVE-2026-78669",
+  "cve": "CVE-2026-78669",
+  "package": "golang.org/x/net",
+  "categories": [
+   "vulnerable",
+   "vulnerable"
+  ],
+  "category": "vulnerable",
+  "verify_ok": [
+   true,
+   true
+  ],
+  "verify_fails": [
+   [],
+   []
+  ],
+  "reasoning": "CVE-2026-78669 (GO-2026-6611) is an HTTP/2 resource-exhaustion flaw. A malicious peer opens many streams and sends many small SETTINGS frames with SETTINGS_INITIAL_WINDOW_SIZE values, which drives up CPU use. Affected: golang.org/x/net/http2 before v0.60.0, plus Go stdlib net/http before go1.26.9. This repository resolves golang.org/x/net to v0.32.0 in go.mod and go.sum. That is inside the affected range. There is no replace directive and no vendored copy. First-party code in hscontrol/noise.go creates an http2.Server and calls ServeConn on the Noise connection accepted at the network-facing /ts2021 endpoint. ServeConn is a listed vulnerable symbol. The flow is: network client, POST/GET /ts2021, controlhttpserver.AcceptHTTP, http2Server.ServeConn. Nothing in the repository sets a configuration or compensating control that stops this. The Noise handshake only establishes a machine key. As far as I can tell from the code I read, any client can generate its own key, so this is not a meaningful authentication barrier. This was not confirmed beyond reading noise.go. Other exposure: the gRPC server (grpc v1.69.0) and the net/http servers in hscontrol/app.go. The Go toolchain is Go 1.23, which is also below the fixed stdlib versions, but I did not need that to reach this conclusion.",
+  "evidence": [
+   {
+    "path": "go.mod",
+    "line": 42,
+    "quote": "\tgolang.org/x/net v0.32.0",
+    "shows": "version"
+   },
+   {
+    "path": "go.sum",
+    "line": 585,
+    "quote": "golang.org/x/net v0.32.0 h1:ZqPmj8Kzc+Y6e0+skZsuACbx+wzMgo5MQsJh9Qd6aYI=",
+    "shows": "version"
+   },
+   {
+    "path": "hscontrol/noise.go",
+    "line": 14,
+    "quote": "\t\"golang.org/x/net/http2\"",
+    "shows": "import"
+   },
+   {
+    "path": "hscontrol/noise.go",
+    "line": 107,
+    "quote": "\tnoiseServer.http2Server = &http2.Server{}",
+    "shows": "call"
+   },
+   {
+    "path": "hscontrol/noise.go",
+    "line": 109,
+    "quote": "\tnoiseServer.http2Server.ServeConn(",
+    "shows": "call"
+   },
+   {
+    "path": "hscontrol/app.go",
+    "line": 462,
+    "quote": "\trouter.HandleFunc(ts2021UpgradePath, h.NoiseUpgradeHandler).Methods(http.MethodPost, http.MethodGet)",
+    "shows": "call"
+   }
+  ],
+  "advisory": {
+   "package": "golang.org/x/net",
+   "ecosystem": "Go",
+   "affected_range": "golang.org/x/net/http2 < v0.60.0 (also stdlib net/http < go1.26.9; net/http/internal/http2 >= go1.27.0-0 < go1.27.2)",
+   "fixed_version": "v0.60.0",
+   "vulnerable_symbols": [
+    "http2.Server.ServeConn",
+    "http2.ConfigureServer",
+    "http2.ConfigureTransport",
+    "http2.Transport.RoundTrip",
+    "http2.ClientConn.RoundTrip",
+    "http2.SettingsFrame.ForeachSetting"
+   ],
+   "source_url": "https://pkg.go.dev/vuln/GO-2026-6611"
+  },
+  "cost": 0.2205565,
+  "seconds": 113.0,
+  "callgraph": "called",
   "decision": "OPEN",
   "why": "코드에서 쓰임이 확인됨"
  }

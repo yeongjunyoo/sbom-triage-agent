@@ -8,7 +8,7 @@
   1. sbom     syft 로 CycloneDX SBOM                     bom.cdx.json
   2. scan     osv-scanner 로 취약점 대조                 scan.json, findings.json
   3. enrich   KEV, EPSS 결합. 규칙으로 우선순위          findings.json
-  4. triage   격리된 에이전트가 코드를 읽어 판단(독립 2회) triage/<id>.json
+  4. triage   격리된 에이전트가 코드를 읽어 판단(독립 2회) triage/<id>.json. Go 는 호출 그래프(govulncheck)와 대조
   5. verify   인용과 검색을 스크립트로 재현, 2회 모두 통과해야 닫음. 사람이 쓴 글에 기댄 닫기는 막는다(agent/guard.py)  decisions.json
   6. output   OpenVEX, 사람 검토 목록, 보고서            vex.json, report.md, audit.jsonl
 LLM 재검토는 층 제거 실험에서 잘못 닫은 건을 못 잡고 맞는 닫기만 뒤집어 뺐다.
@@ -25,6 +25,22 @@ from verify import parse_obj, verify  # noqa: E402
 
 sys.path.insert(0, str(ROOT / "agent"))
 from guard import evidence_guard  # noqa: E402
+from recheck import basis_of  # noqa: E402
+
+
+def step_callgraph(repo: pathlib.Path, findings: list[dict]) -> dict:
+    """Go 건에 호출 그래프(govulncheck)를 붙인다. 도구가 없거나 분석이 실패하면 그 사실을 남기고 대조하지 않는다."""
+    if not any(f.get("ecosystem") == "Go" for f in findings) or not (ROOT / "tools" / "govulncheck").exists():
+        return {"ran": False, "reason": "대상 없음 또는 도구 없음"}
+    from govulncheck_run import run_repo
+
+    r = run_repo(repo, 900)
+    ok = any(x["exit"] in (0, 3) for x in r["runs"])
+    if ok:
+        for f in findings:
+            if f.get("ecosystem") == "Go":
+                f["callgraph"] = next((r["findings"][i] for i in f["ids"] if i in r["findings"]), "none")
+    return {"ran": ok, "reason": "" if ok else (r["runs"][-1]["err"] if r["runs"] else "")[-200:]}
 
 IS_WIN = os.name == "nt"
 SUFFIX = ".exe" if IS_WIN else ""
@@ -149,16 +165,19 @@ def step_scan(bom: pathlib.Path, out: pathlib.Path) -> list[dict]:
                 raw_alerts += 1
                 ids = [v.get("id", "")] + (v.get("aliases") or [])
                 cve = next((i for i in ids if i.startswith("CVE-")), v.get("id"))
-                key = (info.get("name"), cve)
-                f = seen.get(key)
+                # 같은 권고가 GHSA 와 GO 번호로 따로 오면 하나로 합친다. 따로 판단하면 결론이 갈린다(2026-11-02 mapstructure)
+                f = next((x for x in seen.get(info.get("name"), []) if set(x["ids"]) & set(ids)), None)
+                if f is not None:
+                    f["ids"] = sorted(set(f["ids"]) | set(ids))
                 if f is None:
                     f = {
                         "id": f"{str(info.get('name')).replace('/', '_').replace(':', '_')}__{cve}", "package": info.get("name"), "version": info.get("version"),
                         "ecosystem": info.get("ecosystem"), "cve": cve, "ids": sorted(set(ids)), "summary": (v.get("summary") or "")[:200], "fixed": [], "cvss": None,
                     }
-                    seen[key] = f
+                    seen.setdefault(info.get("name"), []).append(f)
                     findings.append(f)
                 f["fixed"] = sorted(set(f["fixed"] + fixed_versions(v, info.get("name"))))
+                f["modified"] = max(f.get("modified") or "", v.get("modified") or "") or None
                 s = next((sev[i] for i in ids if sev.get(i)), None)
                 try:
                     f["cvss"] = max(float(s), f["cvss"] or 0) if s else f["cvss"]
@@ -166,6 +185,16 @@ def step_scan(bom: pathlib.Path, out: pathlib.Path) -> list[dict]:
                     pass
     (out / "scan_counts.json").write_text(json.dumps({"raw_alerts": raw_alerts, "unique": len(findings)}), encoding="utf-8")
     return findings
+
+
+HIGH_DATA = {"개인정보", "인증정보", "결제정보"}
+
+
+def impact_of(f: dict, asset: dict) -> tuple[int, str]:
+    """영향도 = 악용 가능성(KEV 3, EPSS 0.1 이상 2, 그 밖 1) x 자산 노출(인터넷 2, 내부 1) x 데이터 등급(개인정보, 인증정보, 결제정보 2, 그 밖 1). 12점 만점."""
+    exploit = 3 if f["kev"] else (2 if f["epss"] >= 0.1 else 1)
+    score = exploit * (2 if asset.get("internet_facing") else 1) * (2 if asset.get("data_class") in HIGH_DATA else 1)
+    return score, ("상" if score >= 6 else "중" if score >= 3 else "하")
 
 
 def step_enrich(findings: list[dict], asset: dict) -> tuple[list[dict], dict]:
@@ -184,6 +213,7 @@ def step_enrich(findings: list[dict], asset: dict) -> tuple[list[dict], dict]:
             f["tier"] = 3
         else:
             f["tier"] = 4
+        f["impact"], f["impact_label"] = impact_of(f, asset)
     findings.sort(key=lambda f: (f["tier"], -f["epss"], -(f["cvss"] or 0), f["id"]))
     return findings, {"kev_total": len(kev), "epss_day": epss_day}
 
@@ -246,6 +276,7 @@ def triage_one(f: dict, repo: pathlib.Path, out: pathlib.Path, a) -> dict:
         "verify_fails": [c["fails"][:2] for c in checks], "reasoning": main.get("reasoning"), "evidence": (main.get("evidence") or [])[:6], "advisory": main.get("advisory"),
         "cost": sum(m.get("cost") or 0 for m in runs), "seconds": sum(m.get("seconds") or 0 for m in runs),
     }
+    d["callgraph"] = f.get("callgraph")
     if "vulnerable" in cats:
         d["decision"], d["why"] = "OPEN", "코드에서 쓰임이 확인됨"
     elif f.get("kev"):
@@ -254,12 +285,15 @@ def triage_one(f: dict, repo: pathlib.Path, out: pathlib.Path, a) -> dict:
     elif all(c in CLOSE_CATS for c in cats) and all(c["ok"] for c in checks):
         blocked = [x for o in objs for x in evidence_guard(o, repo, f["cve"])]
         hold = [c for c in cats if c not in PROOF_CATS] if a.close_scope == "proof" else []
-        if blocked:
+        if f.get("callgraph") == "called":
+            d["decision"], d["why"] = "REVIEW", "호출 그래프가 취약 함수 호출을 찾아 에이전트의 닫기 판단과 충돌"
+        elif blocked:
             d["decision"], d["why"] = "REVIEW", "저장소 글 차단: " + blocked[0]
         elif hold:
             d["decision"], d["why"] = "REVIEW", "해석이 필요한 범주라 사람이 닫는다: " + hold[0]
         else:
             d["decision"], d["why"] = "CLOSE", cats[0]
+            d["basis"] = basis_of(repo, objs, f)
     elif any(c is None or c == "uncertain" for c in cats):
         d["decision"], d["why"] = "REVIEW", "에이전트가 근거 부족으로 판단을 보류함"
     elif not all(c["ok"] for c in checks):
@@ -284,6 +318,7 @@ def write_vex(findings: list[dict], decisions: dict, out: pathlib.Path, product:
             s["status"] = "not_affected"
             s["justification"] = VEX_JUSTIFICATION[d["category"]]
             s["impact_statement"] = (d.get("reasoning") or "")[:900]
+            s["status_notes"] = "에이전트 판단 초안. 담당자 확인 뒤 외부에 낸다. 근거 파일, 권고문, KEV 가 바뀌면 다시 판단한다(agent/recheck.py)"
         elif d["decision"] == "OPEN":
             s["status"] = "affected"
             s["action_statement"] = f"{f['package']} 를 {', '.join(f['fixed'][:2]) or '수정 버전'} 이상으로 올린다"
@@ -312,27 +347,30 @@ def draft_notes(findings, decisions, key) -> list[str]:
     return L
 
 
-def write_report(findings, decisions, counts, feeds, out, repo, components, wall) -> None:
+def write_report(findings, decisions, counts, feeds, out, repo, components, wall, asset=None) -> None:
     ds = list(decisions.values())
     n = {k: sum(1 for d in ds if d["decision"] == k) for k in ("OPEN", "REVIEW", "CLOSE")}
     cost = sum(d.get("cost") or 0 for d in ds)
     tiers = {t: sum(1 for f in findings if f["tier"] == t) for t in (1, 2, 3, 4)}
     rounds = sum(len(d.get("categories") or []) for d in ds)
     model_seconds = sum(float(d.get("seconds") or 0) for d in ds)
+    conflict = sum(1 for d in ds if str(d.get("why")).startswith("호출 그래프"))
     L = [
         f"# SW 공급망 점검 보고서: {repo.name}", "",
+        *([f"자산: {asset.get('name')}, 담당 {asset.get('owner')}, 사업 {asset.get('business_unit')}, 인터넷 노출 {'예' if asset.get('internet_facing') else '아니오'}, 데이터 등급 {asset.get('data_class')}", ""] if asset else []),
         "| 단계 | 건수 |", "|---|---:|",
         f"| SBOM 구성요소 | {components} |", f"| 스캐너 경보(중복 포함) | {counts['raw_alerts']} |", f"| 패키지와 CVE 기준 고유 건 | {counts['unique']} |",
         f"| 규칙 등급 1 실제 악용(KEV) / 2 / 3 / 4 | {tiers[1]} / {tiers[2]} / {tiers[3]} / {tiers[4]} |",
         f"| 에이전트 판단 | {len(ds)} |", f"| 조치 대상 OPEN | {n['OPEN']} |", f"| 사람 검토 REVIEW | {n['REVIEW']} |", f"| 근거와 함께 닫음 CLOSE | {n['CLOSE']} |", "",
+        f"호출 그래프와 충돌해 닫지 않은 건 {conflict}건.", "",
         f"판단 {rounds}회(건당 독립 2회), 회당 평균 {model_seconds / max(rounds, 1):.0f}초, 모델 비용 환산 {cost:.2f}달러. KEV 판 {feeds['kev_total']}건, EPSS {feeds['epss_day']}.", "",
     ]
     for key, title in (("OPEN", "조치 대상"), ("REVIEW", "사람 검토 필요"), ("CLOSE", "근거와 함께 닫음")):
-        L += [f"## {title}", "", "| 패키지 | 버전 | CVE | KEV | EPSS | 수정 버전 | 이유 |", "|---|---|---|---|---:|---|---|"]
-        for f in findings:
+        L += [f"## {title}", "", "| 영향도 | 패키지 | 버전 | CVE | KEV | EPSS | 수정 버전 | 이유 |", "|---|---|---|---|---|---:|---|---|"]
+        for f in sorted(findings, key=lambda x: -x.get("impact", 0)):
             d = decisions.get(f["id"])
             if d and d["decision"] == key:
-                L.append(f"| {f['package']} | {f['version']} | {f['cve']} | {'예' if f['kev'] else ''} | {f['epss']:.3f} | {', '.join(f['fixed'][:2])} | {str(d['why'])[:90]} |")
+                L.append(f"| {f.get('impact_label', '')} {f.get('impact', '')} | {f['package']} | {f['version']} | {f['cve']} | {'예' if f['kev'] else ''} | {f['epss']:.3f} | {', '.join(f['fixed'][:2])} | {str(d['why'])[:90]} |")
         L.append("")
         if key != "CLOSE":
             L += draft_notes(findings, decisions, key)
@@ -368,6 +406,7 @@ def main() -> int:
     log(audit, "scan", **counts)
     findings, feeds = step_enrich(findings, asset)
     log(audit, "enrich", **feeds)
+    log(audit, "callgraph", **step_callgraph(repo, findings))
     (out / "findings.json").write_text(json.dumps(findings, ensure_ascii=False, indent=0), encoding="utf-8")
     picked = findings[: a.top]
     with ThreadPoolExecutor(a.parallel) as ex:
@@ -377,7 +416,7 @@ def main() -> int:
         log(audit, "decision", id=d["id"], cve=d["cve"], decision=d["decision"], categories=d["categories"], verify_ok=d["verify_ok"], why=d["why"])
     (out / "decisions.json").write_text(json.dumps(decisions, ensure_ascii=False, indent=1), encoding="utf-8")
     write_vex(findings, decisions, out, repo.name)
-    write_report(findings, decisions, counts, feeds, out, repo, components, time.time() - t0)
+    write_report(findings, decisions, counts, feeds, out, repo, components, time.time() - t0, asset)
     print((out / "report.md").read_text(encoding="utf-8")[:900])
     return 0
 

@@ -1,0 +1,29 @@
+{
+ "n": 75,
+ "risk": 22,
+ "kev": 2,
+ "kev_risk": 2,
+ "epss_day": "2026-11-01",
+ "top": {
+  "10": {
+   "hit": 3,
+   "recall": 13.6,
+   "random_hit": 2.9
+  },
+  "20": {
+   "hit": 7,
+   "recall": 31.8,
+   "random_hit": 5.8
+  },
+  "30": {
+   "hit": 9,
+   "recall": 40.9,
+   "random_hit": 8.9
+  },
+  "40": {
+   "hit": 10,
+   "recall": 45.5,
+   "random_hit": 11.8
+  }
+ }
+}

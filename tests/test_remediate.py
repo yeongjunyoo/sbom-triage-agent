@@ -2,7 +2,7 @@
 import pathlib, sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1] / "agent"))
-from remediate import alert_ids, go_mod_state, new_failures, parse_go_test, side_effects
+from remediate import alert_ids, choose_fix, go_mod_state, new_failures, parse_go_test, side_effects
 
 REAL = """FAIL: headscale_test.go:29: Suite.TestConfigFileLoading
 --- FAIL: TestConstraints (0.05s)
@@ -63,3 +63,10 @@ def test_a_failed_rescan_is_an_error_not_zero_alerts():
     except ValueError:
         return
     raise AssertionError("빈 재스캔 출력을 경보 0건으로 읽었다")
+
+
+def test_only_stable_releases_are_chosen():
+    assert choose_fix(["1.85.0-dev.0.20260825072537-93e31b48545e", "1.83.1"], "1.69.0") == ("v1.83.1", False)
+    assert choose_fix(["1.3.3", "1.4.0-rc.3"], "1.2.3") == ("v1.3.3", False)
+    assert choose_fix(["29.2.0+incompatible"], "27.4.0+incompatible") == ("v29.2.0+incompatible", False)
+    assert choose_fix(["2.0.0-rc.1"], "1.0.0") == ("v2.0.0-rc.1", True)

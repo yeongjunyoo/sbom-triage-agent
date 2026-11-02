@@ -1,8 +1,8 @@
 {
  "@context": "https://openvex.dev/ns/v0.2.0",
- "@id": "urn:lotte-ax:headscale_e172c29360:1793607574",
+ "@id": "urn:lotte-ax:headscale_e172c29360:1793614868",
  "author": "SW 공급망 스캐닝 에이전트 시제품",
- "timestamp": "2026-11-02T08:19:34+00:00",
+ "timestamp": "2026-11-02T10:21:08+00:00",
  "version": 1,
  "statements": [
   {
@@ -23,10 +23,11 @@
      ]
     }
    ],
-   "timestamp": "2026-11-02T08:19:34+00:00",
+   "timestamp": "2026-11-02T10:21:08+00:00",
    "status": "not_affected",
    "justification": "vulnerable_code_not_in_execute_path",
-   "impact_statement": "CVE-2026-42508 (GHSA-5cgq-3rg8-m6cv, GO-2026-5021) is a flaw in golang.org/x/crypto/ssh/knownhosts. A revoked key used as a certificate authority's SignatureKey is not checked for the @revoked marker. Versions up to v0.51.0 are affected and v0.52.0 fixes it. This repository resolves golang.org/x/crypto to v0.31.0, which is in the affected range, so the module is present and vulnerable by version. Nothing reaches the vulnerable package, though. First-party Go code imports only golang.org/x/crypto/acme, acme/autocert and bcrypt. No file imports golang.org/x/crypto/ssh or ssh/knownhosts, and the string 'knownhosts' appears nowhere in the repository. The only large dependency that could pull it in transitively is tailscale.com (v1.79.0-pre, used via tsnet, tailcfg, and similar packages). The pkg.go.dev 'Imported by' list for ssh/knownhosts shows no tailscale.com or github.com/tailscale impor"
+   "impact_statement": "CVE-2026-42508 (GHSA-5cgq-3rg8-m6cv, GO-2026-5021) is a flaw in golang.org/x/crypto/ssh/knownhosts. A revoked key used as a certificate authority's SignatureKey is not checked for the @revoked marker. Versions up to v0.51.0 are affected and v0.52.0 fixes it. This repository resolves golang.org/x/crypto to v0.31.0, which is in the affected range, so the module is present and vulnerable by version. Nothing reaches the vulnerable package, though. First-party Go code imports only golang.org/x/crypto/acme, acme/autocert and bcrypt. No file imports golang.org/x/crypto/ssh or ssh/knownhosts, and the string 'knownhosts' appears nowhere in the repository. The only large dependency that could pull it in transitively is tailscale.com (v1.79.0-pre, used via tsnet, tailcfg, and similar packages). The pkg.go.dev 'Imported by' list for ssh/knownhosts shows no tailscale.com or github.com/tailscale impor",
+   "status_notes": "에이전트 판단 초안. 담당자 확인 뒤 외부에 낸다. 근거 파일, 권고문, KEV 가 바뀌면 다시 판단한다(agent/recheck.py)"
   },
   {
    "vulnerability": {
@@ -46,9 +47,9 @@
      ]
     }
    ],
-   "timestamp": "2026-11-02T08:19:34+00:00",
+   "timestamp": "2026-11-02T10:21:08+00:00",
    "status": "under_investigation",
-   "status_notes": "해석이 필요한 범주라 사람이 닫는다: mitigating_control_protected"
+   "status_notes": "호출 그래프가 취약 함수 호출을 찾아 에이전트의 닫기 판단과 충돌"
   },
   {
    "vulnerability": {
@@ -68,10 +69,11 @@
      ]
     }
    ],
-   "timestamp": "2026-11-02T08:19:34+00:00",
+   "timestamp": "2026-11-02T10:21:08+00:00",
    "status": "not_affected",
    "justification": "vulnerable_code_not_in_execute_path",
-   "impact_statement": "The vulnerable module golang.org/x/crypto is declared at v0.31.0, which is inside the affected range (all versions before v0.52.0). The flaw is in the golang.org/x/crypto/ssh package: a malicious SSH peer sends unsolicited global request responses, which blocks the connection read loop and leaks a goroutine per connection. No first-party Go file imports golang.org/x/crypto/ssh. The only x/crypto packages headscale imports are acme, acme/autocert and bcrypt, none of which touch the ssh package. The one transitive route I found is tailscale.com/tsnet, imported in hscontrol/tailsql.go. Its SSH code uses the fork github.com/tailscale/golang-x-crypto/ssh, which go.mod lists as indirect, not golang.org/x/crypto/ssh. I checked this for ipn/ipnlocal/ssh.go in tailscale v1.78.0, not v1.79.0-pre, and I did not read the Go module cache, so the claim covers that one file only. Headscale also has no "
+   "impact_statement": "The vulnerable module golang.org/x/crypto is declared at v0.31.0, which is inside the affected range (all versions before v0.52.0). The flaw is in the golang.org/x/crypto/ssh package: a malicious SSH peer sends unsolicited global request responses, which blocks the connection read loop and leaks a goroutine per connection. No first-party Go file imports golang.org/x/crypto/ssh. The only x/crypto packages headscale imports are acme, acme/autocert and bcrypt, none of which touch the ssh package. The one transitive route I found is tailscale.com/tsnet, imported in hscontrol/tailsql.go. Its SSH code uses the fork github.com/tailscale/golang-x-crypto/ssh, which go.mod lists as indirect, not golang.org/x/crypto/ssh. I checked this for ipn/ipnlocal/ssh.go in tailscale v1.78.0, not v1.79.0-pre, and I did not read the Go module cache, so the claim covers that one file only. Headscale also has no ",
+   "status_notes": "에이전트 판단 초안. 담당자 확인 뒤 외부에 낸다. 근거 파일, 권고문, KEV 가 바뀌면 다시 판단한다(agent/recheck.py)"
   },
   {
    "vulnerability": {
@@ -91,10 +93,11 @@
      ]
     }
    ],
-   "timestamp": "2026-11-02T08:19:34+00:00",
+   "timestamp": "2026-11-02T10:21:08+00:00",
    "status": "not_affected",
    "justification": "vulnerable_code_not_in_execute_path",
-   "impact_statement": "CVE-2026-39832 (GO-2026-5006 / GHSA-f5wc-c3c7-36mc) affects golang.org/x/crypto before 0.52.0. The flaw is in the ssh/agent package: client.Add and keyring.Add drop constraint extensions such as restrict-destination-v00@openssh.com, and NewKeyring() silently ignores unsupported ones. This repository pins golang.org/x/crypto v0.31.0, so the module is present and in the affected range. First-party Go code imports only three x/crypto packages: acme, acme/autocert and bcrypt. It never imports golang.org/x/crypto/ssh or ssh/agent, and it never calls NewKeyring or the agent client. The only 'ssh' matches in hscontrol are Tailscale SSH ACL policy types, which are unrelated to x/crypto. No vendored copy exists. Headscale is a control server and has no SSH agent forwarding feature. Limitation: I could not read the Go module cache, so I could not confirm that a transitive dependency such as tailsc"
+   "impact_statement": "CVE-2026-39832 (GO-2026-5006 / GHSA-f5wc-c3c7-36mc) affects golang.org/x/crypto before 0.52.0. The flaw is in the ssh/agent package: client.Add and keyring.Add drop constraint extensions such as restrict-destination-v00@openssh.com, and NewKeyring() silently ignores unsupported ones. This repository pins golang.org/x/crypto v0.31.0, so the module is present and in the affected range. First-party Go code imports only three x/crypto packages: acme, acme/autocert and bcrypt. It never imports golang.org/x/crypto/ssh or ssh/agent, and it never calls NewKeyring or the agent client. The only 'ssh' matches in hscontrol are Tailscale SSH ACL policy types, which are unrelated to x/crypto. No vendored copy exists. Headscale is a control server and has no SSH agent forwarding feature. Limitation: I could not read the Go module cache, so I could not confirm that a transitive dependency such as tailsc",
+   "status_notes": "에이전트 판단 초안. 담당자 확인 뒤 외부에 낸다. 근거 파일, 권고문, KEV 가 바뀌면 다시 판단한다(agent/recheck.py)"
   },
   {
    "vulnerability": {
@@ -114,10 +117,11 @@
      ]
     }
    ],
-   "timestamp": "2026-11-02T08:19:34+00:00",
+   "timestamp": "2026-11-02T10:21:08+00:00",
    "status": "not_affected",
    "justification": "vulnerable_code_not_in_execute_path",
-   "impact_statement": "github.com/jackc/pgx/v5 v5.7.1 is in the affected range (<5.9.0; fixed in 5.9.0), so the package is present. The Go vulnerability database entry GO-2026-4771 lists the vulnerable symbols as pgproto3 Backend.Receive and Bind.Decode. In pgx v5.7.1, pgproto3.Backend is the server side of the PostgreSQL wire protocol. Its Receive method parses messages sent by a client (Bind, Parse, Query and so on). Headscale only reaches pgx as a PostgreSQL client, through gorm.io/driver/postgres, and that client uses pgproto3.Frontend. Frontend.Receive decodes server messages (BindComplete, DataRow and so on) and never references Bind or Backend.Receive. The repository has no first-party Go code that imports pgx or pgproto3, builds a pgproto3 Backend, or acts as a PostgreSQL server or proxy. So no execution path reaches Backend.Receive or Bind.Decode. The advisory text is thin and gives no root-cause deta"
+   "impact_statement": "github.com/jackc/pgx/v5 v5.7.1 is in the affected range (<5.9.0; fixed in 5.9.0), so the package is present. The Go vulnerability database entry GO-2026-4771 lists the vulnerable symbols as pgproto3 Backend.Receive and Bind.Decode. In pgx v5.7.1, pgproto3.Backend is the server side of the PostgreSQL wire protocol. Its Receive method parses messages sent by a client (Bind, Parse, Query and so on). Headscale only reaches pgx as a PostgreSQL client, through gorm.io/driver/postgres, and that client uses pgproto3.Frontend. Frontend.Receive decodes server messages (BindComplete, DataRow and so on) and never references Bind or Backend.Receive. The repository has no first-party Go code that imports pgx or pgproto3, builds a pgproto3 Backend, or acts as a PostgreSQL server or proxy. So no execution path reaches Backend.Receive or Bind.Decode. The advisory text is thin and gives no root-cause deta",
+   "status_notes": "에이전트 판단 초안. 담당자 확인 뒤 외부에 낸다. 근거 파일, 권고문, KEV 가 바뀌면 다시 판단한다(agent/recheck.py)"
   },
   {
    "vulnerability": {
@@ -137,10 +141,11 @@
      ]
     }
    ],
-   "timestamp": "2026-11-02T08:19:34+00:00",
+   "timestamp": "2026-11-02T10:21:08+00:00",
    "status": "not_affected",
    "justification": "vulnerable_code_not_in_execute_path",
-   "impact_statement": "CVE-2026-39834 (GO-2026-5020, GHSA-rm3j-f69w-wqmq) is an infinite loop in golang.org/x/crypto/ssh. A single write above 4GB to an SSH channel overflows the payload size calculation. Versions before 0.52.0 are affected. go.mod and go.sum resolve golang.org/x/crypto to v0.31.0, which is inside the range, so the package is present and affected.\n\nNo first-party Go file imports golang.org/x/crypto/ssh. The searches found zero imports and zero calls to Dial, NewClientConn, NewServerConn or the Session methods. Headscale uses crypto only through other subpackages. The only plausible transitive route is tailscale.com/tsnet, which hscontrol/tailsql.go imports. That code runs only when HEADSCALE_DEBUG_TAILSQL_ENABLED is set. I could not read the module cache, so I checked the upstream Tailscale source instead, and it points the other way. Upstream tsnet.go (v1.78.0, the nearest tag I checked to th"
+   "impact_statement": "CVE-2026-39834 (GO-2026-5020, GHSA-rm3j-f69w-wqmq) is an infinite loop in golang.org/x/crypto/ssh. A single write above 4GB to an SSH channel overflows the payload size calculation. Versions before 0.52.0 are affected. go.mod and go.sum resolve golang.org/x/crypto to v0.31.0, which is inside the range, so the package is present and affected.\n\nNo first-party Go file imports golang.org/x/crypto/ssh. The searches found zero imports and zero calls to Dial, NewClientConn, NewServerConn or the Session methods. Headscale uses crypto only through other subpackages. The only plausible transitive route is tailscale.com/tsnet, which hscontrol/tailsql.go imports. That code runs only when HEADSCALE_DEBUG_TAILSQL_ENABLED is set. I could not read the module cache, so I checked the upstream Tailscale source instead, and it points the other way. Upstream tsnet.go (v1.78.0, the nearest tag I checked to th",
+   "status_notes": "에이전트 판단 초안. 담당자 확인 뒤 외부에 낸다. 근거 파일, 권고문, KEV 가 바뀌면 다시 판단한다(agent/recheck.py)"
   },
   {
    "vulnerability": {
@@ -160,10 +165,11 @@
      ]
     }
    ],
-   "timestamp": "2026-11-02T08:19:34+00:00",
+   "timestamp": "2026-11-02T10:21:08+00:00",
    "status": "not_affected",
    "justification": "vulnerable_code_not_in_execute_path",
-   "impact_statement": "CVE-2026-33816 (GHSA-9jj7-4m8r-rfcm, GO-2026-4772) is a memory-safety flaw in github.com/jackc/pgx/v5/pgproto3, affecting versions before v5.9.0. The vulnerable symbols are Backend.Receive and FunctionCall.Decode. This repository resolves pgx v5.7.1 as an indirect dependency, pulled in by gorm.io/driver/postgres, so the version is in the affected range. However, pgproto3.Backend is the server side of the PostgreSQL wire protocol (\"Backend acts as a server\"). Backend.Receive parses messages sent by a frontend (client), including FunctionCall. Headscale only uses pgx as a database client through gorm.Open(postgres.Open(...)). The client path uses pgproto3.Frontend, which does not call Backend.Receive. No first-party Go file imports pgx, pgproto3 or pgconn, and none calls NewBackend or Backend. The only code that starts a Postgres server is test-only (postgrestest in hscontrol/db/suite_test"
+   "impact_statement": "CVE-2026-33816 (GHSA-9jj7-4m8r-rfcm, GO-2026-4772) is a memory-safety flaw in github.com/jackc/pgx/v5/pgproto3, affecting versions before v5.9.0. The vulnerable symbols are Backend.Receive and FunctionCall.Decode. This repository resolves pgx v5.7.1 as an indirect dependency, pulled in by gorm.io/driver/postgres, so the version is in the affected range. However, pgproto3.Backend is the server side of the PostgreSQL wire protocol (\"Backend acts as a server\"). Backend.Receive parses messages sent by a frontend (client), including FunctionCall. Headscale only uses pgx as a database client through gorm.Open(postgres.Open(...)). The client path uses pgproto3.Frontend, which does not call Backend.Receive. No first-party Go file imports pgx, pgproto3 or pgconn, and none calls NewBackend or Backend. The only code that starts a Postgres server is test-only (postgrestest in hscontrol/db/suite_test",
+   "status_notes": "에이전트 판단 초안. 담당자 확인 뒤 외부에 낸다. 근거 파일, 권고문, KEV 가 바뀌면 다시 판단한다(agent/recheck.py)"
   },
   {
    "vulnerability": {
@@ -183,10 +189,11 @@
      ]
     }
    ],
-   "timestamp": "2026-11-02T08:19:34+00:00",
+   "timestamp": "2026-11-02T10:21:08+00:00",
    "status": "not_affected",
    "justification": "vulnerable_code_not_in_execute_path",
-   "impact_statement": "The advisory (GO-2026-5023 / GHSA-x527-x647-q7gg) affects golang.org/x/crypto/ssh before v0.52.0. It is a server-side bug. When an ssh.ServerConfig uses a callback other than the public-key callback, source-address validation is skipped. Only server code that calls ssh.NewServerConn is exposed. This repository requires golang.org/x/crypto v0.31.0, which is in the affected range. However, no Go source file in the tree imports golang.org/x/crypto/ssh. The only x/crypto imports are acme, acme/autocert and bcrypt. No file references NewServerConn, ssh.ServerConfig or VerifiedPublicKeyCallback, and there is no vendor directory. The 'ssh' hits in the tree are ACL policy JSON fields and integration tests that shell out to /usr/bin/ssh. Headscale runs no SSH server. The Tailscale SSH server code that headscale's dependency tree could bring in uses a separate fork module, github.com/tailscale/gol"
+   "impact_statement": "The advisory (GO-2026-5023 / GHSA-x527-x647-q7gg) affects golang.org/x/crypto/ssh before v0.52.0. It is a server-side bug. When an ssh.ServerConfig uses a callback other than the public-key callback, source-address validation is skipped. Only server code that calls ssh.NewServerConn is exposed. This repository requires golang.org/x/crypto v0.31.0, which is in the affected range. However, no Go source file in the tree imports golang.org/x/crypto/ssh. The only x/crypto imports are acme, acme/autocert and bcrypt. No file references NewServerConn, ssh.ServerConfig or VerifiedPublicKeyCallback, and there is no vendor directory. The 'ssh' hits in the tree are ACL policy JSON fields and integration tests that shell out to /usr/bin/ssh. Headscale runs no SSH server. The Tailscale SSH server code that headscale's dependency tree could bring in uses a separate fork module, github.com/tailscale/gol",
+   "status_notes": "에이전트 판단 초안. 담당자 확인 뒤 외부에 낸다. 근거 파일, 권고문, KEV 가 바뀌면 다시 판단한다(agent/recheck.py)"
   },
   {
    "vulnerability": {
@@ -206,10 +213,11 @@
      ]
     }
    ],
-   "timestamp": "2026-11-02T08:19:34+00:00",
+   "timestamp": "2026-11-02T10:21:08+00:00",
    "status": "not_affected",
    "justification": "vulnerable_code_not_in_execute_path",
-   "impact_statement": "The advisory (CVE-2026-39831, GHSA-89gr-r52h-f8rx, GO-2026-5019) covers golang.org/x/crypto/ssh, v0.1.0 to before v0.52.0. Verify() for the FIDO/U2F key types sk-ecdsa-sha2-nistp256@openssh.com and sk-ssh-ed25519@openssh.com does not check the User Presence flag. This repository resolves golang.org/x/crypto to v0.31.0, which is inside the affected range, so the package is present. No first-party Go file imports golang.org/x/crypto/ssh. The only x/crypto subpackages imported are bcrypt (hscontrol/db/api_key.go) and acme and acme/autocert (hscontrol/app.go), none of which touch the SSH code. The repo has no SSH server, no ssh.ServerConfig, no PublicKeyCallback, no tailssh, and no sk-* key handling. Verify() on those key types only runs when an SSH server authenticates a client's public-key signature, so no path from headscale's network surfaces reaches it. Limitation: hscontrol/tailsql.go "
+   "impact_statement": "The advisory (CVE-2026-39831, GHSA-89gr-r52h-f8rx, GO-2026-5019) covers golang.org/x/crypto/ssh, v0.1.0 to before v0.52.0. Verify() for the FIDO/U2F key types sk-ecdsa-sha2-nistp256@openssh.com and sk-ssh-ed25519@openssh.com does not check the User Presence flag. This repository resolves golang.org/x/crypto to v0.31.0, which is inside the affected range, so the package is present. No first-party Go file imports golang.org/x/crypto/ssh. The only x/crypto subpackages imported are bcrypt (hscontrol/db/api_key.go) and acme and acme/autocert (hscontrol/app.go), none of which touch the SSH code. The repo has no SSH server, no ssh.ServerConfig, no PublicKeyCallback, no tailssh, and no sk-* key handling. Verify() on those key types only runs when an SSH server authenticates a client's public-key signature, so no path from headscale's network surfaces reaches it. Limitation: hscontrol/tailsql.go ",
+   "status_notes": "에이전트 판단 초안. 담당자 확인 뒤 외부에 낸다. 근거 파일, 권고문, KEV 가 바뀌면 다시 판단한다(agent/recheck.py)"
   },
   {
    "vulnerability": {
@@ -229,10 +237,11 @@
      ]
     }
    ],
-   "timestamp": "2026-11-02T08:19:34+00:00",
+   "timestamp": "2026-11-02T10:21:08+00:00",
    "status": "not_affected",
    "justification": "vulnerable_code_not_in_execute_path",
-   "impact_statement": "The advisory (GO-2026-5005 / GHSA-jppx-rxg9-jmrx) covers golang.org/x/crypto before 0.52.0. The flaw is in the package golang.org/x/crypto/ssh/agent: the in-memory keyring from NewKeyring() accepts keys with the ConfirmBeforeUse constraint but does not enforce it. This repository resolves x/crypto to v0.31.0, which is in the affected range, so the module is present. The vulnerable package is never used. First-party Go code imports only x/crypto/acme, acme/autocert and bcrypt. No file in the repository references x/crypto/ssh, ssh/agent, NewKeyring or ConfirmBeforeUse. There is no vendor directory. headscale is a Tailscale control server and does not act as an SSH agent. The Tailscale SSH code in tailscale.com uses the separate fork module github.com/tailscale/golang-x-crypto, not this module's ssh/agent. I could not inspect the module cache in this sandbox, so I did not directly check wh"
+   "impact_statement": "The advisory (GO-2026-5005 / GHSA-jppx-rxg9-jmrx) covers golang.org/x/crypto before 0.52.0. The flaw is in the package golang.org/x/crypto/ssh/agent: the in-memory keyring from NewKeyring() accepts keys with the ConfirmBeforeUse constraint but does not enforce it. This repository resolves x/crypto to v0.31.0, which is in the affected range, so the module is present. The vulnerable package is never used. First-party Go code imports only x/crypto/acme, acme/autocert and bcrypt. No file in the repository references x/crypto/ssh, ssh/agent, NewKeyring or ConfirmBeforeUse. There is no vendor directory. headscale is a Tailscale control server and does not act as an SSH agent. The Tailscale SSH code in tailscale.com uses the separate fork module github.com/tailscale/golang-x-crypto, not this module's ssh/agent. I could not inspect the module cache in this sandbox, so I did not directly check wh",
+   "status_notes": "에이전트 판단 초안. 담당자 확인 뒤 외부에 낸다. 근거 파일, 권고문, KEV 가 바뀌면 다시 판단한다(agent/recheck.py)"
   },
   {
    "vulnerability": {
@@ -252,10 +261,11 @@
      ]
     }
    ],
-   "timestamp": "2026-11-02T08:19:34+00:00",
+   "timestamp": "2026-11-02T10:21:08+00:00",
    "status": "not_affected",
    "justification": "vulnerable_code_not_in_execute_path",
-   "impact_statement": "CVE-2025-31133 is a runc flaw. The container runtime's maskedPaths handling doesn't verify that the source it bind-mounts over a masked path is really /dev/null, and it ignores ENOENT. The advisory's affected range is runc <=1.2.7, <=1.3.2 and <=1.4.0-rc.2. The fixes are in 1.2.8, 1.3.3 and 1.4.0-rc.3. This repository (headscale) resolves github.com/opencontainers/runc v1.2.3 as an indirect dependency in go.mod and go.sum, so the version is in the affected range. However, no Go source file imports any runc package. The vulnerable code is in runc's libcontainer, which runs when runc starts a container, not when a library is linked. A search found no references to libcontainer or maskPaths. The only mention of runc outside go.mod and go.sum is a comment URL in integration/dockertestutil/config.go. The repo only uses ory/dockertest's client API, in integration test helpers, to ask a Docker "
+   "impact_statement": "CVE-2025-31133 is a runc flaw. The container runtime's maskedPaths handling doesn't verify that the source it bind-mounts over a masked path is really /dev/null, and it ignores ENOENT. The advisory's affected range is runc <=1.2.7, <=1.3.2 and <=1.4.0-rc.2. The fixes are in 1.2.8, 1.3.3 and 1.4.0-rc.3. This repository (headscale) resolves github.com/opencontainers/runc v1.2.3 as an indirect dependency in go.mod and go.sum, so the version is in the affected range. However, no Go source file imports any runc package. The vulnerable code is in runc's libcontainer, which runs when runc starts a container, not when a library is linked. A search found no references to libcontainer or maskPaths. The only mention of runc outside go.mod and go.sum is a comment URL in integration/dockertestutil/config.go. The repo only uses ory/dockertest's client API, in integration test helpers, to ask a Docker ",
+   "status_notes": "에이전트 판단 초안. 담당자 확인 뒤 외부에 낸다. 근거 파일, 권고문, KEV 가 바뀌면 다시 판단한다(agent/recheck.py)"
   },
   {
    "vulnerability": {
@@ -275,10 +285,11 @@
      ]
     }
    ],
-   "timestamp": "2026-11-02T08:19:34+00:00",
+   "timestamp": "2026-11-02T10:21:08+00:00",
    "status": "not_affected",
    "justification": "vulnerable_code_not_in_execute_path",
-   "impact_statement": "CVE-2025-22869 (GO-2025-3487) is a denial of service in the golang.org/x/crypto/ssh package. It affects SSH servers that handle file transfer, because a client that completes key exchange slowly can make pending data pile up in memory. All versions before 0.35.0 are affected. This repository pins golang.org/x/crypto v0.31.0, so the version is in range. The vulnerable package is not used, though. First-party code imports only x/crypto/acme, acme/autocert and bcrypt, never x/crypto/ssh. go.mod declares no SSH, SFTP or SCP module. The one transitive route is the tsnet import in hscontrol/tailsql.go, which is only started when HEADSCALE_DEBUG_TAILSQL_ENABLED is set. That route does not reach x/crypto/ssh either. Tailscale's own SSH code uses the fork github.com/tailscale/golang-x-crypto/ssh, as I confirmed in tailscale v1.78.0 ipn/ipnlocal/ssh.go, which is a separate module from the affected"
+   "impact_statement": "CVE-2025-22869 (GO-2025-3487) is a denial of service in the golang.org/x/crypto/ssh package. It affects SSH servers that handle file transfer, because a client that completes key exchange slowly can make pending data pile up in memory. All versions before 0.35.0 are affected. This repository pins golang.org/x/crypto v0.31.0, so the version is in range. The vulnerable package is not used, though. First-party code imports only x/crypto/acme, acme/autocert and bcrypt, never x/crypto/ssh. go.mod declares no SSH, SFTP or SCP module. The one transitive route is the tsnet import in hscontrol/tailsql.go, which is only started when HEADSCALE_DEBUG_TAILSQL_ENABLED is set. That route does not reach x/crypto/ssh either. Tailscale's own SSH code uses the fork github.com/tailscale/golang-x-crypto/ssh, as I confirmed in tailscale v1.78.0 ipn/ipnlocal/ssh.go, which is a separate module from the affected",
+   "status_notes": "에이전트 판단 초안. 담당자 확인 뒤 외부에 낸다. 근거 파일, 권고문, KEV 가 바뀌면 다시 판단한다(agent/recheck.py)"
   },
   {
    "vulnerability": {
@@ -298,7 +309,7 @@
      ]
     }
    ],
-   "timestamp": "2026-11-02T08:19:34+00:00",
+   "timestamp": "2026-11-02T10:21:08+00:00",
    "status": "under_investigation",
    "status_notes": "근거 재현 검사 실패: 범위를 읽지 못해 저장소 전체로 다시 찾으니 3건: google\\.golang\\.org/api|cloud\\.google\\.com|oauth2/(jwt|googl @ **/*.go and go.mod"
   },
@@ -320,7 +331,7 @@
      ]
     }
    ],
-   "timestamp": "2026-11-02T08:19:34+00:00",
+   "timestamp": "2026-11-02T10:21:08+00:00",
    "status": "under_investigation",
    "status_notes": "에이전트가 근거 부족으로 판단을 보류함"
   },
@@ -342,7 +353,7 @@
      ]
     }
    ],
-   "timestamp": "2026-11-02T08:19:34+00:00",
+   "timestamp": "2026-11-02T10:21:08+00:00",
    "status": "under_investigation",
    "status_notes": "저장소 글 차단: 사람이 쓴 글을 근거로 인용: integration/dockertestutil/config.go"
   },
@@ -364,10 +375,9 @@
      ]
     }
    ],
-   "timestamp": "2026-11-02T08:19:34+00:00",
-   "status": "not_affected",
-   "justification": "vulnerable_code_not_in_execute_path",
-   "impact_statement": "The advisory (GHSA-cgrx-mc8f-2prm) covers github.com/opencontainers/runc <=1.2.7, 1.3.0-rc.1 to 1.3.2, and 1.4.0-rc.1 to 1.4.0-rc.2. The fixes are 1.2.8, 1.3.3 and 1.4.0-rc.3. go.mod and go.sum resolve runc to v1.2.3, so the version is in the affected range. The entry is an indirect dependency only. It most likely comes in through github.com/ory/dockertest and docker/docker, but I did not run `go mod why` to confirm that. No Go file in the repository imports runc or libcontainer, and there is no vendored copy. The flaw is in runc's container-creation code, which writes to /proc and /proc/self/attr while setting up a container. Headscale never calls that code. The only first-party code that touches Docker is the integration test harness under integration/, which uses the ory/dockertest client to talk to an external Docker daemon. It does not link runc to start containers. The only other m"
+   "timestamp": "2026-11-02T10:21:08+00:00",
+   "status": "under_investigation",
+   "status_notes": "호출 그래프가 취약 함수 호출을 찾아 에이전트의 닫기 판단과 충돌"
   },
   {
    "vulnerability": {
@@ -387,10 +397,9 @@
      ]
     }
    ],
-   "timestamp": "2026-11-02T08:19:34+00:00",
-   "status": "not_affected",
-   "justification": "vulnerable_code_not_in_execute_path",
-   "impact_statement": "The advisory (GHSA-78h2-9frx-2jm8 / GO-2026-4945) covers a panic in go-jose JWE decryption. cipher.KeyUnwrap() panics when a JWE uses a key-wrapping alg (*KW, excluding AxxxGCMKW) and has an empty encrypted_key. It is reached through ParseEncrypted*/Decrypt. Affected ranges are v3 3.0.0-3.0.4 (fixed 3.0.5) and v4 4.0.0-4.1.3 (fixed 4.1.4). This repo resolves go-jose/v3 v3.0.3 and go-jose/v4 v4.0.2, both in the affected ranges, but only as indirect dependencies. No first-party Go file imports go-jose. The only plausible route is github.com/coreos/go-oidc/v3 v3.11.0, which hscontrol/oidc.go imports to verify ID tokens. According to the upstream v3.11.0 source (fetched from GitHub, not read from a local module cache), go-oidc only calls jose.ParseSigned in verify.go and jwks.go. It never calls ParseEncrypted or Decrypt, so the JWE/KeyUnwrap path is not reached. I did not inspect the source "
+   "timestamp": "2026-11-02T10:21:08+00:00",
+   "status": "under_investigation",
+   "status_notes": "호출 그래프가 취약 함수 호출을 찾아 에이전트의 닫기 판단과 충돌"
   },
   {
    "vulnerability": {
@@ -410,10 +419,9 @@
      ]
     }
    ],
-   "timestamp": "2026-11-02T08:19:34+00:00",
-   "status": "not_affected",
-   "justification": "vulnerable_code_not_in_execute_path",
-   "impact_statement": "go-jose is present only as an indirect dependency, at v3.0.3 and v4.0.2. Both are inside the affected ranges (v3 3.0.0-3.0.4, v4 4.0.0-4.1.3). The flaw is a panic in cipher.KeyUnwrap, reached through ParseEncrypted/ParseEncryptedJSON/ParseEncryptedCompact followed by Decrypt on a JWE. No first-party Go file imports go-jose or calls any JWE API. The only route to go-jose is github.com/coreos/go-oidc/v3 v3.11.0, called from hscontrol/oidc.go. Its IDTokenVerifier.Verify and RemoteKeySet only use jose.ParseSigned, JSONWebSignature.Verify and JSONWebKeySet, which are the JWS path and never reach JWE decryption or KeyUnwrap. I checked go-oidc against upstream source fetched from GitHub, because the module cache is outside the sandbox, so that part is not mechanically checkable inside the repository. The mockoidc package is used only by the 'headscale mockoidc' CLI helper and by integration tes"
+   "timestamp": "2026-11-02T10:21:08+00:00",
+   "status": "under_investigation",
+   "status_notes": "호출 그래프가 취약 함수 호출을 찾아 에이전트의 닫기 판단과 충돌"
   },
   {
    "vulnerability": {
@@ -433,10 +441,9 @@
      ]
     }
    ],
-   "timestamp": "2026-11-02T08:19:34+00:00",
-   "status": "not_affected",
-   "justification": "vulnerable_code_not_in_execute_path",
-   "impact_statement": "The advisory (GO-2026-6443 / GHSA-2v4p-qf9q-27wj, alias CVE-2026-84445) affects google.golang.org/grpc before 1.82.2 and 1.83.0 up to 1.83.2. The panic is in the xDS routing code, `RouteAndProcess` in `internal/xds/server`, and only affects servers built with `xds.NewGRPCServer()`. This repository resolves grpc v1.69.0, which is in the affected range, so the package is present. The repository's only gRPC servers are plain `grpc.NewServer(...)`, one on a local unix socket and one remote (TLS or insecure). Nothing in any Go source file, go.mod or go.sum references xds. The vulnerable xDS routing code is therefore never linked or run. The transport layer accepts requests with no :authority or Host header, but the advisory's crash comes only from the xDS interceptor indexing the empty authority, and the plain server has no such interceptor. I could not open the advisory text directly: the we"
+   "timestamp": "2026-11-02T10:21:08+00:00",
+   "status": "under_investigation",
+   "status_notes": "호출 그래프가 취약 함수 호출을 찾아 에이전트의 닫기 판단과 충돌"
   },
   {
    "vulnerability": {
@@ -456,9 +463,9 @@
      ]
     }
    ],
-   "timestamp": "2026-11-02T08:19:34+00:00",
+   "timestamp": "2026-11-02T10:21:08+00:00",
    "status": "under_investigation",
-   "status_notes": "해석이 필요한 범주라 사람이 닫는다: requires_configuration"
+   "status_notes": "호출 그래프가 취약 함수 호출을 찾아 에이전트의 닫기 판단과 충돌"
   },
   {
    "vulnerability": {
@@ -478,10 +485,11 @@
      ]
     }
    ],
-   "timestamp": "2026-11-02T08:19:34+00:00",
+   "timestamp": "2026-11-02T10:21:08+00:00",
    "status": "not_affected",
    "justification": "vulnerable_code_not_in_execute_path",
-   "impact_statement": "CVE-2026-63209 (GHSA-259r-337f-4rfw, GO-2026-5841) is an integer overflow in github.com/klauspost/compress/s2. s2.NewDict() accepts a crafted dictionary, and Dict.Encode() then reads out of bounds, which crashes the process. It affects v1.0 through v1.18.6 and is fixed in v1.18.7. This repo resolves v1.17.11, which is inside the affected range, so the module is present. The only first-party use is the zstd subpackage (hscontrol/mapper/mapper.go), which is a different package from s2. The advisory names only s2. No first-party Go file imports s2 or calls NewDict or MakeDict, and there is no vendor directory. The zstd encoder.go at v1.17.11 does not import s2. Exploitation also needs an application that passes attacker-supplied dictionary data to s2.NewDict(). Headscale's only compression use is encoding its own map responses with zstd, with no dictionary input. Limitation: I could not rea"
+   "impact_statement": "CVE-2026-63209 (GHSA-259r-337f-4rfw, GO-2026-5841) is an integer overflow in github.com/klauspost/compress/s2. s2.NewDict() accepts a crafted dictionary, and Dict.Encode() then reads out of bounds, which crashes the process. It affects v1.0 through v1.18.6 and is fixed in v1.18.7. This repo resolves v1.17.11, which is inside the affected range, so the module is present. The only first-party use is the zstd subpackage (hscontrol/mapper/mapper.go), which is a different package from s2. The advisory names only s2. No first-party Go file imports s2 or calls NewDict or MakeDict, and there is no vendor directory. The zstd encoder.go at v1.17.11 does not import s2. Exploitation also needs an application that passes attacker-supplied dictionary data to s2.NewDict(). Headscale's only compression use is encoding its own map responses with zstd, with no dictionary input. Limitation: I could not rea",
+   "status_notes": "에이전트 판단 초안. 담당자 확인 뒤 외부에 낸다. 근거 파일, 권고문, KEV 가 바뀌면 다시 판단한다(agent/recheck.py)"
   },
   {
    "vulnerability": {
@@ -502,10 +510,11 @@
      ]
     }
    ],
-   "timestamp": "2026-11-02T08:19:34+00:00",
+   "timestamp": "2026-11-02T10:21:08+00:00",
    "status": "not_affected",
    "justification": "vulnerable_code_not_in_execute_path",
-   "impact_statement": "The advisory (CVE-2025-15558 / GHSA-p436-gjf2-799p / GO-2026-4610) covers github.com/docker/cli from 19.03.0 up to but not including 29.2.0. The flaw is in plugin discovery in the cli-plugins/manager package, which searches %PROGRAMDATA%\\Docker\\cli-plugins on Windows. The advisory says non-Windows systems and projects that don't use the plugin-manager code are not affected. This repo resolves github.com/docker/cli v27.4.0+incompatible, which is in the affected range. It is only an indirect dependency, pulled in through github.com/ory/dockertest/v3. Headscale's own Go source has no import of github.com/docker/cli or github.com/docker/docker and no reference to cli-plugins or the plugin manager. The only first-party use of dockertest is in integration/ test-harness code, which is not the headscale server or CLI runtime. I could not read the dockertest module source here (file access is res"
+   "impact_statement": "The advisory (CVE-2025-15558 / GHSA-p436-gjf2-799p / GO-2026-4610) covers github.com/docker/cli from 19.03.0 up to but not including 29.2.0. The flaw is in plugin discovery in the cli-plugins/manager package, which searches %PROGRAMDATA%\\Docker\\cli-plugins on Windows. The advisory says non-Windows systems and projects that don't use the plugin-manager code are not affected. This repo resolves github.com/docker/cli v27.4.0+incompatible, which is in the affected range. It is only an indirect dependency, pulled in through github.com/ory/dockertest/v3. Headscale's own Go source has no import of github.com/docker/cli or github.com/docker/docker and no reference to cli-plugins or the plugin manager. The only first-party use of dockertest is in integration/ test-harness code, which is not the headscale server or CLI runtime. I could not read the dockertest module source here (file access is res",
+   "status_notes": "에이전트 판단 초안. 담당자 확인 뒤 외부에 낸다. 근거 파일, 권고문, KEV 가 바뀌면 다시 판단한다(agent/recheck.py)"
   },
   {
    "vulnerability": {
@@ -525,10 +534,11 @@
      ]
     }
    ],
-   "timestamp": "2026-11-02T08:19:34+00:00",
+   "timestamp": "2026-11-02T10:21:08+00:00",
    "status": "not_affected",
    "justification": "vulnerable_code_not_in_execute_path",
-   "impact_statement": "The advisory (GHSA-q4h4-gmj2-qvw2 / GO-2026-5013) covers the golang.org/x/crypto/ssh package, which has a server-side panic in the AES-GCM packet decoder. Affected versions are before v0.52.0, and the named symbols are Dial, NewClientConn and NewServerConn. The module golang.org/x/crypto v0.31.0 is declared in go.mod, so the version is in range. However, the vulnerable package is not used. No Go file in the repository imports golang.org/x/crypto/ssh. The only x/crypto packages imported are acme, acme/autocert and bcrypt. The one transitive route to SSH code is tailscale.com/tsnet, imported by hscontrol/tailsql.go. Upstream Tailscale source imports Tailscale's own fork, github.com/tailscale/golang-x-crypto/ssh, not golang.org/x/crypto/ssh, and uses it only for key parsing and marshalling (ParsePrivateKey, MarshalAuthorizedKey). That fork is a separate module declared in go.mod as an indir"
+   "impact_statement": "The advisory (GHSA-q4h4-gmj2-qvw2 / GO-2026-5013) covers the golang.org/x/crypto/ssh package, which has a server-side panic in the AES-GCM packet decoder. Affected versions are before v0.52.0, and the named symbols are Dial, NewClientConn and NewServerConn. The module golang.org/x/crypto v0.31.0 is declared in go.mod, so the version is in range. However, the vulnerable package is not used. No Go file in the repository imports golang.org/x/crypto/ssh. The only x/crypto packages imported are acme, acme/autocert and bcrypt. The one transitive route to SSH code is tailscale.com/tsnet, imported by hscontrol/tailsql.go. Upstream Tailscale source imports Tailscale's own fork, github.com/tailscale/golang-x-crypto/ssh, not golang.org/x/crypto/ssh, and uses it only for key parsing and marshalling (ParsePrivateKey, MarshalAuthorizedKey). That fork is a separate module declared in go.mod as an indir",
+   "status_notes": "에이전트 판단 초안. 담당자 확인 뒤 외부에 낸다. 근거 파일, 권고문, KEV 가 바뀌면 다시 판단한다(agent/recheck.py)"
   },
   {
    "vulnerability": {
@@ -548,10 +558,11 @@
      ]
     }
    ],
-   "timestamp": "2026-11-02T08:19:34+00:00",
+   "timestamp": "2026-11-02T10:21:08+00:00",
    "status": "not_affected",
    "justification": "vulnerable_code_not_in_execute_path",
-   "impact_statement": "CVE-2026-39829 (GHSA-w879-237q-wc7r, GO-2026-5018) is a DoS in the golang.org/x/crypto/ssh package. The RSA and DSA public key parsers have no size limits, so signature verification on a crafted key can burn CPU for minutes. Affected versions are below v0.52.0. go.mod and go.sum resolve golang.org/x/crypto to v0.31.0, which is in the affected range, so the module is present and its version is vulnerable. The vulnerable package is golang.org/x/crypto/ssh, though, and the repository never uses it. First-party Go code imports only x/crypto/bcrypt, x/crypto/acme and x/crypto/acme/autocert. No Go file imports x/crypto/ssh, runs an SSH server or client, or calls the key-parsing functions. No vendor directory exists. The one transitive route to SSH code is tailscale.com/tsnet, imported by hscontrol/tailsql.go. It is used only when the HEADSCALE_DEBUG_TAILSQL_ENABLED debug setting is on. In tail"
+   "impact_statement": "CVE-2026-39829 (GHSA-w879-237q-wc7r, GO-2026-5018) is a DoS in the golang.org/x/crypto/ssh package. The RSA and DSA public key parsers have no size limits, so signature verification on a crafted key can burn CPU for minutes. Affected versions are below v0.52.0. go.mod and go.sum resolve golang.org/x/crypto to v0.31.0, which is in the affected range, so the module is present and its version is vulnerable. The vulnerable package is golang.org/x/crypto/ssh, though, and the repository never uses it. First-party Go code imports only x/crypto/bcrypt, x/crypto/acme and x/crypto/acme/autocert. No Go file imports x/crypto/ssh, runs an SSH server or client, or calls the key-parsing functions. No vendor directory exists. The one transitive route to SSH code is tailscale.com/tsnet, imported by hscontrol/tailsql.go. It is used only when the HEADSCALE_DEBUG_TAILSQL_ENABLED debug setting is on. In tail",
+   "status_notes": "에이전트 판단 초안. 담당자 확인 뒤 외부에 낸다. 근거 파일, 권고문, KEV 가 바뀌면 다시 판단한다(agent/recheck.py)"
   },
   {
    "vulnerability": {
@@ -570,7 +581,7 @@
      ]
     }
    ],
-   "timestamp": "2026-11-02T08:19:34+00:00",
+   "timestamp": "2026-11-02T10:21:08+00:00",
    "status": "under_investigation",
    "status_notes": "저장소 글 차단: 사람이 쓴 글을 근거로 인용: config-example.yaml"
   },
@@ -591,7 +602,7 @@
      ]
     }
    ],
-   "timestamp": "2026-11-02T08:19:34+00:00",
+   "timestamp": "2026-11-02T10:21:08+00:00",
    "status": "under_investigation",
    "status_notes": "저장소 글 차단: 사람이 쓴 글을 근거로 인용: config-example.yaml"
   },
@@ -613,10 +624,11 @@
      ]
     }
    ],
-   "timestamp": "2026-11-02T08:19:34+00:00",
+   "timestamp": "2026-11-02T10:21:08+00:00",
    "status": "not_affected",
    "justification": "vulnerable_code_not_in_execute_path",
-   "impact_statement": "CVE-2026-41567 is a Moby/Docker Engine daemon bug. In the daemon's handling of PUT /containers/{id}/archive (docker cp -), a compressed (xz/gzip) upload makes the daemon look up the decompressor (xz, unpigz) in the container's filesystem instead of the host's. A trojanized image can then run code as the daemon. The advisory lists Docker Engine before 29.5.1 and moby/moby v2 before v2.0.0-beta.14 as affected, and does not name specific functions.\nThis repo's go.mod pins github.com/docker/docker v27.4.0+incompatible as an indirect dependency. That version is inside the affected range, so the module is present. No first-party Go file imports github.com/docker/docker or any of its daemon, api, client or pkg packages (0 hits). The vulnerable code is the daemon's server-side archive handler. It never runs in headscale or its tests, because the daemon is a separate external process.\nThe only re"
+   "impact_statement": "CVE-2026-41567 is a Moby/Docker Engine daemon bug. In the daemon's handling of PUT /containers/{id}/archive (docker cp -), a compressed (xz/gzip) upload makes the daemon look up the decompressor (xz, unpigz) in the container's filesystem instead of the host's. A trojanized image can then run code as the daemon. The advisory lists Docker Engine before 29.5.1 and moby/moby v2 before v2.0.0-beta.14 as affected, and does not name specific functions.\nThis repo's go.mod pins github.com/docker/docker v27.4.0+incompatible as an indirect dependency. That version is inside the affected range, so the module is present. No first-party Go file imports github.com/docker/docker or any of its daemon, api, client or pkg packages (0 hits). The vulnerable code is the daemon's server-side archive handler. It never runs in headscale or its tests, because the daemon is a separate external process.\nThe only re",
+   "status_notes": "에이전트 판단 초안. 담당자 확인 뒤 외부에 낸다. 근거 파일, 권고문, KEV 가 바뀌면 다시 판단한다(agent/recheck.py)"
   },
   {
    "vulnerability": {
@@ -636,31 +648,11 @@
      ]
     }
    ],
-   "timestamp": "2026-11-02T08:19:34+00:00",
+   "timestamp": "2026-11-02T10:21:08+00:00",
    "status": "not_affected",
    "justification": "vulnerable_code_not_in_execute_path",
-   "impact_statement": "CVE-2026-42306 (GHSA-rg2x-37c3-w2rh / GO-2026-5617) is a race in the Docker/Moby daemon's `docker cp` mount setup. A malicious container can redirect a bind mount target to an arbitrary host path. The affected range is Docker Engine before 29.5.1, Docker Daemon 28.5.2 and earlier, and Moby daemon before 2.0.0-beta.14. The flaw is in server-side daemon code, which runs in the Docker host process and not in this repository.\nHeadscale declares github.com/docker/docker v27.4.0+incompatible only as an indirect dependency, pulled in by github.com/ory/dockertest/v3. That version number falls in the affected daemon range, but the module is a client dependency here. No first-party Go file imports github.com/docker/docker or github.com/moby/moby, and the daemon package is never imported or built. The only Docker use is the ory/dockertest client in the integration test harness (integration/...). It"
-  },
-  {
-   "vulnerability": {
-    "name": "GHSA-hrxh-6v49-42gf",
-    "aliases": [
-     "GO-2026-6061"
-    ]
-   },
-   "products": [
-    {
-     "@id": "headscale_e172c29360",
-     "subcomponents": [
-      {
-       "@id": "pkg:go/google.golang.org/grpc@v1.69.0"
-      }
-     ]
-    }
-   ],
-   "timestamp": "2026-11-02T08:19:34+00:00",
-   "status": "under_investigation",
-   "status_notes": "해석이 필요한 범주라 사람이 닫는다: requires_configuration"
+   "impact_statement": "CVE-2026-42306 (GHSA-rg2x-37c3-w2rh / GO-2026-5617) is a race in the Docker/Moby daemon's `docker cp` mount setup. A malicious container can redirect a bind mount target to an arbitrary host path. The affected range is Docker Engine before 29.5.1, Docker Daemon 28.5.2 and earlier, and Moby daemon before 2.0.0-beta.14. The flaw is in server-side daemon code, which runs in the Docker host process and not in this repository.\nHeadscale declares github.com/docker/docker v27.4.0+incompatible only as an indirect dependency, pulled in by github.com/ory/dockertest/v3. That version number falls in the affected daemon range, but the module is a client dependency here. No first-party Go file imports github.com/docker/docker or github.com/moby/moby, and the daemon package is never imported or built. The only Docker use is the ory/dockertest client in the integration test harness (integration/...). It",
+   "status_notes": "에이전트 판단 초안. 담당자 확인 뒤 외부에 낸다. 근거 파일, 권고문, KEV 가 바뀌면 다시 판단한다(agent/recheck.py)"
   },
   {
    "vulnerability": {
@@ -679,30 +671,9 @@
      ]
     }
    ],
-   "timestamp": "2026-11-02T08:19:34+00:00",
+   "timestamp": "2026-11-02T10:21:08+00:00",
    "status": "under_investigation",
-   "status_notes": "해석이 필요한 범주라 사람이 닫는다: requires_configuration"
-  },
-  {
-   "vulnerability": {
-    "name": "GHSA-fv92-fjc5-jj9h",
-    "aliases": [
-     "GO-2025-3787"
-    ]
-   },
-   "products": [
-    {
-     "@id": "headscale_e172c29360",
-     "subcomponents": [
-      {
-       "@id": "pkg:go/github.com/go-viper/mapstructure/v2@v2.2.1"
-      }
-     ]
-    }
-   ],
-   "timestamp": "2026-11-02T08:19:34+00:00",
-   "status": "affected",
-   "action_statement": "github.com/go-viper/mapstructure/v2 를 2.3.0 이상으로 올린다"
+   "status_notes": "호출 그래프가 취약 함수 호출을 찾아 에이전트의 닫기 판단과 충돌"
   },
   {
    "vulnerability": {
@@ -721,10 +692,9 @@
      ]
     }
    ],
-   "timestamp": "2026-11-02T08:19:34+00:00",
-   "status": "not_affected",
-   "justification": "vulnerable_code_not_in_execute_path",
-   "impact_statement": "GO-2025-3787 (GHSA-fv92-fjc5-jj9h, no CVE) affects github.com/go-viper/mapstructure/v2 before v2.3.0. When a decode fails (WeakDecode and the decode helpers behind it), the error text includes the raw input value, which can leak sensitive data into logs or responses. This repo resolves the module to v2.2.1 as an indirect dependency of spf13/viper v1.20.0-alpha.6, so the version is in range. The only decode path is viper.UnmarshalKey(\"dns.extra_records\", &extraRecords) in hscontrol/types/config.go. It runs once at startup, on operator-authored config (file or HEADSCALE_ env vars), and decodes into []tailcfg.DNSRecord (DNS names and IPs, not secrets). The error is wrapped and returned from config loading, not sent to a network client. The other viper calls are GetString/GetBool/GetStringSlice and similar, which use cast and not mapstructure struct decoding. The repo has no direct mapstruct"
+   "timestamp": "2026-11-02T10:21:08+00:00",
+   "status": "under_investigation",
+   "status_notes": "호출 그래프가 취약 함수 호출을 찾아 에이전트의 닫기 판단과 충돌"
   },
   {
    "vulnerability": {
@@ -741,10 +711,11 @@
      ]
     }
    ],
-   "timestamp": "2026-11-02T08:19:34+00:00",
+   "timestamp": "2026-11-02T10:21:08+00:00",
    "status": "not_affected",
    "justification": "vulnerable_code_not_in_execute_path",
-   "impact_statement": "GO-2026-6237 affects github.com/insomniacslk/dhcp/dhcpv4/nclient4, specifically BroadcastRawUDPConn.ReadFrom. A short IPv4 payload makes the computed DHCP length negative, which panics. All versions before v0.0.0-20260719225207-c76316d4aa82 are affected. The repo resolves the module to v0.0.0-20240129002554-15c9b8791914, so the version is in range. It is only an indirect dependency (go.mod, `// indirect`), and there is no vendor directory. No first-party Go source imports insomniacslk/dhcp or nclient4, and nothing references BroadcastRawUDPConn. The only transitive route is through tailscale.com v1.79.0-pre and similar. pkg.go.dev's imported-by list for nclient4 shows no tailscale.com package, so the vulnerable package should not be compiled into headscale. Caveat: I could not read the Go module cache, and the pkg.go.dev result was a condensed summary rather than a verbatim list. The no-"
+   "impact_statement": "GO-2026-6237 affects github.com/insomniacslk/dhcp/dhcpv4/nclient4, specifically BroadcastRawUDPConn.ReadFrom. A short IPv4 payload makes the computed DHCP length negative, which panics. All versions before v0.0.0-20260719225207-c76316d4aa82 are affected. The repo resolves the module to v0.0.0-20240129002554-15c9b8791914, so the version is in range. It is only an indirect dependency (go.mod, `// indirect`), and there is no vendor directory. No first-party Go source imports insomniacslk/dhcp or nclient4, and nothing references BroadcastRawUDPConn. The only transitive route is through tailscale.com v1.79.0-pre and similar. pkg.go.dev's imported-by list for nclient4 shows no tailscale.com package, so the vulnerable package should not be compiled into headscale. Caveat: I could not read the Go module cache, and the pkg.go.dev result was a condensed summary rather than a verbatim list. The no-",
+   "status_notes": "에이전트 판단 초안. 담당자 확인 뒤 외부에 낸다. 근거 파일, 권고문, KEV 가 바뀌면 다시 판단한다(agent/recheck.py)"
   },
   {
    "vulnerability": {
@@ -761,10 +732,11 @@
      ]
     }
    ],
-   "timestamp": "2026-11-02T08:19:34+00:00",
+   "timestamp": "2026-11-02T10:21:08+00:00",
    "status": "not_affected",
    "justification": "vulnerable_code_not_in_execute_path",
-   "impact_statement": "GO-2026-5932 covers only the deprecated golang.org/x/crypto/openpgp packages (openpgp, packet, armor, clearsign, errors, elgamal, s2k). It lists all versions as affected and no fix, with no CVE alias. The repo declares golang.org/x/crypto v0.31.0, so the module is present and in range. But the vulnerable packages are separate subpackages, and no first-party Go source imports them. The only x/crypto imports are acme, acme/autocert and bcrypt, which are different packages. The string 'openpgp' appears nowhere in the tree, and there is no vendor directory. Caveat: I could not inspect the Go module cache, so I could not check mechanically whether a dependency such as tailscale.com imports x/crypto/openpgp. go.sum has no OpenPGP-related modules such as ProtonMail/go-crypto, keybase or gopenpgp, which is consistent with no OpenPGP use. This is a moderate-confidence call and is worth confirming"
+   "impact_statement": "GO-2026-5932 covers only the deprecated golang.org/x/crypto/openpgp packages (openpgp, packet, armor, clearsign, errors, elgamal, s2k). It lists all versions as affected and no fix, with no CVE alias. The repo declares golang.org/x/crypto v0.31.0, so the module is present and in range. But the vulnerable packages are separate subpackages, and no first-party Go source imports them. The only x/crypto imports are acme, acme/autocert and bcrypt, which are different packages. The string 'openpgp' appears nowhere in the tree, and there is no vendor directory. Caveat: I could not inspect the Go module cache, so I could not check mechanically whether a dependency such as tailscale.com imports x/crypto/openpgp. go.sum has no OpenPGP-related modules such as ProtonMail/go-crypto, keybase or gopenpgp, which is consistent with no OpenPGP use. This is a moderate-confidence call and is worth confirming",
+   "status_notes": "에이전트 판단 초안. 담당자 확인 뒤 외부에 낸다. 근거 파일, 권고문, KEV 가 바뀌면 다시 판단한다(agent/recheck.py)"
   },
   {
    "vulnerability": {
@@ -784,10 +756,9 @@
      ]
     }
    ],
-   "timestamp": "2026-11-02T08:19:34+00:00",
-   "status": "not_affected",
-   "justification": "vulnerable_code_not_in_execute_path",
-   "impact_statement": "The advisory (GHSA-x744-4wpc-v9h2, CVE-2026-34040) covers the Docker Engine daemon module github.com/moby/moby, published in Go as github.com/docker/docker. Affected versions are below 29.3.1. The flaw is in the daemon, which can forward a crafted oversized API request to an AuthZ plugin without the request body. The advisory says that if you don't use AuthZ plugins, you are not affected. This repo resolves github.com/docker/docker v27.4.0+incompatible, which is inside the affected range. It is only an indirect dependency, pulled in through github.com/ory/dockertest/v3. That library is used only under integration/dockertestutil, as a client that drives a Docker daemon in integration tests. No Go file in the repo imports github.com/docker/docker, and none imports the daemon, API server or authorization packages. headscale does not run a Docker daemon, does not configure AuthZ plugins, and"
+   "timestamp": "2026-11-02T10:21:08+00:00",
+   "status": "under_investigation",
+   "status_notes": "호출 그래프가 취약 함수 호출을 찾아 에이전트의 닫기 판단과 충돌"
   },
   {
    "vulnerability": {
@@ -806,7 +777,7 @@
      ]
     }
    ],
-   "timestamp": "2026-11-02T08:19:34+00:00",
+   "timestamp": "2026-11-02T10:21:08+00:00",
    "status": "under_investigation",
    "status_notes": "에이전트가 근거 부족으로 판단을 보류함"
   },
@@ -828,10 +799,11 @@
      ]
     }
    ],
-   "timestamp": "2026-11-02T08:19:34+00:00",
+   "timestamp": "2026-11-02T10:21:08+00:00",
    "status": "not_affected",
    "justification": "vulnerable_code_not_in_execute_path",
-   "impact_statement": "golang.org/x/net is a direct requirement at v0.32.0. The advisory says versions before 0.33.0 are affected, so the version is in range. The vulnerable code is the golang.org/x/net/html package: Parse, ParseWithOptions, ParseFragment and ParseFragmentWithOptions. No first-party Go file imports that package or calls those functions. The only x/net package the repository uses is x/net/http2, imported at hscontrol/noise.go:14. To my knowledge http2 does not import x/net/html, but I could not confirm this because the Go module cache is outside the sandbox. There is no vendor directory. go.mod declares no HTML-parsing libraries such as goquery, bluemonday or goldmark. Limitation: I could not inspect transitive dependencies such as tailscale.com, so a transitive import of x/net/html is not ruled out. A human can confirm with govulncheck or `go mod why -m golang.org/x/net` followed by `go list -"
+   "impact_statement": "golang.org/x/net is a direct requirement at v0.32.0. The advisory says versions before 0.33.0 are affected, so the version is in range. The vulnerable code is the golang.org/x/net/html package: Parse, ParseWithOptions, ParseFragment and ParseFragmentWithOptions. No first-party Go file imports that package or calls those functions. The only x/net package the repository uses is x/net/http2, imported at hscontrol/noise.go:14. To my knowledge http2 does not import x/net/html, but I could not confirm this because the Go module cache is outside the sandbox. There is no vendor directory. go.mod declares no HTML-parsing libraries such as goquery, bluemonday or goldmark. Limitation: I could not inspect transitive dependencies such as tailscale.com, so a transitive import of x/net/html is not ruled out. A human can confirm with govulncheck or `go mod why -m golang.org/x/net` followed by `go list -",
+   "status_notes": "에이전트 판단 초안. 담당자 확인 뒤 외부에 낸다. 근거 파일, 권고문, KEV 가 바뀌면 다시 판단한다(agent/recheck.py)"
   },
   {
    "vulnerability": {
@@ -851,7 +823,7 @@
      ]
     }
    ],
-   "timestamp": "2026-11-02T08:19:34+00:00",
+   "timestamp": "2026-11-02T10:21:08+00:00",
    "status": "affected",
    "action_statement": "golang.org/x/net 를 0.53.0 이상으로 올린다"
   },
@@ -873,10 +845,11 @@
      ]
     }
    ],
-   "timestamp": "2026-11-02T08:19:34+00:00",
+   "timestamp": "2026-11-02T10:21:08+00:00",
    "status": "not_affected",
    "justification": "vulnerable_code_not_in_execute_path",
-   "impact_statement": "CVE-2025-47913 (GO-2025-4116 / GHSA-56w8-48fp-6mgv) affects golang.org/x/crypto before 0.43.0. The flaw is in the ssh/agent client: it panics when an agent answers with SSH_AGENT_SUCCESS where a typed response is expected. This repository resolves golang.org/x/crypto to v0.31.0 (go.mod), which is in the affected range, so the package is present. However, first-party Go code imports only golang.org/x/crypto/acme, acme/autocert and bcrypt. Nothing imports golang.org/x/crypto/ssh or ssh/agent, and there are no calls to agent.NewClient, ssh.Dial or similar. The only route left is a transitive one, through tailscale.com/tsnet (hscontrol/tailsql.go). pkg.go.dev shows that tsnet does not directly import tailscale.com/ssh/tailssh. tailssh imports only golang.org/x/crypto/ssh, not ssh/agent. I could not read the module source offline, so I did not walk the full transitive import graph. No evidenc"
+   "impact_statement": "CVE-2025-47913 (GO-2025-4116 / GHSA-56w8-48fp-6mgv) affects golang.org/x/crypto before 0.43.0. The flaw is in the ssh/agent client: it panics when an agent answers with SSH_AGENT_SUCCESS where a typed response is expected. This repository resolves golang.org/x/crypto to v0.31.0 (go.mod), which is in the affected range, so the package is present. However, first-party Go code imports only golang.org/x/crypto/acme, acme/autocert and bcrypt. Nothing imports golang.org/x/crypto/ssh or ssh/agent, and there are no calls to agent.NewClient, ssh.Dial or similar. The only route left is a transitive one, through tailscale.com/tsnet (hscontrol/tailsql.go). pkg.go.dev shows that tsnet does not directly import tailscale.com/ssh/tailssh. tailssh imports only golang.org/x/crypto/ssh, not ssh/agent. I could not read the module source offline, so I did not walk the full transitive import graph. No evidenc",
+   "status_notes": "에이전트 판단 초안. 담당자 확인 뒤 외부에 낸다. 근거 파일, 권고문, KEV 가 바뀌면 다시 판단한다(agent/recheck.py)"
   },
   {
    "vulnerability": {
@@ -896,7 +869,7 @@
      ]
     }
    ],
-   "timestamp": "2026-11-02T08:19:34+00:00",
+   "timestamp": "2026-11-02T10:21:08+00:00",
    "status": "affected",
    "action_statement": "golang.org/x/net 를 0.60.0 이상으로 올린다"
   },
@@ -918,9 +891,9 @@
      ]
     }
    ],
-   "timestamp": "2026-11-02T08:19:34+00:00",
-   "status": "under_investigation",
-   "status_notes": "우선순위 예산 밖이라 아직 판단하지 않음"
+   "timestamp": "2026-11-02T10:21:08+00:00",
+   "status": "affected",
+   "action_statement": "golang.org/x/net 를 0.60.0 이상으로 올린다"
   },
   {
    "vulnerability": {
@@ -940,9 +913,9 @@
      ]
     }
    ],
-   "timestamp": "2026-11-02T08:19:34+00:00",
-   "status": "under_investigation",
-   "status_notes": "우선순위 예산 밖이라 아직 판단하지 않음"
+   "timestamp": "2026-11-02T10:21:08+00:00",
+   "status": "affected",
+   "action_statement": "golang.org/x/net 를 0.60.0 이상으로 올린다"
   },
   {
    "vulnerability": {
@@ -962,7 +935,7 @@
      ]
     }
    ],
-   "timestamp": "2026-11-02T08:19:34+00:00",
+   "timestamp": "2026-11-02T10:21:08+00:00",
    "status": "under_investigation",
    "status_notes": "우선순위 예산 밖이라 아직 판단하지 않음"
   },
@@ -984,7 +957,7 @@
      ]
     }
    ],
-   "timestamp": "2026-11-02T08:19:34+00:00",
+   "timestamp": "2026-11-02T10:21:08+00:00",
    "status": "under_investigation",
    "status_notes": "우선순위 예산 밖이라 아직 판단하지 않음"
   },
@@ -1006,7 +979,7 @@
      ]
     }
    ],
-   "timestamp": "2026-11-02T08:19:34+00:00",
+   "timestamp": "2026-11-02T10:21:08+00:00",
    "status": "under_investigation",
    "status_notes": "우선순위 예산 밖이라 아직 판단하지 않음"
   },
@@ -1028,7 +1001,7 @@
      ]
     }
    ],
-   "timestamp": "2026-11-02T08:19:34+00:00",
+   "timestamp": "2026-11-02T10:21:08+00:00",
    "status": "under_investigation",
    "status_notes": "우선순위 예산 밖이라 아직 판단하지 않음"
   },
@@ -1050,7 +1023,7 @@
      ]
     }
    ],
-   "timestamp": "2026-11-02T08:19:34+00:00",
+   "timestamp": "2026-11-02T10:21:08+00:00",
    "status": "under_investigation",
    "status_notes": "우선순위 예산 밖이라 아직 판단하지 않음"
   },
@@ -1071,7 +1044,7 @@
      ]
     }
    ],
-   "timestamp": "2026-11-02T08:19:34+00:00",
+   "timestamp": "2026-11-02T10:21:08+00:00",
    "status": "under_investigation",
    "status_notes": "우선순위 예산 밖이라 아직 판단하지 않음"
   },
@@ -1093,7 +1066,7 @@
      ]
     }
    ],
-   "timestamp": "2026-11-02T08:19:34+00:00",
+   "timestamp": "2026-11-02T10:21:08+00:00",
    "status": "under_investigation",
    "status_notes": "우선순위 예산 밖이라 아직 판단하지 않음"
   },
@@ -1114,7 +1087,7 @@
      ]
     }
    ],
-   "timestamp": "2026-11-02T08:19:34+00:00",
+   "timestamp": "2026-11-02T10:21:08+00:00",
    "status": "under_investigation",
    "status_notes": "우선순위 예산 밖이라 아직 판단하지 않음"
   },
@@ -1136,7 +1109,7 @@
      ]
     }
    ],
-   "timestamp": "2026-11-02T08:19:34+00:00",
+   "timestamp": "2026-11-02T10:21:08+00:00",
    "status": "under_investigation",
    "status_notes": "우선순위 예산 밖이라 아직 판단하지 않음"
   },
@@ -1157,7 +1130,7 @@
      ]
     }
    ],
-   "timestamp": "2026-11-02T08:19:34+00:00",
+   "timestamp": "2026-11-02T10:21:08+00:00",
    "status": "under_investigation",
    "status_notes": "우선순위 예산 밖이라 아직 판단하지 않음"
   },
@@ -1178,7 +1151,7 @@
      ]
     }
    ],
-   "timestamp": "2026-11-02T08:19:34+00:00",
+   "timestamp": "2026-11-02T10:21:08+00:00",
    "status": "under_investigation",
    "status_notes": "우선순위 예산 밖이라 아직 판단하지 않음"
   },
@@ -1199,7 +1172,7 @@
      ]
     }
    ],
-   "timestamp": "2026-11-02T08:19:34+00:00",
+   "timestamp": "2026-11-02T10:21:08+00:00",
    "status": "under_investigation",
    "status_notes": "우선순위 예산 밖이라 아직 판단하지 않음"
   },
@@ -1221,7 +1194,7 @@
      ]
     }
    ],
-   "timestamp": "2026-11-02T08:19:34+00:00",
+   "timestamp": "2026-11-02T10:21:08+00:00",
    "status": "under_investigation",
    "status_notes": "우선순위 예산 밖이라 아직 판단하지 않음"
   },
@@ -1242,7 +1215,7 @@
      ]
     }
    ],
-   "timestamp": "2026-11-02T08:19:34+00:00",
+   "timestamp": "2026-11-02T10:21:08+00:00",
    "status": "under_investigation",
    "status_notes": "우선순위 예산 밖이라 아직 판단하지 않음"
   },
@@ -1264,7 +1237,7 @@
      ]
     }
    ],
-   "timestamp": "2026-11-02T08:19:34+00:00",
+   "timestamp": "2026-11-02T10:21:08+00:00",
    "status": "under_investigation",
    "status_notes": "우선순위 예산 밖이라 아직 판단하지 않음"
   },
@@ -1286,7 +1259,7 @@
      ]
     }
    ],
-   "timestamp": "2026-11-02T08:19:34+00:00",
+   "timestamp": "2026-11-02T10:21:08+00:00",
    "status": "under_investigation",
    "status_notes": "우선순위 예산 밖이라 아직 판단하지 않음"
   },
@@ -1308,7 +1281,7 @@
      ]
     }
    ],
-   "timestamp": "2026-11-02T08:19:34+00:00",
+   "timestamp": "2026-11-02T10:21:08+00:00",
    "status": "under_investigation",
    "status_notes": "우선순위 예산 밖이라 아직 판단하지 않음"
   },
@@ -1330,7 +1303,7 @@
      ]
     }
    ],
-   "timestamp": "2026-11-02T08:19:34+00:00",
+   "timestamp": "2026-11-02T10:21:08+00:00",
    "status": "under_investigation",
    "status_notes": "우선순위 예산 밖이라 아직 판단하지 않음"
   },
@@ -1352,7 +1325,7 @@
      ]
     }
    ],
-   "timestamp": "2026-11-02T08:19:34+00:00",
+   "timestamp": "2026-11-02T10:21:08+00:00",
    "status": "under_investigation",
    "status_notes": "우선순위 예산 밖이라 아직 판단하지 않음"
   },
@@ -1374,7 +1347,7 @@
      ]
     }
    ],
-   "timestamp": "2026-11-02T08:19:34+00:00",
+   "timestamp": "2026-11-02T10:21:08+00:00",
    "status": "under_investigation",
    "status_notes": "우선순위 예산 밖이라 아직 판단하지 않음"
   },
@@ -1396,7 +1369,7 @@
      ]
     }
    ],
-   "timestamp": "2026-11-02T08:19:34+00:00",
+   "timestamp": "2026-11-02T10:21:08+00:00",
    "status": "under_investigation",
    "status_notes": "우선순위 예산 밖이라 아직 판단하지 않음"
   },
@@ -1418,7 +1391,7 @@
      ]
     }
    ],
-   "timestamp": "2026-11-02T08:19:34+00:00",
+   "timestamp": "2026-11-02T10:21:08+00:00",
    "status": "under_investigation",
    "status_notes": "우선순위 예산 밖이라 아직 판단하지 않음"
   },
@@ -1440,7 +1413,7 @@
      ]
     }
    ],
-   "timestamp": "2026-11-02T08:19:34+00:00",
+   "timestamp": "2026-11-02T10:21:08+00:00",
    "status": "under_investigation",
    "status_notes": "우선순위 예산 밖이라 아직 판단하지 않음"
   },
@@ -1462,7 +1435,7 @@
      ]
     }
    ],
-   "timestamp": "2026-11-02T08:19:34+00:00",
+   "timestamp": "2026-11-02T10:21:08+00:00",
    "status": "under_investigation",
    "status_notes": "우선순위 예산 밖이라 아직 판단하지 않음"
   },
@@ -1484,7 +1457,7 @@
      ]
     }
    ],
-   "timestamp": "2026-11-02T08:19:34+00:00",
+   "timestamp": "2026-11-02T10:21:08+00:00",
    "status": "under_investigation",
    "status_notes": "우선순위 예산 밖이라 아직 판단하지 않음"
   },
@@ -1506,7 +1479,7 @@
      ]
     }
    ],
-   "timestamp": "2026-11-02T08:19:34+00:00",
+   "timestamp": "2026-11-02T10:21:08+00:00",
    "status": "under_investigation",
    "status_notes": "우선순위 예산 밖이라 아직 판단하지 않음"
   },
@@ -1528,7 +1501,7 @@
      ]
     }
    ],
-   "timestamp": "2026-11-02T08:19:34+00:00",
+   "timestamp": "2026-11-02T10:21:08+00:00",
    "status": "under_investigation",
    "status_notes": "우선순위 예산 밖이라 아직 판단하지 않음"
   },
@@ -1549,7 +1522,7 @@
      ]
     }
    ],
-   "timestamp": "2026-11-02T08:19:34+00:00",
+   "timestamp": "2026-11-02T10:21:08+00:00",
    "status": "under_investigation",
    "status_notes": "우선순위 예산 밖이라 아직 판단하지 않음"
   },
@@ -1570,7 +1543,7 @@
      ]
     }
    ],
-   "timestamp": "2026-11-02T08:19:34+00:00",
+   "timestamp": "2026-11-02T10:21:08+00:00",
    "status": "under_investigation",
    "status_notes": "우선순위 예산 밖이라 아직 판단하지 않음"
   },
@@ -1592,7 +1565,7 @@
      ]
     }
    ],
-   "timestamp": "2026-11-02T08:19:34+00:00",
+   "timestamp": "2026-11-02T10:21:08+00:00",
    "status": "under_investigation",
    "status_notes": "우선순위 예산 밖이라 아직 판단하지 않음"
   },
@@ -1613,7 +1586,7 @@
      ]
     }
    ],
-   "timestamp": "2026-11-02T08:19:34+00:00",
+   "timestamp": "2026-11-02T10:21:08+00:00",
    "status": "under_investigation",
    "status_notes": "우선순위 예산 밖이라 아직 판단하지 않음"
   },
@@ -1634,7 +1607,7 @@
      ]
     }
    ],
-   "timestamp": "2026-11-02T08:19:34+00:00",
+   "timestamp": "2026-11-02T10:21:08+00:00",
    "status": "under_investigation",
    "status_notes": "우선순위 예산 밖이라 아직 판단하지 않음"
   },
@@ -1655,7 +1628,7 @@
      ]
     }
    ],
-   "timestamp": "2026-11-02T08:19:34+00:00",
+   "timestamp": "2026-11-02T10:21:08+00:00",
    "status": "under_investigation",
    "status_notes": "우선순위 예산 밖이라 아직 판단하지 않음"
   },
@@ -1676,7 +1649,7 @@
      ]
     }
    ],
-   "timestamp": "2026-11-02T08:19:34+00:00",
+   "timestamp": "2026-11-02T10:21:08+00:00",
    "status": "under_investigation",
    "status_notes": "우선순위 예산 밖이라 아직 판단하지 않음"
   },
@@ -1697,7 +1670,7 @@
      ]
     }
    ],
-   "timestamp": "2026-11-02T08:19:34+00:00",
+   "timestamp": "2026-11-02T10:21:08+00:00",
    "status": "under_investigation",
    "status_notes": "우선순위 예산 밖이라 아직 판단하지 않음"
   },
@@ -1718,7 +1691,7 @@
      ]
     }
    ],
-   "timestamp": "2026-11-02T08:19:34+00:00",
+   "timestamp": "2026-11-02T10:21:08+00:00",
    "status": "under_investigation",
    "status_notes": "우선순위 예산 밖이라 아직 판단하지 않음"
   },
@@ -1739,7 +1712,7 @@
      ]
     }
    ],
-   "timestamp": "2026-11-02T08:19:34+00:00",
+   "timestamp": "2026-11-02T10:21:08+00:00",
    "status": "under_investigation",
    "status_notes": "우선순위 예산 밖이라 아직 판단하지 않음"
   },
@@ -1761,7 +1734,7 @@
      ]
     }
    ],
-   "timestamp": "2026-11-02T08:19:34+00:00",
+   "timestamp": "2026-11-02T10:21:08+00:00",
    "status": "under_investigation",
    "status_notes": "우선순위 예산 밖이라 아직 판단하지 않음"
   },
@@ -1782,7 +1755,7 @@
      ]
     }
    ],
-   "timestamp": "2026-11-02T08:19:34+00:00",
+   "timestamp": "2026-11-02T10:21:08+00:00",
    "status": "under_investigation",
    "status_notes": "우선순위 예산 밖이라 아직 판단하지 않음"
   },
@@ -1804,7 +1777,7 @@
      ]
     }
    ],
-   "timestamp": "2026-11-02T08:19:34+00:00",
+   "timestamp": "2026-11-02T10:21:08+00:00",
    "status": "under_investigation",
    "status_notes": "우선순위 예산 밖이라 아직 판단하지 않음"
   },
@@ -1826,7 +1799,7 @@
      ]
     }
    ],
-   "timestamp": "2026-11-02T08:19:34+00:00",
+   "timestamp": "2026-11-02T10:21:08+00:00",
    "status": "under_investigation",
    "status_notes": "우선순위 예산 밖이라 아직 판단하지 않음"
   },
@@ -1848,7 +1821,7 @@
      ]
     }
    ],
-   "timestamp": "2026-11-02T08:19:34+00:00",
+   "timestamp": "2026-11-02T10:21:08+00:00",
    "status": "under_investigation",
    "status_notes": "우선순위 예산 밖이라 아직 판단하지 않음"
   },
@@ -1870,7 +1843,7 @@
      ]
     }
    ],
-   "timestamp": "2026-11-02T08:19:34+00:00",
+   "timestamp": "2026-11-02T10:21:08+00:00",
    "status": "under_investigation",
    "status_notes": "우선순위 예산 밖이라 아직 판단하지 않음"
   },
@@ -1891,7 +1864,7 @@
      ]
     }
    ],
-   "timestamp": "2026-11-02T08:19:34+00:00",
+   "timestamp": "2026-11-02T10:21:08+00:00",
    "status": "under_investigation",
    "status_notes": "우선순위 예산 밖이라 아직 판단하지 않음"
   },
@@ -1913,7 +1886,7 @@
      ]
     }
    ],
-   "timestamp": "2026-11-02T08:19:34+00:00",
+   "timestamp": "2026-11-02T10:21:08+00:00",
    "status": "under_investigation",
    "status_notes": "우선순위 예산 밖이라 아직 판단하지 않음"
   }

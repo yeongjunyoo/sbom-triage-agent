@@ -1,0 +1,53 @@
+{
+ "query": "CVE-2021-44228",
+ "sboms": 69,
+ "assets": 6,
+ "assets_affected_version": 0,
+ "hits": 6,
+ "seconds": 2.89,
+ "packages": [
+  "com.guicedee.services:log4j-core",
+  "org.apache.logging.log4j:log4j-core",
+  "org.ops4j.pax.logging:pax-logging-log4j2",
+  "org.xbib.elasticsearch:log4j",
+  "uk.co.nichesolutions.logging.log4j:log4j-core"
+ ],
+ "rows": [
+  {
+   "asset": "dubbo_1d1bb26e79",
+   "package": "org.apache.logging.log4j:log4j-core",
+   "version": "UNKNOWN",
+   "affected": null
+  },
+  {
+   "asset": "dubbo_218aab1e4a",
+   "package": "org.apache.logging.log4j:log4j-core",
+   "version": "UNKNOWN",
+   "affected": null
+  },
+  {
+   "asset": "nacos_20caf99db3",
+   "package": "org.apache.logging.log4j:log4j-core",
+   "version": "UNKNOWN",
+   "affected": null
+  },
+  {
+   "asset": "pulsar_137df29f85",
+   "package": "org.apache.logging.log4j:log4j-core",
+   "version": "UNKNOWN",
+   "affected": null
+  },
+  {
+   "asset": "pulsar_5e6e6cebcd",
+   "package": "org.apache.logging.log4j:log4j-core",
+   "version": "UNKNOWN",
+   "affected": null
+  },
+  {
+   "asset": "pulsar_7ab9c700a5",
+   "package": "org.apache.logging.log4j:log4j-core",
+   "version": "UNKNOWN",
+   "affected": null
+  }
+ ]
+}

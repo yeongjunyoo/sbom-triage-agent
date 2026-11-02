@@ -1,0 +1,73 @@
+{
+ "n_go": 30,
+ "levels": {
+  "called": 6,
+  "failed": 15,
+  "none": 5,
+  "imported": 4
+ },
+ "dev": {
+  "n": 10,
+  "risk": 3,
+  "levels": {
+   "imported": 1,
+   "called": 2,
+   "none": 2,
+   "failed": 5
+  },
+  "called_as_positive": {
+   "n": 10,
+   "flagged": 2,
+   "tp": 0,
+   "fp": 2,
+   "fn": 3,
+   "precision": 0.0,
+   "recall": 0.0,
+   "f1": 0
+  },
+  "rules": {
+   "기본값": {
+    "close": 1,
+    "close_err": 0,
+    "called_closed": 0
+   },
+   "기본값 + 호출 그래프 대조": {
+    "close": 1,
+    "close_err": 0,
+    "called_closed": 0
+   }
+  }
+ },
+ "test": {
+  "n": 20,
+  "risk": 4,
+  "levels": {
+   "failed": 10,
+   "called": 4,
+   "none": 3,
+   "imported": 3
+  },
+  "called_as_positive": {
+   "n": 20,
+   "flagged": 4,
+   "tp": 2,
+   "fp": 2,
+   "fn": 2,
+   "precision": 50.0,
+   "recall": 50.0,
+   "f1": 50.0
+  },
+  "rules": {
+   "기본값": {
+    "close": 6.7,
+    "close_err": 0,
+    "called_closed": 1
+   },
+   "기본값 + 호출 그래프 대조": {
+    "close": 5.7,
+    "close_err": 0,
+    "called_closed": 0
+   }
+  }
+ }
+}

@@ -1,5 +1,5 @@
 diff --git a/go.mod b/go.mod
-index 71d0039..114223e 100644
+index 71d0039..3519136 100644
 --- a/go.mod
 +++ b/go.mod
 @@ -1,6 +1,6 @@
@@ -36,7 +36,7 @@ index 71d0039..114223e 100644
 +	golang.org/x/oauth2 v0.36.0
 +	golang.org/x/sync v0.23.0
 +	google.golang.org/genproto/googleapis/api v0.0.0-20260526163538-3dc84a4a5aaa
-+	google.golang.org/grpc v1.83.1
++	google.golang.org/grpc v1.83.2
 +	google.golang.org/protobuf v1.36.11
  	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c
  	gopkg.in/yaml.v3 v3.0.1
@@ -50,11 +50,13 @@ index 71d0039..114223e 100644
  	github.com/containerd/continuity v0.4.5 // indirect
  	github.com/coreos/go-iptables v0.7.1-0.20240112124308-65c67c9f46e6 // indirect
  	github.com/creachadair/mds v0.20.0 // indirect
-@@ -122,13 +122,13 @@ require (
+@@ -121,14 +121,14 @@ require (
+ 	github.com/fxamacker/cbor/v2 v2.6.0 // indirect
  	github.com/gaissmai/bart v0.11.1 // indirect
  	github.com/glebarez/go-sqlite v1.22.0 // indirect
- 	github.com/go-jose/go-jose/v3 v3.0.3 // indirect
+-	github.com/go-jose/go-jose/v3 v3.0.3 // indirect
 -	github.com/go-jose/go-jose/v4 v4.0.2 // indirect
++	github.com/go-jose/go-jose/v3 v3.0.5 // indirect
 +	github.com/go-jose/go-jose/v4 v4.1.6 // indirect
  	github.com/go-json-experiment/json v0.0.0-20231102232822-2e55bd4e08b0 // indirect
  	github.com/go-ole/go-ole v1.3.0 // indirect
@@ -99,7 +101,7 @@ index 71d0039..114223e 100644
  	gvisor.dev/gvisor v0.0.0-20240722211153-64c016c92987 // indirect
  )
 diff --git a/go.sum b/go.sum
-index 4ca8825..cb5161a 100644
+index 4ca8825..d1d8c4b 100644
 --- a/go.sum
 +++ b/go.sum
 @@ -101,15 +101,15 @@ github.com/chzyer/readline v0.0.0-20180603132655-2972be24d48e/go.mod h1:nSuG5e5P
@@ -122,12 +124,16 @@ index 4ca8825..cb5161a 100644
  github.com/containerd/continuity v0.4.5 h1:ZRoN1sXq9u7V6QoHMcVWGhOwDFqZ4B9i5H6un1Wh0x4=
  github.com/containerd/continuity v0.4.5/go.mod h1:/lNJvtJKUQStBzpVQ1+rasXO1LAWtUQssk28EZvJ3nE=
  github.com/coreos/go-iptables v0.7.1-0.20240112124308-65c67c9f46e6 h1:8h5+bWd7R6AYUslN6c6iuZWTKsKxUFDlpnmilO6R2n0=
-@@ -171,14 +171,14 @@ github.com/go-gormigrate/gormigrate/v2 v2.1.3 h1:ei3Vq/rpPI/jCJY9mRHJAKg5vU+EhZy
+@@ -169,16 +169,16 @@ github.com/glebarez/sqlite v1.11.0 h1:wSG0irqzP6VurnMEpFGer5Li19RpIRi2qvQz++w0GM
+ github.com/glebarez/sqlite v1.11.0/go.mod h1:h8/o8j5wiAsqSPoWELDUdJXhjAhsVliSn7bWZjOhrgQ=
+ github.com/go-gormigrate/gormigrate/v2 v2.1.3 h1:ei3Vq/rpPI/jCJY9mRHJAKg5vU+EhZyWhBAkaAomQuw=
  github.com/go-gormigrate/gormigrate/v2 v2.1.3/go.mod h1:VJ9FIOBAur+NmQ8c4tDVwOuiJcgupTG105FexPFrXzA=
- github.com/go-jose/go-jose/v3 v3.0.3 h1:fFKWeig/irsp7XD2zBxvnmA/XaRWp5V3CBsZXJF7G7k=
- github.com/go-jose/go-jose/v3 v3.0.3/go.mod h1:5b+7YgP7ZICgJDBdfjZaIt+H/9L9T/YQrVfLAMboGkQ=
+-github.com/go-jose/go-jose/v3 v3.0.3 h1:fFKWeig/irsp7XD2zBxvnmA/XaRWp5V3CBsZXJF7G7k=
+-github.com/go-jose/go-jose/v3 v3.0.3/go.mod h1:5b+7YgP7ZICgJDBdfjZaIt+H/9L9T/YQrVfLAMboGkQ=
 -github.com/go-jose/go-jose/v4 v4.0.2 h1:R3l3kkBds16bO7ZFAEEcofK0MkrAJt3jlJznWZG0nvk=
 -github.com/go-jose/go-jose/v4 v4.0.2/go.mod h1:WVf9LFMHh/QVrmqrOfqun0C45tMe3RoiKJMPvgWwLfY=
++github.com/go-jose/go-jose/v3 v3.0.5 h1:BLLJWbC4nMZOfuPVxoZIxeYsn6Nl2r1fITaJ78UQlVQ=
++github.com/go-jose/go-jose/v3 v3.0.5/go.mod h1:5b+7YgP7ZICgJDBdfjZaIt+H/9L9T/YQrVfLAMboGkQ=
 +github.com/go-jose/go-jose/v4 v4.1.6 h1:sNRkftxFJxwsILiQukqp5z83QBSmntVwmgRY7AqBDO4=
 +github.com/go-jose/go-jose/v4 v4.1.6/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
  github.com/go-json-experiment/json v0.0.0-20231102232822-2e55bd4e08b0 h1:ymLjT4f35nQbASLnvxEde4XOBL+Sn7rFuV+FOJqkljg=
@@ -335,8 +341,8 @@ index 4ca8825..cb5161a 100644
 -google.golang.org/grpc v1.69.0/go.mod h1:vyjdE6jLBI76dgpDojsFGNaHlxdjXN9ghpnd2o7JGZ4=
 -google.golang.org/protobuf v1.36.0 h1:mjIs9gYtt56AzC4ZaffQuh88TZurBGhIJMBZGSxNerQ=
 -google.golang.org/protobuf v1.36.0/go.mod h1:9fA7Ob0pmnwhb644+1+CVWFRbNajQ6iRojtC/QF5bRE=
-+google.golang.org/grpc v1.83.1 h1:HIO0+BEtBP6soyqvqC8sNUjZ7bTs+0hFQuFF+RAy++Y=
-+google.golang.org/grpc v1.83.1/go.mod h1:kDyl6SKsiHKt0uylY5gtn5cEjkrIOhQOGDgIc4JGwzQ=
++google.golang.org/grpc v1.83.2 h1:EManeRomTObA0BU7I8vXgg/78uE5MJ9M8B39EX2WscU=
++google.golang.org/grpc v1.83.2/go.mod h1:YPI1hK3kDked6iHvgX3tR0y+nX/qpMFKhPgFsokw1S8=
 +google.golang.org/protobuf v1.36.11 h1:fV6ZwhNocDyBLK0dj+fg8ektcVegBBuEolpbTQyBNVE=
 +google.golang.org/protobuf v1.36.11/go.mod h1:HTf+CrKn2C3g5S8VImy6tdcUvCska2kB7j23XfzDpco=
  gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=

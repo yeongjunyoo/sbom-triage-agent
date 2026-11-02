@@ -97,7 +97,8 @@ def semver_key(v: str):
 def choose_fix(fixed: list[str], current: str) -> tuple[str | None, bool]:
     cur = semver_key(current)
     cands = [v for v in fixed if semver_key(v) > cur]
-    stable = [v for v in cands if not re.search(r"(rc|beta|alpha|pre)", v, re.I)]
+    # semver 에서 하이픈 뒤는 정식 릴리스가 아니다(rc, beta, dev, 유사 버전). +incompatible 은 정식이다
+    stable = [v for v in cands if "-" not in v.split("+")[0]]
     if stable:
         return "v" + max(stable, key=semver_key).lstrip("v"), False
     return (("v" + max(cands, key=semver_key).lstrip("v")) if cands else None), bool(cands)
