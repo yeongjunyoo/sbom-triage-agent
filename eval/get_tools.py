@@ -2,6 +2,8 @@
 
     python eval/get_tools.py        # tools/ 에 받고 manifest.json 에 버전과 SHA256 을 남긴다
 """
+from __future__ import annotations
+
 import hashlib, io, json, os, pathlib, re, stat, tarfile, urllib.request, zipfile
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
