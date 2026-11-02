@@ -10,8 +10,8 @@
   3. enrich   KEV, EPSS 결합. 규칙으로 우선순위          findings.json
   4. triage   격리된 에이전트가 코드를 읽어 판단          triage/<id>.json
   5. verify   인용과 검색을 스크립트로 재현              decisions.json
-  6. review   닫는 판단만 두 번째 독립 검토              review/<id>.json
-  7. output   OpenVEX, 사람 검토 목록, 보고서            vex.json, report.md, audit.jsonl
+  6. output   OpenVEX, 사람 검토 목록, 보고서            vex.json, report.md, audit.jsonl
+LLM 재검토(--with-review)는 층 제거 실험에서 잘못 닫은 건을 못 잡고 맞는 닫기만 뒤집어 기본값에서 뺐다.
 모델이 실패하면 조용히 넘어가지 않고 REVIEW 로 떨어진다. 코드 수정 권한은 에이전트에게 없다.
 """
 from __future__ import annotations
@@ -220,6 +220,9 @@ def triage_one(f: dict, repo: pathlib.Path, out: pathlib.Path, a) -> dict:
     else:
         prompt = (ROOT / "eval/prompts" / f"{a.triage_prompt}.md").read_text(encoding="utf-8").replace("{cve_id}", f["cve"])
         m = claude(prompt, repo, tdir / f"{f['id']}.stream.jsonl", a.model, a.effort, a.timeout)
+        if not isinstance(parse_obj(m.get("text")), dict):
+            m = claude(prompt, repo, tdir / f"{f['id']}.stream.jsonl", a.model, a.effort, a.timeout)
+            m["retried"] = True
         meta.write_text(json.dumps(m, ensure_ascii=False), encoding="utf-8")
     o = parse_obj(m.get("text"))
     cat = o.get("category") if isinstance(o, dict) else None
@@ -232,6 +235,8 @@ def triage_one(f: dict, repo: pathlib.Path, out: pathlib.Path, a) -> dict:
         d["decision"], d["why"] = "REVIEW", "판단 불가" if cat else "모델 응답 없음"
     elif not v["ok"]:
         d["decision"], d["why"] = "REVIEW", "근거 검사 실패: " + "; ".join(v["fails"][:2])
+    elif not a.with_review:
+        d["decision"], d["why"] = "CLOSE", cat
     else:
         rmeta = rdir / f"{f['id']}.json"
         if rmeta.exists():
@@ -312,6 +317,7 @@ def main() -> int:
     ap.add_argument("--parallel", type=int, default=6)
     ap.add_argument("--triage-prompt", default="triage_v1")
     ap.add_argument("--review-prompt", default="review_v1")
+    ap.add_argument("--with-review", action="store_true")
     a = ap.parse_args()
     repo = pathlib.Path(a.repo).resolve()
     out = pathlib.Path(a.out).resolve()
