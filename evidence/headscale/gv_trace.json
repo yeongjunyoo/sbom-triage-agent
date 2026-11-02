@@ -1,1 +1,908 @@
-[]
+[
+ {
+  "id": "google.golang.org_grpc__CVE-2026-33186",
+  "cve": "CVE-2026-33186",
+  "package": "google.golang.org/grpc",
+  "trace": [
+   [
+    "google.golang.org/grpc.*Server.Serve",
+    "github.com/juanfont/headscale/hscontrol.Serve$1",
+    "golang.org/x/sync/errgroup.Go$1",
+    "golang.org/x/sync/errgroup.*Group.Go",
+    "github.com/juanfont/headscale/integration.*Scenario.WaitForTailscaleLogout"
+   ]
+  ]
+ },
+ {
+  "id": "github.com_golang-jwt_jwt_v5__CVE-2025-30204",
+  "cve": "CVE-2025-30204",
+  "package": "github.com/golang-jwt/jwt/v5",
+  "trace": [
+   [
+    "github.com/golang-jwt/jwt/v5.*Parser.ParseUnverified",
+    "github.com/golang-jwt/jwt/v5.*Parser.ParseWithClaims",
+    "github.com/golang-jwt/jwt/v5.*Parser.Parse",
+    "github.com/golang-jwt/jwt/v5.Parse",
+    "github.com/oauth2-proxy/mockoidc.*Keypair.VerifyJWT",
+    "github.com/oauth2-proxy/mockoidc.*MockOIDC.authorizeToken",
+    "github.com/oauth2-proxy/mockoidc.*MockOIDC.validateRefreshGrant",
+    "github.com/oauth2-proxy/mockoidc.*MockOIDC.Token",
+    "net/http.HandlerFunc.ServeHTTP",
+    "golang.org/x/net/http2.*serverConn.runHandler",
+    "golang.org/x/net/http2.*serverConn.upgradeRequest",
+    "golang.org/x/net/http2.*Server.serveConn",
+    "golang.org/x/net/http2.*Server.ServeConn",
+    "github.com/juanfont/headscale/hscontrol.*Headscale.NoiseUpgradeHandler"
+   ]
+  ]
+ },
+ {
+  "id": "github.com_opencontainers_runc__CVE-2025-52881",
+  "cve": "CVE-2025-52881",
+  "package": "github.com/opencontainers/runc",
+  "trace": [
+   [
+    "github.com/opencontainers/runc/libcontainer/user.CurrentUser",
+    "github.com/ory/dockertest/v3/docker/pkg/homedir.Get",
+    "github.com/ory/dockertest/v3/docker.getDockerEnv",
+    "github.com/ory/dockertest/v3/docker.NewVersionedClientFromEnv",
+    "github.com/ory/dockertest/v3/docker.NewClientFromEnv",
+    "github.com/ory/dockertest/v3.NewPool",
+    "github.com/juanfont/headscale/integration.NewScenario"
+   ],
+   [
+    "github.com/opencontainers/runc/libcontainer/user.init",
+    "github.com/ory/dockertest/v3/docker/pkg/homedir.init",
+    "github.com/ory/dockertest/v3/docker.init",
+    "github.com/juanfont/headscale/integration/tsic.init"
+   ]
+  ]
+ },
+ {
+  "id": "github.com_go-jose_go-jose_v3__CVE-2026-34986",
+  "cve": "CVE-2026-34986",
+  "package": "github.com/go-jose/go-jose/v3",
+  "trace": [
+   [
+    "github.com/go-jose/go-jose/v3.init",
+    "github.com/oauth2-proxy/mockoidc.init",
+    "github.com/juanfont/headscale/cmd/headscale/cli.init"
+   ]
+  ]
+ },
+ {
+  "id": "github.com_go-jose_go-jose_v4__CVE-2026-34986",
+  "cve": "CVE-2026-34986",
+  "package": "github.com/go-jose/go-jose/v4",
+  "trace": [
+   [
+    "github.com/go-jose/go-jose/v4.ParseSigned",
+    "github.com/coreos/go-oidc/v3/oidc.*IDTokenVerifier.Verify",
+    "github.com/juanfont/headscale/hscontrol.*AuthProviderOIDC.extractIDToken",
+    "github.com/juanfont/headscale/hscontrol.*AuthProviderOIDC.OIDCCallbackHandler"
+   ],
+   [
+    "github.com/go-jose/go-jose/v4.init",
+    "github.com/coreos/go-oidc/v3/oidc.init",
+    "github.com/juanfont/headscale/hscontrol/types.init"
+   ]
+  ]
+ },
+ {
+  "id": "google.golang.org_grpc__CVE-2026-84445",
+  "cve": "CVE-2026-84445",
+  "package": "google.golang.org/grpc",
+  "trace": [
+   [
+    "google.golang.org/grpc/internal/transport.*http2Server.HandleStreams",
+    "google.golang.org/grpc.*Server.serveStreams",
+    "google.golang.org/grpc.handleRawConn$1",
+    "google.golang.org/grpc.*Server.handleRawConn",
+    "google.golang.org/grpc.Serve$3",
+    "google.golang.org/grpc.*Server.Serve",
+    "github.com/juanfont/headscale/hscontrol.Serve$1",
+    "golang.org/x/sync/errgroup.Go$1",
+    "golang.org/x/sync/errgroup.*Group.Go",
+    "github.com/juanfont/headscale/integration.*Scenario.WaitForTailscaleLogout"
+   ]
+  ]
+ },
+ {
+  "id": "google.golang.org_grpc__CVE-2026-84304",
+  "cve": "CVE-2026-84304",
+  "package": "google.golang.org/grpc",
+  "trace": [
+   [
+    "google.golang.org/grpc/mem.ReadAll",
+    "google.golang.org/grpc.decompress",
+    "google.golang.org/grpc.recvAndDecompress",
+    "google.golang.org/grpc.recv",
+    "google.golang.org/grpc.*csAttempt.recvMsg",
+    "google.golang.org/grpc.RecvMsg$1",
+    "google.golang.org/grpc.*clientStream.withRetry",
+    "google.golang.org/grpc.*clientStream.SendMsg",
+    "google.golang.org/grpc.invoke",
+    "google.golang.org/grpc.*ClientConn.Invoke",
+    "github.com/juanfont/headscale/gen/go/headscale/v1.*headscaleServiceClient.SetPolicy"
+   ],
+   [
+    "google.golang.org/grpc/internal/transport.*http2Client.Close",
+    "google.golang.org/grpc.*addrConn.tearDown",
+    "google.golang.org/grpc.Close$2",
+    "google.golang.org/grpc.*ClientConn.Close",
+    "github.com/juanfont/headscale/gen/go/headscale/v1.RegisterHeadscaleServiceHandlerFromEndpoint$1",
+    "github.com/juanfont/headscale/gen/go/headscale/v1.RegisterHeadscaleServiceHandlerFromEndpoint"
+   ],
+   [
+    "google.golang.org/grpc/internal/transport.*http2Server.Close",
+    "google.golang.org/grpc.*Server.addConn",
+    "google.golang.org/grpc.*Server.handleRawConn",
+    "google.golang.org/grpc.Serve$3",
+    "google.golang.org/grpc.*Server.Serve",
+    "github.com/juanfont/headscale/hscontrol.Serve$1",
+    "golang.org/x/sync/errgroup.Go$1",
+    "golang.org/x/sync/errgroup.*Group.Go",
+    "github.com/juanfont/headscale/integration.*Scenario.WaitForTailscaleLogout"
+   ]
+  ]
+ },
+ {
+  "id": "google.golang.org_grpc__GO-2026-6061",
+  "cve": "GO-2026-6061",
+  "package": "google.golang.org/grpc",
+  "trace": [
+   [
+    "google.golang.org/grpc/internal/transport.*ServerStream.Read",
+    "google.golang.org/grpc.*parser.recvMsg",
+    "google.golang.org/grpc.recvAndDecompress",
+    "google.golang.org/grpc.recv",
+    "google.golang.org/grpc.*csAttempt.recvMsg",
+    "google.golang.org/grpc.RecvMsg$1",
+    "google.golang.org/grpc.*clientStream.withRetry",
+    "google.golang.org/grpc.*clientStream.SendMsg",
+    "google.golang.org/grpc.invoke",
+    "google.golang.org/grpc.*ClientConn.Invoke",
+    "github.com/juanfont/headscale/gen/go/headscale/v1.*headscaleServiceClient.SetPolicy"
+   ],
+   [
+    "google.golang.org/grpc/internal/transport.*http2Client.GracefulClose",
+    "google.golang.org/grpc.*addrConn.tearDown",
+    "google.golang.org/grpc.Close$2",
+    "google.golang.org/grpc.*ClientConn.Close",
+    "github.com/juanfont/headscale/gen/go/headscale/v1.RegisterHeadscaleServiceHandlerFromEndpoint$1",
+    "github.com/juanfont/headscale/gen/go/headscale/v1.RegisterHeadscaleServiceHandlerFromEndpoint"
+   ],
+   [
+    "google.golang.org/grpc/internal/transport.*http2Server.Drain",
+    "google.golang.org/grpc.*Server.addConn",
+    "google.golang.org/grpc.*Server.handleRawConn",
+    "google.golang.org/grpc.Serve$3",
+    "google.golang.org/grpc.*Server.Serve",
+    "github.com/juanfont/headscale/hscontrol.Serve$1",
+    "golang.org/x/sync/errgroup.Go$1",
+    "golang.org/x/sync/errgroup.*Group.Go",
+    "github.com/juanfont/headscale/integration.*Scenario.WaitForTailscaleLogout"
+   ]
+  ]
+ },
+ {
+  "id": "github.com_go-viper_mapstructure_v2__GO-2025-3787",
+  "cve": "GO-2025-3787",
+  "package": "github.com/go-viper/mapstructure/v2",
+  "trace": [
+   [
+    "github.com/go-viper/mapstructure/v2/internal/errors.init",
+    "github.com/go-viper/mapstructure/v2.init",
+    "github.com/spf13/viper.init",
+    "github.com/juanfont/headscale/hscontrol/util.init"
+   ],
+   [
+    "github.com/go-viper/mapstructure/v2/internal/errors.Join",
+    "github.com/go-viper/mapstructure/v2.*Decoder.decodeSlice",
+    "github.com/go-viper/mapstructure/v2.*Decoder.decode",
+    "github.com/go-viper/mapstructure/v2.*Decoder.Decode",
+    "github.com/spf13/viper.decode",
+    "github.com/spf13/viper.*Viper.UnmarshalKey",
+    "github.com/spf13/viper.UnmarshalKey",
+    "github.com/juanfont/headscale/hscontrol/types.dns",
+    "github.com/juanfont/headscale/hscontrol/types.LoadServerConfig"
+   ]
+  ]
+ },
+ {
+  "id": "github.com_docker_docker__CVE-2026-34040",
+  "cve": "CVE-2026-34040",
+  "package": "github.com/docker/docker",
+  "trace": [
+   [
+    "github.com/docker/docker/api/types/swarm.init",
+    "github.com/docker/cli/opts.init",
+    "github.com/docker/cli/cli/compose/loader.init",
+    "github.com/ory/dockertest/v3/docker/opts.init",
+    "github.com/ory/dockertest/v3/docker.init",
+    "github.com/juanfont/headscale/integration/tsic.init"
+   ]
+  ]
+ },
+ {
+  "id": "golang.org_x_net__CVE-2026-39821",
+  "cve": "CVE-2026-39821",
+  "package": "golang.org/x/net",
+  "trace": [
+   [
+    "golang.org/x/net/idna.ToASCII",
+    "golang.org/x/net/http2.authorityAddr",
+    "golang.org/x/net/http2.*Transport.RoundTripOpt",
+    "golang.org/x/net/http2.*unencryptedTransport.RoundTrip",
+    "net/http.*Transport.roundTrip",
+    "net/http.*Transport.RoundTrip",
+    "net/http.send",
+    "net/http.*Client.send",
+    "net/http.*Client.do",
+    "net/http.*Client.Do",
+    "github.com/juanfont/headscale/hscontrol/derp.loadDERPMapFromURL",
+    "github.com/juanfont/headscale/hscontrol/derp.GetDERPMap"
+   ],
+   [
+    "golang.org/x/net/idna.*Profile.ToASCII",
+    "golang.org/x/crypto/acme/autocert.HostWhitelist",
+    "github.com/juanfont/headscale/hscontrol.*Headscale.getTLSSettings",
+    "github.com/juanfont/headscale/hscontrol.*Headscale.Serve"
+   ]
+  ]
+ },
+ {
+  "id": "golang.org_x_net__CVE-2026-33814",
+  "cve": "CVE-2026-33814",
+  "package": "golang.org/x/net",
+  "trace": [
+   [
+    "golang.org/x/net/http2.*unencryptedTransport.RoundTrip",
+    "net/http.*Transport.roundTrip",
+    "net/http.*Transport.RoundTrip",
+    "net/http.send",
+    "net/http.*Client.send",
+    "net/http.*Client.do",
+    "net/http.*Client.Do",
+    "github.com/juanfont/headscale/hscontrol/derp.loadDERPMapFromURL",
+    "github.com/juanfont/headscale/hscontrol/derp.GetDERPMap"
+   ]
+  ]
+ },
+ {
+  "id": "golang.org_x_net__CVE-2026-78659",
+  "cve": "CVE-2026-78659",
+  "package": "golang.org/x/net",
+  "trace": [
+   [
+    "golang.org/x/net/http2.*writeData.String",
+    "fmt.*pp.handleMethods",
+    "fmt.*pp.printArg",
+    "fmt.*pp.doPrintln",
+    "fmt.Fprintln",
+    "github.com/juanfont/headscale/cmd/headscale/cli.Execute"
+   ],
+   [
+    "golang.org/x/net/http2.headerFieldValueError.Error",
+    "github.com/juanfont/headscale/hscontrol.headscaleV1APIServer.SetTags"
+   ],
+   [
+    "golang.org/x/net/http2.*Transport.RoundTrip",
+    "net/http.*Transport.roundTrip",
+    "net/http.*Transport.RoundTrip",
+    "net/http.send",
+    "net/http.*Client.send",
+    "net/http.*Client.do",
+    "net/http.*Client.Do",
+    "github.com/juanfont/headscale/hscontrol/derp.loadDERPMapFromURL",
+    "github.com/juanfont/headscale/hscontrol/derp.GetDERPMap"
+   ],
+   [
+    "golang.org/x/net/http2.*responseWriter.FlushError",
+    "net/http.*ResponseController.Flush",
+    "github.com/juanfont/headscale/hscontrol.*mapSession.serveLongPoll",
+    "github.com/juanfont/headscale/hscontrol.*noiseServer.NoisePollNetMapHandler"
+   ],
+   [
+    "golang.org/x/net/http2.*responseWriter.WriteString",
+    "bufio.*Writer.WriteString",
+    "net/http.*http2responseWriter.write",
+    "net/http.*http2responseWriter.Write",
+    "github.com/juanfont/headscale/hscontrol/derp/server.DERPProbeHandler"
+   ],
+   [
+    "golang.org/x/net/http2.*requestBody.Read",
+    "io.ReadAll",
+    "github.com/juanfont/headscale/hscontrol.headscaleV1APIServer.GetPolicy"
+   ],
+   [
+    "golang.org/x/net/http2.*Server.ServeConn",
+    "github.com/juanfont/headscale/hscontrol.*Headscale.NoiseUpgradeHandler"
+   ],
+   [
+    "golang.org/x/net/http2.*Transport.CloseIdleConnections",
+    "tailscale.com/ipn/ipnlocal.*reverseProxy.close",
+    "tailscale.com/ipn/ipnlocal.setServeProxyHandlersLocked$2",
+    "sync.*Map.Range",
+    "gorm.io/gorm.*Statement.clone",
+    "gorm.io/gorm.*DB.getInstance",
+    "gorm.io/gorm.*DB.Unscoped",
+    "github.com/juanfont/headscale/hscontrol/db.DeleteNode"
+   ],
+   [
+    "golang.org/x/net/http2.ConfigureTransports",
+    "tailscale.com/control/controlclient.NewNoiseClient",
+    "tailscale.com/control/controlclient.getNoiseClient$1",
+    "tailscale.com/util/singleflight.doCall$2",
+    "tailscale.com/util/singleflight.*Group[struct{}, *tailscale.com/control/controlclient.NoiseClient].doCall",
+    "tailscale.com/util/singleflight.*Group[struct{}, *tailscale.com/control/controlclient.NoiseClient].Do",
+    "tailscale.com/control/controlclient.*Direct.getNoiseClient",
+    "tailscale.com/control/controlclient.*Direct.doLogin",
+    "tailscale.com/control/controlclient.*Direct.TryLogout",
+    "tailscale.com/control/controlclient.*Auto.Logout",
+    "tailscale.com/ipn/ipnlocal.*LocalBackend.Logout",
+    "tailscale.com/ipn/ipnlocal.*LocalBackend.Shutdown",
+    "tailscale.com/tsnet.*Server.Close",
+    "github.com/juanfont/headscale/hscontrol.runTailSQLService",
+    "github.com/juanfont/headscale/hscontrol.*Headscale.Serve"
+   ],
+   [
+    "golang.org/x/net/http2.*Framer.WritePing",
+    "google.golang.org/grpc/internal/transport.*loopyWriter.pingHandler",
+    "google.golang.org/grpc/internal/transport.*loopyWriter.handle",
+    "google.golang.org/grpc/internal/transport.*loopyWriter.run",
+    "google.golang.org/grpc/internal/transport.NewServerTransport$2",
+    "google.golang.org/grpc/internal/transport.NewServerTransport",
+    "google.golang.org/grpc.*Server.newHTTP2Transport",
+    "google.golang.org/grpc.*Server.handleRawConn",
+    "google.golang.org/grpc.Serve$3",
+    "google.golang.org/grpc.*Server.Serve",
+    "github.com/juanfont/headscale/hscontrol.Serve$1",
+    "golang.org/x/sync/errgroup.Go$1",
+    "golang.org/x/sync/errgroup.*Group.Go",
+    "github.com/juanfont/headscale/integration.*Scenario.WaitForTailscaleLogout"
+   ],
+   [
+    "golang.org/x/net/http2.stickyErrWriter.Write",
+    "bufio.*Writer.Write",
+    "archive/tar.*Writer.Close",
+    "github.com/juanfont/headscale/integration/integrationutil.WriteFileToContainer"
+   ],
+   [
+    "golang.org/x/net/http2.transportResponseBody.Close",
+    "github.com/juanfont/headscale/integration/hsic.*HeadscaleInContainer.SaveMetrics"
+   ]
+  ]
+ },
+ {
+  "id": "golang.org_x_net__CVE-2026-78663",
+  "cve": "CVE-2026-78663",
+  "package": "golang.org/x/net",
+  "trace": [
+   [
+    "golang.org/x/net/http2.*Transport.CloseIdleConnections",
+    "tailscale.com/ipn/ipnlocal.*reverseProxy.close",
+    "tailscale.com/ipn/ipnlocal.setServeProxyHandlersLocked$2",
+    "sync.*Map.Range",
+    "gorm.io/gorm.*Statement.clone",
+    "gorm.io/gorm.*DB.getInstance",
+    "gorm.io/gorm.*DB.Unscoped",
+    "github.com/juanfont/headscale/hscontrol/db.DeleteNode"
+   ],
+   [
+    "golang.org/x/net/http2.FrameHeader.String",
+    "fmt.*pp.handleMethods",
+    "fmt.*pp.printArg",
+    "fmt.*pp.doPrintln",
+    "fmt.Fprintln",
+    "github.com/juanfont/headscale/cmd/headscale/cli.Execute"
+   ],
+   [
+    "golang.org/x/net/http2.ConnectionError.Error",
+    "github.com/juanfont/headscale/hscontrol.headscaleV1APIServer.SetTags"
+   ],
+   [
+    "golang.org/x/net/http2.*responseWriter.SetWriteDeadline",
+    "net/http.*ResponseController.SetWriteDeadline",
+    "github.com/juanfont/headscale/hscontrol.*mapSession.serveLongPoll",
+    "github.com/juanfont/headscale/hscontrol.*noiseServer.NoisePollNetMapHandler"
+   ],
+   [
+    "golang.org/x/net/http2.ConfigureTransports",
+    "tailscale.com/control/controlclient.NewNoiseClient",
+    "tailscale.com/control/controlclient.getNoiseClient$1",
+    "tailscale.com/util/singleflight.doCall$2",
+    "tailscale.com/util/singleflight.*Group[struct{}, *tailscale.com/control/controlclient.NoiseClient].doCall",
+    "tailscale.com/util/singleflight.*Group[struct{}, *tailscale.com/control/controlclient.NoiseClient].Do",
+    "tailscale.com/control/controlclient.*Direct.getNoiseClient",
+    "tailscale.com/control/controlclient.*Direct.doLogin",
+    "tailscale.com/control/controlclient.*Direct.TryLogout",
+    "tailscale.com/control/controlclient.*Auto.Logout",
+    "tailscale.com/ipn/ipnlocal.*LocalBackend.Logout",
+    "tailscale.com/ipn/ipnlocal.*LocalBackend.Shutdown",
+    "tailscale.com/tsnet.*Server.Close",
+    "github.com/juanfont/headscale/hscontrol.runTailSQLService",
+    "github.com/juanfont/headscale/hscontrol.*Headscale.Serve"
+   ],
+   [
+    "golang.org/x/net/http2.*Transport.NewClientConn",
+    "tailscale.com/internal/noiseconn.New",
+    "tailscale.com/control/controlclient.*NoiseClient.dial",
+    "tailscale.com/control/controlclient.getConn$1",
+    "tailscale.com/util/singleflight.doCall$2",
+    "tailscale.com/util/singleflight.*Group[struct{}, *tailscale.com/internal/noiseconn.Conn].doCall",
+    "tailscale.com/util/singleflight.*Group[struct{}, *tailscale.com/internal/noiseconn.Conn].Do",
+    "tailscale.com/control/controlclient.*NoiseClient.getConn",
+    "tailscale.com/control/controlclient.*NoiseClient.RoundTrip",
+    "net/http.send",
+    "net/http.*Client.send",
+    "net/http.*Client.do",
+    "net/http.*Client.Do",
+    "github.com/juanfont/headscale/hscontrol/derp.loadDERPMapFromURL",
+    "github.com/juanfont/headscale/hscontrol/derp.GetDERPMap"
+   ],
+   [
+    "golang.org/x/net/http2.*responseWriter.WriteHeader",
+    "github.com/juanfont/headscale/hscontrol/derp/server.DERPProbeHandler"
+   ],
+   [
+    "golang.org/x/net/http2.*Server.ServeConn",
+    "github.com/juanfont/headscale/hscontrol.*Headscale.NoiseUpgradeHandler"
+   ],
+   [
+    "golang.org/x/net/http2.*gzipReader.Read",
+    "io.ReadAll",
+    "github.com/juanfont/headscale/hscontrol.headscaleV1APIServer.GetPolicy"
+   ],
+   [
+    "golang.org/x/net/http2.*Framer.WriteSettings",
+    "google.golang.org/grpc/internal/transport.NewServerTransport",
+    "google.golang.org/grpc.*Server.newHTTP2Transport",
+    "google.golang.org/grpc.*Server.handleRawConn",
+    "google.golang.org/grpc.Serve$3",
+    "google.golang.org/grpc.*Server.Serve",
+    "github.com/juanfont/headscale/hscontrol.Serve$1",
+    "golang.org/x/sync/errgroup.Go$1",
+    "golang.org/x/sync/errgroup.*Group.Go",
+    "github.com/juanfont/headscale/integration.*Scenario.WaitForTailscaleLogout"
+   ],
+   [
+    "golang.org/x/net/http2.*gzipReader.Close",
+    "github.com/juanfont/headscale/integration/hsic.*HeadscaleInContainer.SaveMetrics"
+   ],
+   [
+    "golang.org/x/net/http2.stickyErrWriter.Write",
+    "bufio.*Writer.Write",
+    "archive/tar.*Writer.Close",
+    "github.com/juanfont/headscale/integration/integrationutil.WriteFileToContainer"
+   ]
+  ]
+ },
+ {
+  "id": "golang.org_x_net__CVE-2026-78669",
+  "cve": "CVE-2026-78669",
+  "package": "golang.org/x/net",
+  "trace": [
+   [
+    "golang.org/x/net/http2.StreamError.Error",
+    "github.com/juanfont/headscale/hscontrol.headscaleV1APIServer.SetTags"
+   ],
+   [
+    "golang.org/x/net/http2.*responseWriter.FlushError",
+    "net/http.*ResponseController.Flush",
+    "github.com/juanfont/headscale/hscontrol.*mapSession.serveLongPoll",
+    "github.com/juanfont/headscale/hscontrol.*noiseServer.NoisePollNetMapHandler"
+   ],
+   [
+    "golang.org/x/net/http2.ConfigureTransports",
+    "tailscale.com/control/controlclient.NewNoiseClient",
+    "tailscale.com/control/controlclient.getNoiseClient$1",
+    "tailscale.com/util/singleflight.doCall$2",
+    "tailscale.com/util/singleflight.*Group[struct{}, *tailscale.com/control/controlclient.NoiseClient].doCall",
+    "tailscale.com/util/singleflight.*Group[struct{}, *tailscale.com/control/controlclient.NoiseClient].Do",
+    "tailscale.com/control/controlclient.*Direct.getNoiseClient",
+    "tailscale.com/control/controlclient.*Direct.doLogin",
+    "tailscale.com/control/controlclient.*Direct.TryLogout",
+    "tailscale.com/control/controlclient.*Auto.Logout",
+    "tailscale.com/ipn/ipnlocal.*LocalBackend.Logout",
+    "tailscale.com/ipn/ipnlocal.*LocalBackend.Shutdown",
+    "tailscale.com/tsnet.*Server.Close",
+    "github.com/juanfont/headscale/hscontrol.runTailSQLService",
+    "github.com/juanfont/headscale/hscontrol.*Headscale.Serve"
+   ],
+   [
+    "golang.org/x/net/http2.*Transport.NewClientConn",
+    "tailscale.com/internal/noiseconn.New",
+    "tailscale.com/control/controlclient.*NoiseClient.dial",
+    "tailscale.com/control/controlclient.getConn$1",
+    "tailscale.com/util/singleflight.doCall$2",
+    "tailscale.com/util/singleflight.*Group[struct{}, *tailscale.com/internal/noiseconn.Conn].doCall",
+    "tailscale.com/util/singleflight.*Group[struct{}, *tailscale.com/internal/noiseconn.Conn].Do",
+    "tailscale.com/control/controlclient.*NoiseClient.getConn",
+    "tailscale.com/control/controlclient.*NoiseClient.RoundTrip",
+    "net/http.send",
+    "net/http.*Client.send",
+    "net/http.*Client.do",
+    "net/http.*Client.Do",
+    "github.com/juanfont/headscale/hscontrol/derp.loadDERPMapFromURL",
+    "github.com/juanfont/headscale/hscontrol/derp.GetDERPMap"
+   ],
+   [
+    "golang.org/x/net/http2.*responseWriter.WriteHeader",
+    "github.com/juanfont/headscale/hscontrol/derp/server.DERPProbeHandler"
+   ],
+   [
+    "golang.org/x/net/http2.transportResponseBody.Read",
+    "io.ReadAll",
+    "github.com/juanfont/headscale/hscontrol.headscaleV1APIServer.GetPolicy"
+   ],
+   [
+    "golang.org/x/net/http2.ErrCode.String",
+    "fmt.*pp.handleMethods",
+    "fmt.*pp.printArg",
+    "fmt.*pp.doPrintln",
+    "fmt.Fprintln",
+    "github.com/juanfont/headscale/cmd/headscale/cli.Execute"
+   ],
+   [
+    "golang.org/x/net/http2.*Server.ServeConn",
+    "github.com/juanfont/headscale/hscontrol.*Headscale.NoiseUpgradeHandler"
+   ],
+   [
+    "golang.org/x/net/http2.*Transport.CloseIdleConnections",
+    "tailscale.com/ipn/ipnlocal.*reverseProxy.close",
+    "tailscale.com/ipn/ipnlocal.setServeProxyHandlersLocked$2",
+    "sync.*Map.Range",
+    "gorm.io/gorm.*Statement.clone",
+    "gorm.io/gorm.*DB.getInstance",
+    "gorm.io/gorm.*DB.Unscoped",
+    "github.com/juanfont/headscale/hscontrol/db.DeleteNode"
+   ],
+   [
+    "golang.org/x/net/http2.chunkWriter.Write",
+    "bufio.*Writer.Write",
+    "archive/tar.*Writer.Close",
+    "github.com/juanfont/headscale/integration/integrationutil.WriteFileToContainer"
+   ],
+   [
+    "golang.org/x/net/http2.*Framer.WritePing",
+    "google.golang.org/grpc/internal/transport.*loopyWriter.pingHandler",
+    "google.golang.org/grpc/internal/transport.*loopyWriter.handle",
+    "google.golang.org/grpc/internal/transport.*loopyWriter.run",
+    "google.golang.org/grpc/internal/transport.NewServerTransport$2",
+    "google.golang.org/grpc/internal/transport.NewServerTransport",
+    "google.golang.org/grpc.*Server.newHTTP2Transport",
+    "google.golang.org/grpc.*Server.handleRawConn",
+    "google.golang.org/grpc.Serve$3",
+    "google.golang.org/grpc.*Server.Serve",
+    "github.com/juanfont/headscale/hscontrol.Serve$1",
+    "golang.org/x/sync/errgroup.Go$1",
+    "golang.org/x/sync/errgroup.*Group.Go",
+    "github.com/juanfont/headscale/integration.*Scenario.WaitForTailscaleLogout"
+   ],
+   [
+    "golang.org/x/net/http2.*gzipReader.Close",
+    "github.com/juanfont/headscale/integration/hsic.*HeadscaleInContainer.SaveMetrics"
+   ]
+  ]
+ },
+ {
+  "id": "golang.org_x_net__CVE-2026-97032",
+  "cve": "CVE-2026-97032",
+  "package": "golang.org/x/net",
+  "trace": [
+   [
+    "golang.org/x/net/http2.*responseWriter.WriteString",
+    "bufio.*Writer.WriteString",
+    "net/http.*http2responseWriter.write",
+    "net/http.*http2responseWriter.Write",
+    "github.com/juanfont/headscale/hscontrol/derp/server.DERPProbeHandler"
+   ],
+   [
+    "golang.org/x/net/http2.*Transport.NewClientConn",
+    "tailscale.com/internal/noiseconn.New",
+    "tailscale.com/control/controlclient.*NoiseClient.dial",
+    "tailscale.com/control/controlclient.getConn$1",
+    "tailscale.com/util/singleflight.doCall$2",
+    "tailscale.com/util/singleflight.*Group[struct{}, *tailscale.com/internal/noiseconn.Conn].doCall",
+    "tailscale.com/util/singleflight.*Group[struct{}, *tailscale.com/internal/noiseconn.Conn].Do",
+    "tailscale.com/control/controlclient.*NoiseClient.getConn",
+    "tailscale.com/control/controlclient.*NoiseClient.RoundTrip",
+    "net/http.send",
+    "net/http.*Client.send",
+    "net/http.*Client.do",
+    "net/http.*Client.Do",
+    "github.com/juanfont/headscale/hscontrol/derp.loadDERPMapFromURL",
+    "github.com/juanfont/headscale/hscontrol/derp.GetDERPMap"
+   ],
+   [
+    "golang.org/x/net/http2.*requestBody.Read",
+    "io.ReadAll",
+    "github.com/juanfont/headscale/hscontrol.headscaleV1APIServer.GetPolicy"
+   ],
+   [
+    "golang.org/x/net/http2.ConnectionError.Error",
+    "github.com/juanfont/headscale/hscontrol.headscaleV1APIServer.SetTags"
+   ],
+   [
+    "golang.org/x/net/http2.FrameType.String",
+    "fmt.*pp.handleMethods",
+    "fmt.*pp.printArg",
+    "fmt.*pp.doPrintln",
+    "fmt.Fprintln",
+    "github.com/juanfont/headscale/cmd/headscale/cli.Execute"
+   ],
+   [
+    "golang.org/x/net/http2.*responseWriter.Flush",
+    "net/http.*ResponseController.Flush",
+    "github.com/juanfont/headscale/hscontrol.*mapSession.serveLongPoll",
+    "github.com/juanfont/headscale/hscontrol.*noiseServer.NoisePollNetMapHandler"
+   ],
+   [
+    "golang.org/x/net/http2.ConfigureTransports",
+    "tailscale.com/control/controlclient.NewNoiseClient",
+    "tailscale.com/control/controlclient.getNoiseClient$1",
+    "tailscale.com/util/singleflight.doCall$2",
+    "tailscale.com/util/singleflight.*Group[struct{}, *tailscale.com/control/controlclient.NoiseClient].doCall",
+    "tailscale.com/util/singleflight.*Group[struct{}, *tailscale.com/control/controlclient.NoiseClient].Do",
+    "tailscale.com/control/controlclient.*Direct.getNoiseClient",
+    "tailscale.com/control/controlclient.*Direct.doLogin",
+    "tailscale.com/control/controlclient.*Direct.TryLogout",
+    "tailscale.com/control/controlclient.*Auto.Logout",
+    "tailscale.com/ipn/ipnlocal.*LocalBackend.Logout",
+    "tailscale.com/ipn/ipnlocal.*LocalBackend.Shutdown",
+    "tailscale.com/tsnet.*Server.Close",
+    "github.com/juanfont/headscale/hscontrol.runTailSQLService",
+    "github.com/juanfont/headscale/hscontrol.*Headscale.Serve"
+   ],
+   [
+    "golang.org/x/net/http2.*Server.ServeConn",
+    "github.com/juanfont/headscale/hscontrol.*Headscale.NoiseUpgradeHandler"
+   ],
+   [
+    "golang.org/x/net/http2.*Transport.CloseIdleConnections",
+    "tailscale.com/ipn/ipnlocal.*reverseProxy.close",
+    "tailscale.com/ipn/ipnlocal.setServeProxyHandlersLocked$2",
+    "sync.*Map.Range",
+    "gorm.io/gorm.*Statement.clone",
+    "gorm.io/gorm.*DB.getInstance",
+    "gorm.io/gorm.*DB.Unscoped",
+    "github.com/juanfont/headscale/hscontrol/db.DeleteNode"
+   ],
+   [
+    "golang.org/x/net/http2.*Framer.WritePing",
+    "google.golang.org/grpc/internal/transport.*loopyWriter.pingHandler",
+    "google.golang.org/grpc/internal/transport.*loopyWriter.handle",
+    "google.golang.org/grpc/internal/transport.*loopyWriter.run",
+    "google.golang.org/grpc/internal/transport.NewServerTransport$2",
+    "google.golang.org/grpc/internal/transport.NewServerTransport",
+    "google.golang.org/grpc.*Server.newHTTP2Transport",
+    "google.golang.org/grpc.*Server.handleRawConn",
+    "google.golang.org/grpc.Serve$3",
+    "google.golang.org/grpc.*Server.Serve",
+    "github.com/juanfont/headscale/hscontrol.Serve$1",
+    "golang.org/x/sync/errgroup.Go$1",
+    "golang.org/x/sync/errgroup.*Group.Go",
+    "github.com/juanfont/headscale/integration.*Scenario.WaitForTailscaleLogout"
+   ],
+   [
+    "golang.org/x/net/http2.*bufferedWriterTimeoutWriter.Write",
+    "bufio.*Writer.Write",
+    "archive/tar.*Writer.Close",
+    "github.com/juanfont/headscale/integration/integrationutil.WriteFileToContainer"
+   ],
+   [
+    "golang.org/x/net/http2.transportResponseBody.Close",
+    "github.com/juanfont/headscale/integration/hsic.*HeadscaleInContainer.SaveMetrics"
+   ]
+  ]
+ },
+ {
+  "id": "golang.org_x_text__CVE-2026-56852",
+  "cve": "CVE-2026-56852",
+  "package": "golang.org/x/text",
+  "trace": [
+   [
+    "golang.org/x/text/unicode/norm.Form.Bytes",
+    "golang.org/x/net/idna.validateAndMap",
+    "golang.org/x/net/idna.*Profile.process",
+    "golang.org/x/net/idna.*Profile.ToASCII",
+    "golang.org/x/crypto/acme/autocert.HostWhitelist",
+    "github.com/juanfont/headscale/hscontrol.*Headscale.getTLSSettings",
+    "github.com/juanfont/headscale/hscontrol.*Headscale.Serve"
+   ],
+   [
+    "golang.org/x/text/unicode/norm.Form.Properties",
+    "golang.org/x/text/cases.ltLower",
+    "golang.org/x/text/cases.*simpleCaser.Transform",
+    "golang.org/x/text/transform.String",
+    "golang.org/x/text/cases.Caser.String",
+    "gorm.io/gorm/schema.init#1",
+    "gorm.io/gorm/schema.init",
+    "github.com/juanfont/headscale/hscontrol/db.init"
+   ],
+   [
+    "golang.org/x/text/unicode/norm.Form.Span",
+    "golang.org/x/text/secure/precis.*buffers.apply",
+    "golang.org/x/text/secure/precis.*buffers.enforce",
+    "golang.org/x/text/secure/precis.processBytes",
+    "golang.org/x/text/secure/precis.*Profile.Bytes",
+    "github.com/jackc/pgx/v5/pgconn.newScramClient",
+    "github.com/jackc/pgx/v5/pgconn.*PgConn.scramAuth",
+    "github.com/jackc/pgx/v5/pgconn.connectOne",
+    "github.com/jackc/pgx/v5/pgconn.connectPreferred",
+    "github.com/jackc/pgx/v5/pgconn.ConnectConfig",
+    "github.com/jackc/pgx/v5.connect",
+    "github.com/jackc/pgx/v5.ConnectConfig",
+    "github.com/jackc/pgx/v5/stdlib.connector.Connect",
+    "database/sql.*DB.conn",
+    "database/sql.PingContext$1",
+    "database/sql.*DB.retry",
+    "database/sql.*DB.PingContext",
+    "github.com/juanfont/headscale/hscontrol/db.*HSDatabase.PingDB"
+   ]
+  ]
+ },
+ {
+  "id": "golang.org_x_text__CVE-2026-56851",
+  "cve": "CVE-2026-56851",
+  "package": "golang.org/x/text",
+  "trace": [
+   [
+    "golang.org/x/text/secure/precis.*Profile.Bytes",
+    "github.com/jackc/pgx/v5/pgconn.newScramClient",
+    "github.com/jackc/pgx/v5/pgconn.*PgConn.scramAuth",
+    "github.com/jackc/pgx/v5/pgconn.connectOne",
+    "github.com/jackc/pgx/v5/pgconn.connectPreferred",
+    "github.com/jackc/pgx/v5/pgconn.ConnectConfig",
+    "github.com/jackc/pgx/v5.connect",
+    "github.com/jackc/pgx/v5.ConnectConfig",
+    "github.com/jackc/pgx/v5/stdlib.connector.Connect",
+    "database/sql.*DB.conn",
+    "database/sql.PingContext$1",
+    "database/sql.*DB.retry",
+    "database/sql.*DB.PingContext",
+    "github.com/juanfont/headscale/hscontrol/db.*HSDatabase.PingDB"
+   ]
+  ]
+ },
+ {
+  "id": "github.com_go-viper_mapstructure_v2__CVE-2025-11065",
+  "cve": "CVE-2025-11065",
+  "package": "github.com/go-viper/mapstructure/v2",
+  "trace": [
+   [
+    "github.com/go-viper/mapstructure/v2.*Decoder.decodeInt",
+    "github.com/go-viper/mapstructure/v2.*Decoder.decode",
+    "github.com/go-viper/mapstructure/v2.*Decoder.Decode",
+    "github.com/spf13/viper.decode",
+    "github.com/spf13/viper.*Viper.UnmarshalKey",
+    "github.com/spf13/viper.UnmarshalKey",
+    "github.com/juanfont/headscale/hscontrol/types.dns",
+    "github.com/juanfont/headscale/hscontrol/types.LoadServerConfig"
+   ]
+  ]
+ },
+ {
+  "id": "golang.org_x_net__CVE-2025-22870",
+  "cve": "CVE-2025-22870",
+  "package": "golang.org/x/net",
+  "trace": [
+   [
+    "golang.org/x/net/proxy.*PerHost.DialContext",
+    "tailscale.com/net/tsdial.*Dialer.SystemDial",
+    "tailscale.com/net/tsdial.*Dialer.UserDial",
+    "tailscale.com/ipn/localapi.*Handler.serveDial",
+    "tailscale.com/ipn/localapi.*Handler.ServeHTTP",
+    "golang.org/x/net/http2.*serverConn.runHandler",
+    "golang.org/x/net/http2.*serverConn.upgradeRequest",
+    "golang.org/x/net/http2.*Server.serveConn",
+    "golang.org/x/net/http2.*Server.ServeConn",
+    "github.com/juanfont/headscale/hscontrol.*Headscale.NoiseUpgradeHandler"
+   ],
+   [
+    "golang.org/x/net/proxy.FromEnvironmentUsing",
+    "tailscale.com/net/netns.wrapSocks",
+    "tailscale.com/net/netns.FromDialer",
+    "tailscale.com/net/netns.NewDialer",
+    "tailscale.com/net/tsdial.SystemDial$1",
+    "sync.*Once.doSlow",
+    "sync.*Once.Do",
+    "github.com/juanfont/headscale/gen/go/headscale/v1.file_headscale_v1_node_proto_rawDescGZIP",
+    "github.com/juanfont/headscale/gen/go/headscale/v1.*BackfillNodeIPsResponse.Descriptor"
+   ]
+  ]
+ },
+ {
+  "id": "golang.org_x_net__CVE-2026-78660",
+  "cve": "CVE-2026-78660",
+  "package": "golang.org/x/net",
+  "trace": [
+   [
+    "golang.org/x/net/http2.*unencryptedTransport.RoundTrip",
+    "net/http.*Transport.roundTrip",
+    "net/http.*Transport.RoundTrip",
+    "net/http.send",
+    "net/http.*Client.send",
+    "net/http.*Client.do",
+    "net/http.*Client.Do",
+    "github.com/juanfont/headscale/hscontrol/derp.loadDERPMapFromURL",
+    "github.com/juanfont/headscale/hscontrol/derp.GetDERPMap"
+   ]
+  ]
+ },
+ {
+  "id": "github.com_docker_docker__CVE-2026-33997",
+  "cve": "CVE-2026-33997",
+  "package": "github.com/docker/docker",
+  "trace": [
+   [
+    "github.com/docker/docker/api/types/swarm/runtime.init",
+    "github.com/docker/docker/api/types/swarm.init",
+    "github.com/docker/cli/opts.init",
+    "github.com/docker/cli/cli/compose/loader.init",
+    "github.com/ory/dockertest/v3/docker/opts.init",
+    "github.com/ory/dockertest/v3/docker.init",
+    "github.com/juanfont/headscale/integration/tsic.init"
+   ]
+  ]
+ },
+ {
+  "id": "github.com_gorilla_csrf__CVE-2025-24358",
+  "cve": "CVE-2025-24358",
+  "package": "github.com/gorilla/csrf",
+  "trace": [
+   [
+    "github.com/gorilla/csrf.*csrf.ServeHTTP",
+    "tailscale.com/client/web.*Server.serve",
+    "tailscale.com/client/web.*Server.ServeHTTP",
+    "golang.org/x/net/http2.*serverConn.runHandler",
+    "golang.org/x/net/http2.*serverConn.upgradeRequest",
+    "golang.org/x/net/http2.*Server.serveConn",
+    "golang.org/x/net/http2.*Server.ServeConn",
+    "github.com/juanfont/headscale/hscontrol.*Headscale.NoiseUpgradeHandler"
+   ]
+  ]
+ },
+ {
+  "id": "github.com_jackc_pgx_v5__CVE-2026-41889",
+  "cve": "CVE-2026-41889",
+  "package": "github.com/jackc/pgx/v5",
+  "trace": [
+   [
+    "github.com/jackc/pgx/v5/internal/sanitize.SanitizeSQL",
+    "github.com/jackc/pgx/v5.*Conn.sanitizeForSimpleQuery",
+    "github.com/jackc/pgx/v5.*Conn.Query",
+    "github.com/jackc/pgx/v5/stdlib.*Conn.QueryContext",
+    "database/sql.ctxDriverQuery",
+    "database/sql.queryDC$1",
+    "database/sql.withLock",
+    "database/sql.*Rows.Next",
+    "github.com/juanfont/headscale/hscontrol/db.runMigrations",
+    "github.com/juanfont/headscale/hscontrol/db.NewHeadscaleDatabase"
+   ]
+  ]
+ },
+ {
+  "id": "github.com_opencontainers_runc__CVE-2026-41579",
+  "cve": "CVE-2026-41579",
+  "package": "github.com/opencontainers/runc",
+  "trace": [
+   [
+    "github.com/opencontainers/runc/libcontainer/user.CurrentUser",
+    "github.com/ory/dockertest/v3/docker/pkg/homedir.Get",
+    "github.com/ory/dockertest/v3/docker.getDockerEnv",
+    "github.com/ory/dockertest/v3/docker.NewVersionedClientFromEnv",
+    "github.com/ory/dockertest/v3/docker.NewClientFromEnv",
+    "github.com/ory/dockertest/v3.NewPool",
+    "github.com/juanfont/headscale/integration.NewScenario"
+   ],
+   [
+    "github.com/opencontainers/runc/libcontainer/user.init",
+    "github.com/ory/dockertest/v3/docker/pkg/homedir.init",
+    "github.com/ory/dockertest/v3/docker.init",
+    "github.com/juanfont/headscale/integration/tsic.init"
+   ]
+  ]
+ }
+]

@@ -6,7 +6,7 @@
 """
 from __future__ import annotations
 
-import json, pathlib, random, sys
+import json, pathlib, sys
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "eval"))
@@ -24,11 +24,10 @@ def main() -> int:
     rows.sort(key=lambda x: (not x["kev"], -x["epss"]))
     total = sum(x["risk"] for x in rows)
     res = {"n": len(rows), "risk": total, "kev": sum(x["kev"] for x in rows), "kev_risk": sum(x["kev"] and x["risk"] for x in rows), "epss_day": day, "top": {}}
-    rnd = random.Random(13)
     for k in (10, 20, 30, 40):
         hit = sum(x["risk"] for x in rows[:k])
-        rand = sum(sum(x["risk"] for x in rnd.sample(rows, k)) for _ in range(2000)) / 2000
-        res["top"][k] = {"hit": hit, "recall": round(100 * hit / total, 1), "random_hit": round(rand, 1)}
+        # 무작위로 k 건을 고를 때의 기대값(초기하 분포)
+        res["top"][k] = {"hit": hit, "recall": round(100 * hit / total, 1), "random_hit": round(k * total / len(rows), 1)}
     (ROOT / "results" / "rank_score.json").write_text(json.dumps(res, ensure_ascii=False, indent=1), encoding="utf-8")
     print(json.dumps(res, ensure_ascii=False))
     return 0

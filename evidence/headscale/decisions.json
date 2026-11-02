@@ -2130,7 +2130,7 @@
   },
   "cost": 0.21959199999999998,
   "seconds": 131.2,
-  "callgraph": "none",
+  "callgraph": "required",
   "decision": "CLOSE",
   "why": "code_not_reachable",
   "basis": {

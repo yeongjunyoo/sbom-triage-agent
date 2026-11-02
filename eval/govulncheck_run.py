@@ -53,10 +53,10 @@ def run_repo(repo: pathlib.Path, timeout: int) -> dict:
     out = OUT / f"{repo.name}.json"
     if out.exists() and out.stat().st_size > 2:
         old = json.loads(out.read_text(encoding="utf-8"))
-        if any(x["exit"] in (0, 3) for x in old["runs"]):
+        if any(x["exit"] in (0, 3) for x in old["runs"]) and old.get("trace_format") == 2:
             return old
     env = dict(os.environ, PATH=f"{GO.parent}:{os.environ['PATH']}", GOPATH=str(OUT / "gopath"), GOCACHE=str(OUT / "gocache"), GOFLAGS="-mod=mod", GOOS="linux", GOARCH="amd64", CGO_ENABLED="0")
-    res = {"repo": repo.name, "runs": [], "findings": {}}
+    res = {"repo": repo.name, "runs": [], "findings": {}, "traces": {}, "trace_format": 2}
     for d in go_dirs(repo):
         env["GOTOOLCHAIN"] = toolchain_for(d)
         try:
@@ -65,7 +65,7 @@ def run_repo(repo: pathlib.Path, timeout: int) -> dict:
         except subprocess.TimeoutExpired:
             code, stdout, stderr = -9, "", "timeout"
         dec = json.JSONDecoder()
-        i, aliases, levels = 0, {}, {}
+        i, aliases, levels, traces = 0, {}, {}, {}
         while i < len(stdout):
             while i < len(stdout) and stdout[i].isspace():
                 i += 1
@@ -84,11 +84,20 @@ def run_repo(repo: pathlib.Path, timeout: int) -> dict:
                 rank = {"required": 0, "imported": 1, "called": 2}
                 if rank[level] >= rank.get(levels.get(f["osv"]), -1):
                     levels[f["osv"]] = level
+                if level == "called":
+                    # 경로를 남겨야 충돌 건을 사람이 확인할 수 있다. 맨 앞이 취약 함수, 맨 뒤가 진입점이다
+                    chain = [f"{x.get('package', '')}.{(x.get('receiver') + '.') if x.get('receiver') else ''}{x.get('function', '')}" for x in f["trace"]]
+                    bucket = traces.setdefault(f["osv"], [])
+                    # 모듈과 진입점이 다른 경로만 모은다. 첫 경로가 시험 도구 쪽이어도 운영 경로가 가려지지 않게 한다
+                    if not any(b["module"] == t.get("module") and b["path"][-1] == chain[-1] for b in bucket):
+                        bucket.append({"module": t.get("module"), "path": chain})
         res["runs"].append({"dir": str(d.relative_to(repo)), "exit": code, "err": stderr[-300:], "findings": len(levels)})
         for oid, lv in levels.items():
             for name in [oid] + aliases.get(oid, []):
                 if {"required": 0, "imported": 1, "called": 2}[lv] >= {"required": 0, "imported": 1, "called": 2}.get(res["findings"].get(name), -1):
                     res["findings"][name] = lv
+                if oid in traces:
+                    res["traces"].setdefault(name, traces[oid])
     out.write_text(json.dumps(res, ensure_ascii=False), encoding="utf-8")
     return res
 

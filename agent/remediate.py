@@ -7,7 +7,7 @@
 - 한 번에 다 올리면 하나가 전체를 깨뜨린다(2026-11-02 headscale: runc 를 올리자 dockertest 가 깨졌다). 하나씩 시도해 깨지면 되돌리고 사람에게 넘긴다.
 - 정식 릴리스가 없는 수정 버전(rc, beta)은 자동으로 고르지 않는다.
 - 시험 비교는 패키지가 아니라 시험 이름까지 본다. 원래 실패하던 패키지 안의 새 실패를 놓치지 않으려는 것이다. 종료 코드가 0이 아닌데 실패를 읽지 못하면 통과로 치지 않는다.
-- 언어 버전 상승과 간접 의존성 상승은 빌드가 되어도 담당자가 볼 일이라 따로 적는다.
+- 언어 버전 상승과 함께 바뀌는 다른 의존성은 빌드가 되어도 담당자가 볼 일이라 따로 적는다.
 - 시험은 저장소 코드를 실행하므로 sandbox-exec 로 비밀 폴더 읽기를 막고 돌린다(맥).
 """
 from __future__ import annotations
@@ -58,7 +58,8 @@ def side_effects(before: str, after: str, targets: set[str]) -> dict:
     go_a, mods_a = go_mod_state(before)
     go_b, mods_b = go_mod_state(after)
     bumps = {k: [mods_a[k], v] for k, v in mods_b.items() if k in mods_a and mods_a[k] != v and k not in targets}
-    return {"go_directive": [go_a, go_b] if go_a != go_b else None, "also_changed": bumps}
+    indirect = set(re.findall(r"^[ \t]*(?:require[ \t]+)?(\S+)[ \t]+v\S+[ \t]+// indirect", after, re.M))
+    return {"go_directive": [go_a, go_b] if go_a != go_b else None, "also_changed": bumps, "also_changed_indirect": sorted(k for k in bumps if k in indirect)}
 
 
 def alert_ids(raw: str) -> tuple[set[str], set[str], int]:
@@ -79,14 +80,17 @@ def report_section(res: dict) -> list[str]:
     L = ["## 조치안 검증", "", "복사본에서 패키지별로 버전을 올려 빌드와 시험을 돌렸다. 코드 반영과 배포는 담당자가 한다.", "",
          "| 패키지 | 올린 버전 | 대상 CVE | 결과 |", "|---|---|---|---|"]
     for pkg, t in res["targets"].items():
-        L.append(f"| {pkg} | {t['from']} > {t['version']} | {', '.join(t['cves'])} | {'반영' if pkg in res['accepted'] else '되돌림, 사람에게 넘김'} |")
+        final = t.get("final") or t["version"]
+        asked = "" if final == t["version"] else f"(요청 {t['version']}, 다른 패키지를 올리며 함께 오름)"
+        L.append(f"| {pkg} | {t['from']} > {final}{asked} | {', '.join(t['cves'])} | {'반영' if pkg in res['accepted'] else '되돌림, 사람에게 넘김'} |")
     b, a = res["baseline"], res["after"]
     L += ["", f"- 시험: 고치기 전 통과 패키지 {b['ok_packages']}, 실패 시험 {len(b['failed_tests'])}. 고친 뒤 통과 패키지 {a['ok_packages']}, 실패 시험 {len(a['failed_tests'])}. 새 실패 {len(res['new_test_failures'])}건.",
           f"- 재스캔: 경보 {res['alerts_before']}건에서 {res['alerts_after']}건. 대상 취약점 {len(res['cves_fixed_targeted'])}건 중 남은 것 {len(res['cves_still_reported'])}건. 새로 생긴 경보 ID {len(res['alerts_new_ids'])}건."]
     if fx["go_directive"]:
         L.append(f"- 담당자 확인: Go 언어 버전이 {fx['go_directive'][0]}에서 {fx['go_directive'][1]}로 올라간다. CI와 컨테이너 이미지를 함께 올려야 한다.")
     if fx["also_changed"]:
-        L.append("- 담당자 확인: 함께 올라가는 간접 의존성 " + ", ".join(f"{k} {v[0]} > {v[1]}" for k, v in sorted(fx["also_changed"].items())))
+        n_ind = len(fx.get("also_changed_indirect") or [])
+        L.append(f"- 담당자 확인: 함께 바뀌는 다른 의존성 {len(fx['also_changed'])}개(직접 {len(fx['also_changed']) - n_ind}, 간접 {n_ind}): " + ", ".join(f"{k} {v[0]} > {v[1]}" for k, v in sorted(fx["also_changed"].items())))
     return L + [""]
 
 
@@ -193,7 +197,12 @@ def main() -> int:
     after_test = w.test(pkgs, a.test_timeout)
     still_broken = new_failures(base_test, after_test)
     mod_before = w.git("show", f"HEAD~{len(accepted)}:go.mod").stdout
-    effects = side_effects(mod_before, (w.dir / "go.mod").read_text(encoding="utf-8"), set(accepted))
+    mod_after = (w.dir / "go.mod").read_text(encoding="utf-8")
+    effects = side_effects(mod_before, mod_after, set(accepted))
+    final_mods = go_mod_state(mod_after)[1]
+    for pkg in accepted:
+        # 나중에 올린 패키지에 끌려 요청한 버전보다 더 올라갈 수 있다. 표에는 실제로 남은 버전을 쓴다
+        targets[pkg]["final"] = final_mods.get(pkg, targets[pkg]["version"])
     diff = w.git("diff", "HEAD~%d" % len(accepted), "--", "go.mod").stdout if accepted else ""
     full = w.git("diff", "HEAD~%d" % len(accepted)).stdout if accepted else ""
     (out / "fix.patch").write_text(full, encoding="utf-8")
@@ -212,6 +221,8 @@ def main() -> int:
         "alerts_before": before, "alerts_after": raw_after, "alerts_new_ids": sorted(ids_after - ids_before), "go_mod_diff": diff[:3000],
     }
     (out / "remediation.json").write_text(json.dumps(result, ensure_ascii=False, indent=1), encoding="utf-8")
+    with (out / "audit.jsonl").open("a", encoding="utf-8") as f:
+        f.write(json.dumps({"t": time.strftime("%Y-%m-%dT%H:%M:%S"), "step": "remediation", "accepted": accepted, "rejected": [x["package"] for x in rejected], "new_test_failures": still_broken, "alerts_before": before, "alerts_after": raw_after, "alerts_new_ids": result["alerts_new_ids"]}, ensure_ascii=False) + "\n")
     rep = out / "report.md"
     if rep.exists():
         head = rep.read_text(encoding="utf-8").split("## 조치안 검증")[0].rstrip()

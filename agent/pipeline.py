@@ -40,6 +40,11 @@ def step_callgraph(repo: pathlib.Path, findings: list[dict]) -> dict:
         for f in findings:
             if f.get("ecosystem") == "Go":
                 f["callgraph"] = next((r["findings"][i] for i in f["ids"] if i in r["findings"]), "none")
+                paths = next((r.get("traces", {})[i] for i in f["ids"] if i in r.get("traces", {})), None) or []
+                own = [p["path"] for p in paths if p.get("module") == f["package"]]
+                if own:
+                    # 운영 경로를 앞에 둔다. 통합 시험 패키지에서 시작하는 경로는 뒤로 민다
+                    f["cg_trace"] = sorted(own, key=lambda c: "/integration" in c[-1])
     return {"ran": ok, "reason": "" if ok else (r["runs"][-1]["err"] if r["runs"] else "")[-200:]}
 
 IS_WIN = os.name == "nt"
@@ -49,6 +54,13 @@ TOOLS = ROOT / "tools"
 CACHE = ROOT / "results" / "feeds"
 KEV_URL = "https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json"
 EPSS_URL = "https://epss.empiricalsecurity.com/epss_scores-{d}.csv.gz"
+def close_hold(cats: list, scope: str) -> list:
+    """닫을 수 있는 판단 중 사람에게 보낼 범주. none 은 자동 닫기를 끄는 값이다."""
+    if scope == "none":
+        return list(cats)
+    return [c for c in cats if c not in PROOF_CATS] if scope == "proof" else []
+
+
 # 없다는 사실을 검색으로 증명하는 범주. 이 밖의 범주는 해석이 들어가 두 회차가 같은 오류를 반복할 수 있다(eval/inject_compare.py, eval/policy_confirm.py).
 PROOF_CATS = {"code_not_present", "code_not_reachable", "false_positive"}
 CLOSE_CATS = {
@@ -284,7 +296,7 @@ def triage_one(f: dict, repo: pathlib.Path, out: pathlib.Path, a) -> dict:
         d["decision"], d["why"] = "REVIEW", "실제 악용 목록(KEV) 등재 건은 사람이 닫는다"
     elif all(c in CLOSE_CATS for c in cats) and all(c["ok"] for c in checks):
         blocked = [x for o in objs for x in evidence_guard(o, repo, f["cve"])]
-        hold = [c for c in cats if c not in PROOF_CATS] if a.close_scope == "proof" else (list(cats) if a.close_scope == "none" else [])
+        hold = close_hold(cats, a.close_scope)
         if f.get("callgraph") == "called":
             d["decision"], d["why"] = "REVIEW", "호출 그래프가 취약 함수 호출을 찾아 에이전트의 닫기 판단과 충돌"
         elif blocked:
@@ -338,6 +350,8 @@ def draft_notes(findings, decisions, key) -> list[str]:
         if not d or d["decision"] != key:
             continue
         L += [f"### {f['package']} {f['cve']}", "", f"- 회차별 판단: {', '.join(str(c) for c in d.get('categories') or [])}", f"- 사유: {d['why']}"]
+        if str(d.get("why")).startswith("호출 그래프") and f.get("cg_trace"):
+            L.append("- 호출 경로(취약 함수에서 진입점으로): " + " < ".join(f["cg_trace"][0][:8]))
         if d.get("reasoning"):
             L.append(f"- 에이전트 설명: {str(d['reasoning'])[:500]}")
         for e in (d.get("evidence") or [])[:4]:
@@ -396,6 +410,9 @@ def main() -> int:
     out = pathlib.Path(a.out).resolve()
     out.mkdir(parents=True, exist_ok=True)
     audit = out / "audit.jsonl"
+    if audit.exists():
+        # 실행마다 새 기록을 쓴다. 지난 실행의 판단이 섞이면 감사 기록으로 쓸 수 없다
+        audit.replace(out / "audit.prev.jsonl")
     asset = json.loads(pathlib.Path(a.asset).read_text(encoding="utf-8")) if a.asset else {}
     t0 = time.time()
     bom = step_sbom(repo, out)
@@ -408,6 +425,7 @@ def main() -> int:
     log(audit, "enrich", **feeds)
     log(audit, "callgraph", **step_callgraph(repo, findings))
     (out / "findings.json").write_text(json.dumps(findings, ensure_ascii=False, indent=0), encoding="utf-8")
+    (out / "gv_trace.json").write_text(json.dumps([{"id": f["id"], "cve": f["cve"], "package": f["package"], "trace": f["cg_trace"]} for f in findings if f.get("cg_trace")], ensure_ascii=False, indent=1), encoding="utf-8")
     picked = findings[: a.top]
     with ThreadPoolExecutor(a.parallel) as ex:
         res = list(ex.map(lambda f: triage_one(f, repo, out, a), picked))

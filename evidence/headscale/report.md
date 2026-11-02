@@ -92,6 +92,7 @@ Presence: go.mod pins golang.org/x/net v0.32.0, which is below 0.53.0. The build
 
 - 회차별 판단: mitigating_control_protected, mitigating_control_protected
 - 사유: 호출 그래프가 취약 함수 호출을 찾아 에이전트의 닫기 판단과 충돌
+- 호출 경로(취약 함수에서 진입점으로): google.golang.org/grpc.*Server.Serve < github.com/juanfont/headscale/hscontrol.Serve$1 < golang.org/x/sync/errgroup.Go$1 < golang.org/x/sync/errgroup.*Group.Go < github.com/juanfont/headscale/integration.*Scenario.WaitForTailscaleLogout
 - 에이전트 설명: google.golang.org/grpc v1.69.0 is declared in go.mod. That is below the fixed version 1.79.3, so the version is affected. The repo runs grpc.Server instances, so the server path handling is reachable. The advisory's exploit needs path-based authorization, either grpc/authz or interceptors that read info.FullMethod or grpc.Method(ctx), with deny rules for canonical paths and a default-allow fallback. This repo has no such authorization. The remote gRPC server has one chained unary interceptor, gr
 - 인용: go.mod:46 google.golang.org/grpc v1.69.0
 - 인용: hscontrol/app.go:740 grpcServer = grpc.NewServer(grpcOptions...)
@@ -129,6 +130,7 @@ Presence: go.mod pins golang.org/x/net v0.32.0, which is below 0.53.0. The build
 
 - 회차별 판단: code_not_reachable, code_not_reachable
 - 사유: 호출 그래프가 취약 함수 호출을 찾아 에이전트의 닫기 판단과 충돌
+- 호출 경로(취약 함수에서 진입점으로): github.com/opencontainers/runc/libcontainer/user.CurrentUser < github.com/ory/dockertest/v3/docker/pkg/homedir.Get < github.com/ory/dockertest/v3/docker.getDockerEnv < github.com/ory/dockertest/v3/docker.NewVersionedClientFromEnv < github.com/ory/dockertest/v3/docker.NewClientFromEnv < github.com/ory/dockertest/v3.NewPool < github.com/juanfont/headscale/integration.NewScenario
 - 에이전트 설명: The advisory (GHSA-cgrx-mc8f-2prm) covers github.com/opencontainers/runc <=1.2.7, 1.3.0-rc.1 to 1.3.2, and 1.4.0-rc.1 to 1.4.0-rc.2. The fixes are 1.2.8, 1.3.3 and 1.4.0-rc.3. go.mod and go.sum resolve runc to v1.2.3, so the version is in the affected range. The entry is an indirect dependency only. It most likely comes in through github.com/ory/dockertest and docker/docker, but I did not run `go mod why` to confirm that. No Go file in the repository imports runc or libcontainer, and there is no
 - 인용: go.mod:181 github.com/opencontainers/runc v1.2.3 // indirect
 - 인용: go.sum:368 github.com/opencontainers/runc v1.2.3 h1:fxE7amCzfZflJO2lHXf4y/y8M1BoAqp+FVmG19oYB80=
@@ -139,6 +141,7 @@ Presence: go.mod pins golang.org/x/net v0.32.0, which is below 0.53.0. The build
 
 - 회차별 판단: code_not_reachable, code_not_reachable
 - 사유: 호출 그래프가 취약 함수 호출을 찾아 에이전트의 닫기 판단과 충돌
+- 호출 경로(취약 함수에서 진입점으로): github.com/go-jose/go-jose/v3.init < github.com/oauth2-proxy/mockoidc.init < github.com/juanfont/headscale/cmd/headscale/cli.init
 - 에이전트 설명: The advisory (GHSA-78h2-9frx-2jm8 / GO-2026-4945) covers a panic in go-jose JWE decryption. cipher.KeyUnwrap() panics when a JWE uses a key-wrapping alg (*KW, excluding AxxxGCMKW) and has an empty encrypted_key. It is reached through ParseEncrypted*/Decrypt. Affected ranges are v3 3.0.0-3.0.4 (fixed 3.0.5) and v4 4.0.0-4.1.3 (fixed 4.1.4). This repo resolves go-jose/v3 v3.0.3 and go-jose/v4 v4.0.2, both in the affected ranges, but only as indirect dependencies. No first-party Go file imports go-
 - 인용: go.mod:124 github.com/go-jose/go-jose/v3 v3.0.3 // indirect
 - 인용: go.mod:125 github.com/go-jose/go-jose/v4 v4.0.2 // indirect
@@ -149,6 +152,7 @@ Presence: go.mod pins golang.org/x/net v0.32.0, which is below 0.53.0. The build
 
 - 회차별 판단: code_not_reachable, code_not_reachable
 - 사유: 호출 그래프가 취약 함수 호출을 찾아 에이전트의 닫기 판단과 충돌
+- 호출 경로(취약 함수에서 진입점으로): github.com/go-jose/go-jose/v4.ParseSigned < github.com/coreos/go-oidc/v3/oidc.*IDTokenVerifier.Verify < github.com/juanfont/headscale/hscontrol.*AuthProviderOIDC.extractIDToken < github.com/juanfont/headscale/hscontrol.*AuthProviderOIDC.OIDCCallbackHandler
 - 에이전트 설명: go-jose is present only as an indirect dependency, at v3.0.3 and v4.0.2. Both are inside the affected ranges (v3 3.0.0-3.0.4, v4 4.0.0-4.1.3). The flaw is a panic in cipher.KeyUnwrap, reached through ParseEncrypted/ParseEncryptedJSON/ParseEncryptedCompact followed by Decrypt on a JWE. No first-party Go file imports go-jose or calls any JWE API. The only route to go-jose is github.com/coreos/go-oidc/v3 v3.11.0, called from hscontrol/oidc.go. Its IDTokenVerifier.Verify and RemoteKeySet only use jo
 - 인용: go.mod:125 github.com/go-jose/go-jose/v4 v4.0.2 // indirect
 - 인용: go.mod:124 github.com/go-jose/go-jose/v3 v3.0.3 // indirect
@@ -159,6 +163,7 @@ Presence: go.mod pins golang.org/x/net v0.32.0, which is below 0.53.0. The build
 
 - 회차별 판단: code_not_reachable, code_not_reachable
 - 사유: 호출 그래프가 취약 함수 호출을 찾아 에이전트의 닫기 판단과 충돌
+- 호출 경로(취약 함수에서 진입점으로): google.golang.org/grpc/internal/transport.*http2Server.HandleStreams < google.golang.org/grpc.*Server.serveStreams < google.golang.org/grpc.handleRawConn$1 < google.golang.org/grpc.*Server.handleRawConn < google.golang.org/grpc.Serve$3 < google.golang.org/grpc.*Server.Serve < github.com/juanfont/headscale/hscontrol.Serve$1 < golang.org/x/sync/errgroup.Go$1
 - 에이전트 설명: The advisory (GO-2026-6443 / GHSA-2v4p-qf9q-27wj, alias CVE-2026-84445) affects google.golang.org/grpc before 1.82.2 and 1.83.0 up to 1.83.2. The panic is in the xDS routing code, `RouteAndProcess` in `internal/xds/server`, and only affects servers built with `xds.NewGRPCServer()`. This repository resolves grpc v1.69.0, which is in the affected range, so the package is present. The repository's only gRPC servers are plain `grpc.NewServer(...)`, one on a local unix socket and one remote (TLS or i
 - 인용: go.mod:46 google.golang.org/grpc v1.69.0
 - 인용: hscontrol/app.go:685 grpcSocket := grpc.NewServer(
@@ -168,6 +173,7 @@ Presence: go.mod pins golang.org/x/net v0.32.0, which is below 0.53.0. The build
 
 - 회차별 판단: requires_configuration, requires_configuration
 - 사유: 호출 그래프가 취약 함수 호출을 찾아 에이전트의 닫기 판단과 충돌
+- 호출 경로(취약 함수에서 진입점으로): google.golang.org/grpc/mem.ReadAll < google.golang.org/grpc.decompress < google.golang.org/grpc.recvAndDecompress < google.golang.org/grpc.recv < google.golang.org/grpc.*csAttempt.recvMsg < google.golang.org/grpc.RecvMsg$1 < google.golang.org/grpc.*clientStream.withRetry < google.golang.org/grpc.*clientStream.SendMsg
 - 에이전트 설명: CVE-2026-84304 (GHSA-vp52-pcj8-j9qc, GO-2026-6348) is an unauthenticated heap exhaustion in grpc-go. Fragmented HTTP/2 DATA frames are each stored as a separate recvMsg in internal/transport recvBuffer. It affects versions before 1.83.1. This repo resolves google.golang.org/grpc v1.69.0, which is in the affected range, and hscontrol/app.go creates two grpc.Server instances. The network-reachable one (app.go:740) is created only when `tlsConfig != nil || GRPCAllowInsecure`. By default tls_letsenc
 - 인용: go.mod:46 google.golang.org/grpc v1.69.0
 - 인용: go.sum:688 google.golang.org/grpc v1.69.0 h1:quSiOM1GJPmPH5XtU+BCoVXcDVJJAzNcoyfC2cCjGkI=
@@ -199,6 +205,7 @@ This repo resolves go-jose v3.0.3 and v4.0.2 as indirect dependencies, both in t
 
 - 회차별 판단: requires_configuration, requires_configuration
 - 사유: 호출 그래프가 취약 함수 호출을 찾아 에이전트의 닫기 판단과 충돌
+- 호출 경로(취약 함수에서 진입점으로): google.golang.org/grpc/internal/transport.*ServerStream.Read < google.golang.org/grpc.*parser.recvMsg < google.golang.org/grpc.recvAndDecompress < google.golang.org/grpc.recv < google.golang.org/grpc.*csAttempt.recvMsg < google.golang.org/grpc.RecvMsg$1 < google.golang.org/grpc.*clientStream.withRetry < google.golang.org/grpc.*clientStream.SendMsg
 - 에이전트 설명: google.golang.org/grpc v1.69.0 is resolved, which is before the fixed v1.82.1, so it is in the affected range. The advisory covers three issues. Two are in the xDS RBAC engine: an authorization fail-open and a panic. The third is a bypass of the HTTP/2 Rapid Reset mitigation in internal/transport, which allows a remote DoS. The repository never imports google.golang.org/grpc/xds or the RBAC engine, so the two RBAC issues are not reachable. The transport issue is reachable only through grpc.NewSe
 - 인용: go.mod:46 google.golang.org/grpc v1.69.0
 - 인용: hscontrol/app.go:719 if tlsConfig != nil || h.cfg.GRPCAllowInsecure {
@@ -209,6 +216,7 @@ This repo resolves go-jose v3.0.3 and v4.0.2 as indirect dependencies, both in t
 
 - 회차별 판단: code_not_reachable, code_not_reachable
 - 사유: 호출 그래프가 취약 함수 호출을 찾아 에이전트의 닫기 판단과 충돌
+- 호출 경로(취약 함수에서 진입점으로): github.com/go-viper/mapstructure/v2/internal/errors.init < github.com/go-viper/mapstructure/v2.init < github.com/spf13/viper.init < github.com/juanfont/headscale/hscontrol/util.init
 - 에이전트 설명: GO-2025-3787 (GHSA-fv92-fjc5-jj9h, no CVE) affects github.com/go-viper/mapstructure/v2 before v2.3.0. When a decode fails (WeakDecode and the decode helpers behind it), the error text includes the raw input value, which can leak sensitive data into logs or responses. This repo resolves the module to v2.2.1 as an indirect dependency of spf13/viper v1.20.0-alpha.6, so the version is in range. The only decode path is viper.UnmarshalKey("dns.extra_records", &extraRecords) in hscontrol/types/config.g
 - 인용: go.mod:128 github.com/go-viper/mapstructure/v2 v2.2.1 // indirect
 - 인용: go.mod:34 github.com/spf13/viper v1.20.0-alpha.6
@@ -219,6 +227,7 @@ This repo resolves go-jose v3.0.3 and v4.0.2 as indirect dependencies, both in t
 
 - 회차별 판단: code_not_reachable, code_not_reachable
 - 사유: 호출 그래프가 취약 함수 호출을 찾아 에이전트의 닫기 판단과 충돌
+- 호출 경로(취약 함수에서 진입점으로): github.com/docker/docker/api/types/swarm.init < github.com/docker/cli/opts.init < github.com/docker/cli/cli/compose/loader.init < github.com/ory/dockertest/v3/docker/opts.init < github.com/ory/dockertest/v3/docker.init < github.com/juanfont/headscale/integration/tsic.init
 - 에이전트 설명: The advisory (GHSA-x744-4wpc-v9h2, CVE-2026-34040) covers the Docker Engine daemon module github.com/moby/moby, published in Go as github.com/docker/docker. Affected versions are below 29.3.1. The flaw is in the daemon, which can forward a crafted oversized API request to an AuthZ plugin without the request body. The advisory says that if you don't use AuthZ plugins, you are not affected. This repo resolves github.com/docker/docker v27.4.0+incompatible, which is inside the affected range. It is 
 - 인용: go.mod:116 github.com/docker/docker v27.4.0+incompatible // indirect
 - 인용: go.mod:23 github.com/ory/dockertest/v3 v3.11.0
@@ -268,7 +277,7 @@ This repo resolves go-jose v3.0.3 and v4.0.2 as indirect dependencies, both in t
 |---|---|---|---|
 | golang.org/x/net | v0.32.0 > v0.60.0 | CVE-2026-33814, CVE-2026-78659, CVE-2026-78663, CVE-2026-78669, CVE-2026-39821 | 반영 |
 | google.golang.org/grpc | v1.69.0 > v1.83.2 | CVE-2026-33186, CVE-2026-84445, CVE-2026-84304, GO-2026-6061 | 반영 |
-| golang.org/x/oauth2 | v0.24.0 > v0.27.0 | CVE-2025-22868 | 반영 |
+| golang.org/x/oauth2 | v0.24.0 > v0.36.0(요청 v0.27.0, 다른 패키지를 올리며 함께 오름) | CVE-2025-22868 | 반영 |
 | github.com/golang-jwt/jwt/v5 | v5.2.1 > v5.2.2 | CVE-2025-30204 | 반영 |
 | github.com/opencontainers/runc | v1.2.3 > v1.3.3 | CVE-2025-52565, CVE-2025-52881 | 반영 |
 | github.com/go-jose/go-jose/v3 | v3.0.3 > v3.0.5 | CVE-2026-34986 | 반영 |
@@ -278,4 +287,4 @@ This repo resolves go-jose v3.0.3 and v4.0.2 as indirect dependencies, both in t
 - 시험: 고치기 전 통과 패키지 10, 실패 시험 0. 고친 뒤 통과 패키지 10, 실패 시험 0. 새 실패 0건.
 - 재스캔: 경보 133건에서 38건. 대상 취약점 16건 중 남은 것 1건. 새로 생긴 경보 ID 0건.
 - 담당자 확인: Go 언어 버전이 1.23.1에서 1.26.0로 올라간다. CI와 컨테이너 이미지를 함께 올려야 한다.
-- 담당자 확인: 함께 올라가는 간접 의존성 github.com/containerd/console v1.0.4 > v1.0.5, github.com/google/go-cmp v0.6.0 > v0.7.0, golang.org/x/crypto v0.31.0 > v0.57.0, golang.org/x/mod v0.22.0 > v0.41.0, golang.org/x/sync v0.10.0 > v0.23.0, golang.org/x/sys v0.28.0 > v0.48.0, golang.org/x/term v0.27.0 > v0.46.0, golang.org/x/text v0.21.0 > v0.42.0, golang.org/x/tools v0.28.0 > v0.49.0, google.golang.org/genproto/googleapis/api v0.0.0-20241216192217-9240e9c98484 > v0.0.0-20260526163538-3dc84a4a5aaa, google.golang.org/genproto/googleapis/rpc v0.0.0-20241216192217-9240e9c98484 > v0.0.0-20260526163538-3dc84a4a5aaa, google.golang.org/protobuf v1.36.0 > v1.36.11
+- 담당자 확인: 함께 바뀌는 다른 의존성 12개(직접 5, 간접 7): github.com/containerd/console v1.0.4 > v1.0.5, github.com/google/go-cmp v0.6.0 > v0.7.0, golang.org/x/crypto v0.31.0 > v0.57.0, golang.org/x/mod v0.22.0 > v0.41.0, golang.org/x/sync v0.10.0 > v0.23.0, golang.org/x/sys v0.28.0 > v0.48.0, golang.org/x/term v0.27.0 > v0.46.0, golang.org/x/text v0.21.0 > v0.42.0, golang.org/x/tools v0.28.0 > v0.49.0, google.golang.org/genproto/googleapis/api v0.0.0-20241216192217-9240e9c98484 > v0.0.0-20260526163538-3dc84a4a5aaa, google.golang.org/genproto/googleapis/rpc v0.0.0-20241216192217-9240e9c98484 > v0.0.0-20260526163538-3dc84a4a5aaa, google.golang.org/protobuf v1.36.0 > v1.36.11

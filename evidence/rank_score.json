@@ -13,17 +13,17 @@
   "20": {
    "hit": 7,
    "recall": 31.8,
-   "random_hit": 5.8
+   "random_hit": 5.9
   },
   "30": {
    "hit": 9,
    "recall": 40.9,
-   "random_hit": 8.9
+   "random_hit": 8.8
   },
   "40": {
    "hit": 10,
    "recall": 45.5,
-   "random_hit": 11.8
+   "random_hit": 11.7
   }
  }
 }

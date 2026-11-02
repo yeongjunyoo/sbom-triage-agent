@@ -10,7 +10,8 @@
     "CVE-2026-39821"
    ],
    "from": "v0.32.0",
-   "decision": "OPEN"
+   "decision": "OPEN",
+   "final": "v0.60.0"
   },
   "google.golang.org/grpc": {
    "version": "v1.83.2",
@@ -21,7 +22,8 @@
     "GO-2026-6061"
    ],
    "from": "v1.69.0",
-   "decision": "REVIEW"
+   "decision": "REVIEW",
+   "final": "v1.83.2"
   },
   "golang.org/x/oauth2": {
    "version": "v0.27.0",
@@ -29,7 +31,8 @@
     "CVE-2025-22868"
    ],
    "from": "v0.24.0",
-   "decision": "REVIEW"
+   "decision": "REVIEW",
+   "final": "v0.36.0"
   },
   "github.com/golang-jwt/jwt/v5": {
    "version": "v5.2.2",
@@ -37,7 +40,8 @@
     "CVE-2025-30204"
    ],
    "from": "v5.2.1",
-   "decision": "REVIEW"
+   "decision": "REVIEW",
+   "final": "v5.2.2"
   },
   "github.com/opencontainers/runc": {
    "version": "v1.3.3",
@@ -46,7 +50,8 @@
     "CVE-2025-52881"
    ],
    "from": "v1.2.3",
-   "decision": "REVIEW"
+   "decision": "REVIEW",
+   "final": "v1.3.3"
   },
   "github.com/go-jose/go-jose/v3": {
    "version": "v3.0.5",
@@ -54,7 +59,8 @@
     "CVE-2026-34986"
    ],
    "from": "v3.0.3",
-   "decision": "REVIEW"
+   "decision": "REVIEW",
+   "final": "v3.0.5"
   },
   "github.com/go-jose/go-jose/v4": {
    "version": "v4.1.6",
@@ -63,7 +69,8 @@
     "CVE-2026-116587"
    ],
    "from": "v4.0.2",
-   "decision": "REVIEW"
+   "decision": "REVIEW",
+   "final": "v4.1.6"
   },
   "github.com/go-viper/mapstructure/v2": {
    "version": "v2.3.0",
@@ -71,7 +78,8 @@
     "GO-2025-3787"
    ],
    "from": "v2.2.1",
-   "decision": "REVIEW"
+   "decision": "REVIEW",
+   "final": "v2.3.0"
   }
  },
  "accepted": [
@@ -109,7 +117,7 @@
   "ok_packages": 10,
   "failed_packages": [],
   "failed_tests": [],
-  "seconds": 31.4
+  "seconds": 30.0
  },
  "new_test_failures": [],
  "side_effects": {
@@ -166,7 +174,16 @@
     "v0.0.0-20241216192217-9240e9c98484",
     "v0.0.0-20260526163538-3dc84a4a5aaa"
    ]
-  }
+  },
+  "also_changed_indirect": [
+   "github.com/containerd/console",
+   "golang.org/x/mod",
+   "golang.org/x/sys",
+   "golang.org/x/term",
+   "golang.org/x/text",
+   "golang.org/x/tools",
+   "google.golang.org/genproto/googleapis/rpc"
+  ]
  },
  "cves_fixed_targeted": [
   "CVE-2025-22868",
