@@ -85,6 +85,26 @@ def rerun_search(repo: pathlib.Path, s: dict, timeout: int = 90) -> tuple[bool, 
     pat = str(s.get("pattern") or "")
     scope = str(s.get("scope") or ".")
     globs, target = _scope_globs(scope)
+    if "**" in pat or pat.rstrip("/").endswith("/*"):
+        # 정규식이 아니라 경로 글롭을 적은 경우: 파일이 있는지로 확인한다
+        files = sorted(repo.glob(pat.lstrip("./"))) if not pat.startswith("/") else []
+        actual = len([f for f in files if ".git" not in f.parts])
+        try:
+            claimed = int(s.get("hits"))
+        except (TypeError, ValueError):
+            return True, f"건수 미기재: {pat[:60]}", None
+        if claimed == 0 and actual > 0:
+            return False, f"0건 주장이 틀림({actual}개 파일): {pat[:60]}", actual
+        return True, "", actual
+    if target != "." and not (repo / target).exists():
+        # 없는 폴더를 범위로 한 검색은 0건이 맞다. 그 폴더가 있다고 주장한 경우만 틀렸다
+        try:
+            claimed = int(s.get("hits"))
+        except (TypeError, ValueError):
+            claimed = 0
+        if claimed > 0:
+            return False, f"없는 범위에서 {claimed}건 주장: {pat[:40]} @ {target[:40]}", 0
+        return True, "", 0
     actual = _rg_count(repo, pat, globs, target, timeout)
     if actual is None:
         actual = _rg_count(repo, pat, [], ".", timeout)
