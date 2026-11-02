@@ -7,13 +7,14 @@ no_answer(답을 못 낸 건)는 FAILED 로 세어 맞힌 것에 넣지 않는�
 """
 from __future__ import annotations
 
-import argparse, collections, importlib.util, json, pathlib, statistics
+import __future__, argparse, collections, json, pathlib, statistics, types
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 BENCH = ROOT / "vendor" / "vex-bench"
-spec = importlib.util.spec_from_file_location("result_parser", BENCH / "src" / "evaluate" / "result_parser.py")
-rp = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(rp)
+# 맥 python3.9 에서 원본의 `str | None` 주석이 터지지 않도록 annotations 플래그로 컴파일한다. 내용은 그대로다.
+_src = (BENCH / "src" / "evaluate" / "result_parser.py").read_text(encoding="utf-8")
+rp = types.ModuleType("result_parser")
+exec(compile(_src, "result_parser.py", "exec", flags=__future__.annotations.compiler_flag), rp.__dict__)
 
 
 def truth() -> dict:

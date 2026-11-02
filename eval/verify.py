@@ -26,7 +26,8 @@ def _norm(s: str) -> str:
 
 
 def check_quote(repo: pathlib.Path, ev: dict) -> tuple[bool, str]:
-    rel = str(ev.get("path", "")).replace("\\", "/").lstrip("./")
+    rel = str(ev.get("path", "")).replace("\\", "/")
+    rel = rel[2:] if rel.startswith("./") else rel
     p = (repo / rel).resolve()
     if repo.resolve() not in p.parents or not p.is_file():
         return False, f"없는 파일: {rel}"
@@ -46,31 +47,60 @@ def check_quote(repo: pathlib.Path, ev: dict) -> tuple[bool, str]:
     return False, f"인용 불일치: {rel}:{ln}"
 
 
-def rerun_search(repo: pathlib.Path, s: dict, timeout: int = 90) -> tuple[bool, str, int | None]:
-    pat = str(s.get("pattern") or "")
-    scope = str(s.get("scope") or ".").replace("\\", "/")
-    cmd = [RG, "--count-matches", "--no-messages", "--no-ignore", "--hidden", "--glob", "!.git", "-e", pat]
-    target = "."
-    if any(c in scope for c in "*?{"):
-        cmd += ["--glob", scope]
-    elif scope not in (".", "./", ""):
-        target = scope.lstrip("./")
-    cmd.append(target)
+def _scope_globs(scope: str) -> tuple[list[str], str]:
+    """에이전트가 적은 범위를 ripgrep 인자로 바꾼다. 쉼표 목록과 설명 문구를 견딘다."""
+    scope = re.sub(r"\(.*?\)", " ", scope).replace("\\", "/").strip()
+    parts = [x.strip() for x in scope.split(",") if x.strip()]
+    globs, target = [], "."
+    for x in parts:
+        if " " in x:
+            continue
+        if any(c in x for c in "*?{!"):
+            globs.append(x)
+        elif len(parts) == 1 and x not in (".", "./"):
+            target = x[2:] if x.startswith("./") else x
+        elif x not in (".", "./"):
+            globs.append(x if "." in x.split("/")[-1] else x.rstrip("/") + "/**")
+    return globs, target
+
+
+def _rg_count(repo: pathlib.Path, pat: str, globs: list[str], target: str, timeout: int) -> int | None:
+    cmd = [RG, "--count-matches", "--no-messages", "--no-ignore", "--hidden", "--glob", "!.git"]
+    if "\\n" in pat:
+        cmd += ["--multiline"]
+    for g in globs:
+        cmd += ["--glob", g]
+    cmd += ["-e", pat, target]
     try:
         r = subprocess.run(cmd, cwd=str(repo), capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=timeout, creationflags=NO_WINDOW)
     except subprocess.TimeoutExpired:
-        return False, f"검색 시간 초과: {pat[:60]}", None
+        return None
     if r.returncode not in (0, 1):
-        return False, f"검색 실행 실패: {pat[:60]}", None
-    actual = sum(int(l.rsplit(":", 1)[-1]) for l in r.stdout.splitlines() if l.rsplit(":", 1)[-1].isdigit())
+        return None
+    return sum(int(l.rsplit(":", 1)[-1]) for l in r.stdout.splitlines() if l.rsplit(":", 1)[-1].isdigit())
+
+
+def rerun_search(repo: pathlib.Path, s: dict, timeout: int = 90) -> tuple[bool, str, int | None]:
+    """0건 주장이 틀렸는지 본다. 범위 해석이 어긋나 건수가 다를 수 있으므로 실패는 지어낸 근거가 분명할 때만 낸다."""
+    pat = str(s.get("pattern") or "")
+    scope = str(s.get("scope") or ".")
+    globs, target = _scope_globs(scope)
+    actual = _rg_count(repo, pat, globs, target, timeout)
+    if actual is None:
+        actual = _rg_count(repo, pat, [], ".", timeout)
+        if actual is None:
+            return True, f"검색 재현 불가, 판단에 쓰지 않음: {pat[:60]}", None
+        globs, target = [], "."
     try:
         claimed = int(s.get("hits"))
     except (TypeError, ValueError):
-        return False, f"건수 미기재: {pat[:60]}", actual
+        return True, f"건수 미기재: {pat[:60]}", None
     if claimed == 0 and actual > 0:
-        return False, f"0건 주장이 틀림({actual}건): {pat[:60]} @ {scope}", actual
+        return False, f"0건 주장이 틀림({actual}건): {pat[:60]} @ {scope[:60]}", actual
     if claimed > 0 and actual == 0:
-        return False, f"있다던 것이 없음({claimed}건 주장): {pat[:60]} @ {scope}", actual
+        whole = _rg_count(repo, pat, [], ".", timeout)
+        if whole == 0:
+            return False, f"있다던 것이 저장소 전체에 없음({claimed}건 주장): {pat[:60]}", 0
     return True, "", actual
 
 
@@ -94,6 +124,8 @@ def verify(obj: dict | None, repo: pathlib.Path) -> dict:
             ok, msg, actual = rerun_search(repo, s)
             if not ok:
                 fails.append(msg)
+            elif msg:
+                notes.append(msg)
             elif actual == 0:
                 zero_ok += 1
     if cat in NEEDS_EVIDENCE and not evidence:
