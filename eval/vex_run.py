@@ -8,7 +8,7 @@
 """
 from __future__ import annotations
 
-import argparse, ast, json, os, pathlib, subprocess, sys, threading, time
+import argparse, ast, json, os, pathlib, signal, subprocess, sys, threading, time
 from concurrent.futures import ThreadPoolExecutor
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
@@ -16,7 +16,8 @@ BENCH = ROOT / "vendor" / "vex-bench"
 REPOS = ROOT / "vex-repos"
 RESULTS = ROOT / "results"
 PROMPTS_DIR = ROOT / "eval" / "prompts"
-NO_WINDOW = 0x08000000
+IS_WIN = os.name == "nt"
+NO_WINDOW = 0x08000000 if IS_WIN else 0
 RAM_FLOOR_MB = 3000
 lock = threading.Lock()
 
@@ -49,6 +50,8 @@ def repo_dir(t: dict) -> pathlib.Path:
 
 
 def avail_mb() -> int:
+    if not IS_WIN:
+        return 99999
     r = subprocess.run(
         ["powershell", "-NoProfile", "-Command", "(Get-CimInstance Win32_OperatingSystem).FreePhysicalMemory"],
         capture_output=True, text=True, timeout=30, creationflags=NO_WINDOW,
@@ -57,6 +60,14 @@ def avail_mb() -> int:
         return int(r.stdout.strip()) // 1024
     except ValueError:
         return 99999
+
+
+def agent_env() -> dict:
+    env = dict(os.environ)
+    tok = pathlib.Path.home() / ".nova" / "claude_oauth_token"
+    if not IS_WIN and tok.exists():
+        env["CLAUDE_CODE_OAUTH_TOKEN"] = tok.read_text().strip()
+    return env
 
 
 def run_one(t: dict, a) -> dict:
@@ -90,7 +101,7 @@ def run_one(t: dict, a) -> dict:
     with raw.open("w", encoding="utf-8") as fo, err.open("w", encoding="utf-8") as fe:
         p = subprocess.Popen(
             cmd, cwd=str(repo_dir(t)), stdin=subprocess.PIPE, stdout=fo, stderr=fe,
-            creationflags=NO_WINDOW, text=True, encoding="utf-8",
+            creationflags=NO_WINDOW, text=True, encoding="utf-8", start_new_session=not IS_WIN, env=agent_env(),
         )
         try:
             p.stdin.write(prompt)
@@ -100,7 +111,10 @@ def run_one(t: dict, a) -> dict:
         try:
             code = p.wait(timeout=a.timeout)
         except subprocess.TimeoutExpired:
-            subprocess.run(["taskkill", "/PID", str(p.pid), "/T", "/F"], capture_output=True, creationflags=NO_WINDOW)
+            if IS_WIN:
+                subprocess.run(["taskkill", "/PID", str(p.pid), "/T", "/F"], capture_output=True, creationflags=NO_WINDOW)
+            else:
+                os.killpg(p.pid, signal.SIGKILL)
             code = -9
     final, cost, usage, tools, turns, model_used, denials = None, None, None, [], None, None, None
     for line in raw.read_text(encoding="utf-8", errors="replace").splitlines():
@@ -142,7 +156,7 @@ def main() -> int:
     ap.add_argument("--split", default="", choices=["", "dev", "test"])
     ap.add_argument("--context-run", default="", help="앞 단계 실행 이름. {prior} 에 그 결과를 넣고, 닫는 판단이 난 과제만 돌린다")
     ap.add_argument("--context-repeat", type=int, default=0)
-    ap.add_argument("--claude", default=str(pathlib.Path.home() / ".local" / "bin" / "claude.exe"))
+    ap.add_argument("--claude", default=str(pathlib.Path.home() / ".local" / "bin" / ("claude.exe" if IS_WIN else "claude")))
     a = ap.parse_args()
     ts = tasks()
     if a.only_lang:

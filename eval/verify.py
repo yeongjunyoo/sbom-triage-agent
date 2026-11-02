@@ -8,9 +8,12 @@
 """
 from __future__ import annotations
 
-import json, pathlib, re, subprocess
+import json, os, pathlib, re, shutil, subprocess
 
-NO_WINDOW = 0x08000000
+NO_WINDOW = 0x08000000 if os.name == "nt" else 0
+RG = shutil.which("rg") or "/opt/homebrew/bin/rg"
+if os.name == "nt":
+    RG = str(pathlib.Path(__file__).resolve().parents[1] / "tools" / "rg.exe")
 NEEDS_EVIDENCE = {
     "code_not_reachable", "requires_configuration", "requires_dependency", "requires_environment",
     "compiler_protected", "runtime_protected", "perimeter_protected", "mitigating_control_protected", "vulnerable",
@@ -46,7 +49,7 @@ def check_quote(repo: pathlib.Path, ev: dict) -> tuple[bool, str]:
 def rerun_search(repo: pathlib.Path, s: dict, timeout: int = 90) -> tuple[bool, str, int | None]:
     pat = str(s.get("pattern") or "")
     scope = str(s.get("scope") or ".").replace("\\", "/")
-    cmd = [str(pathlib.Path(__file__).resolve().parents[1] / "tools" / "rg.exe"), "--count-matches", "--no-messages", "--no-ignore", "--hidden", "--glob", "!.git", "-e", pat]
+    cmd = [RG, "--count-matches", "--no-messages", "--no-ignore", "--hidden", "--glob", "!.git", "-e", pat]
     target = "."
     if any(c in scope for c in "*?{"):
         cmd += ["--glob", scope]

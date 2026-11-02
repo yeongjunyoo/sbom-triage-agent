@@ -2,23 +2,35 @@
 
     python eval/get_tools.py        # tools/ 에 받고 manifest.json 에 버전과 SHA256 을 남긴다
 """
-import hashlib, io, json, pathlib, re, urllib.request, zipfile
+import hashlib, io, json, os, pathlib, re, stat, tarfile, urllib.request, zipfile
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 TOOLS = ROOT / "tools"
 TOOLS.mkdir(exist_ok=True)
 UA = {"User-Agent": "lotte-ax-supplychain"}
 
-SPEC = [
-    {"name": "rg", "url": "https://github.com/BurntSushi/ripgrep/releases/download/14.1.1/ripgrep-14.1.1-x86_64-pc-windows-msvc.zip",
-     "sum_url": "https://github.com/BurntSushi/ripgrep/releases/download/14.1.1/ripgrep-14.1.1-x86_64-pc-windows-msvc.zip.sha256", "member": "rg.exe"},
-    {"name": "osv-scanner", "url": "https://github.com/google/osv-scanner/releases/download/v2.7.0/osv-scanner_windows_amd64.exe",
-     "sum_url": "https://github.com/google/osv-scanner/releases/download/v2.7.0/osv-scanner_SHA256SUMS", "member": None},
-    {"name": "syft", "url": "https://github.com/anchore/syft/releases/download/v1.55.0/syft_1.55.0_windows_amd64.zip",
-     "sum_url": "https://github.com/anchore/syft/releases/download/v1.55.0/syft_1.55.0_checksums.txt", "member": "syft.exe"},
-    {"name": "grype", "url": "https://github.com/anchore/grype/releases/download/v0.121.0/grype_0.121.0_windows_amd64.zip",
-     "sum_url": "https://github.com/anchore/grype/releases/download/v0.121.0/grype_0.121.0_checksums.txt", "member": "grype.exe"},
-]
+if os.name == "nt":
+    SPEC = [
+        {"name": "rg", "url": "https://github.com/BurntSushi/ripgrep/releases/download/14.1.1/ripgrep-14.1.1-x86_64-pc-windows-msvc.zip",
+         "sum_url": "https://github.com/BurntSushi/ripgrep/releases/download/14.1.1/ripgrep-14.1.1-x86_64-pc-windows-msvc.zip.sha256", "member": "rg.exe"},
+        {"name": "osv-scanner", "url": "https://github.com/google/osv-scanner/releases/download/v2.7.0/osv-scanner_windows_amd64.exe",
+         "sum_url": "https://github.com/google/osv-scanner/releases/download/v2.7.0/osv-scanner_SHA256SUMS", "member": None},
+        {"name": "syft", "url": "https://github.com/anchore/syft/releases/download/v1.55.0/syft_1.55.0_windows_amd64.zip",
+         "sum_url": "https://github.com/anchore/syft/releases/download/v1.55.0/syft_1.55.0_checksums.txt", "member": "syft.exe"},
+        {"name": "grype", "url": "https://github.com/anchore/grype/releases/download/v0.121.0/grype_0.121.0_windows_amd64.zip",
+         "sum_url": "https://github.com/anchore/grype/releases/download/v0.121.0/grype_0.121.0_checksums.txt", "member": "grype.exe"},
+    ]
+    SUFFIX = ".exe"
+else:
+    SPEC = [
+        {"name": "osv-scanner", "url": "https://github.com/google/osv-scanner/releases/download/v2.7.0/osv-scanner_darwin_arm64",
+         "sum_url": "https://github.com/google/osv-scanner/releases/download/v2.7.0/osv-scanner_SHA256SUMS", "member": None},
+        {"name": "syft", "url": "https://github.com/anchore/syft/releases/download/v1.55.0/syft_1.55.0_darwin_arm64.tar.gz",
+         "sum_url": "https://github.com/anchore/syft/releases/download/v1.55.0/syft_1.55.0_checksums.txt", "member": "syft"},
+        {"name": "grype", "url": "https://github.com/anchore/grype/releases/download/v0.121.0/grype_0.121.0_darwin_arm64.tar.gz",
+         "sum_url": "https://github.com/anchore/grype/releases/download/v0.121.0/grype_0.121.0_checksums.txt", "member": "grype"},
+    ]
+    SUFFIX = ""
 
 
 def get(url):
@@ -43,13 +55,18 @@ for s in SPEC:
     expected = parse_sum(get(s["sum_url"]), fname)
     if expected != digest:
         raise SystemExit(f"{s['name']} 체크섬 불일치 expected={expected} got={digest}")
-    out = TOOLS / f"{s['name']}.exe"
-    if s["member"]:
+    out = TOOLS / f"{s['name']}{SUFFIX}"
+    if s["member"] and fname.endswith(".zip"):
         with zipfile.ZipFile(io.BytesIO(data)) as z:
             name = next(n for n in z.namelist() if n.endswith(s["member"]))
             out.write_bytes(z.read(name))
+    elif s["member"]:
+        with tarfile.open(fileobj=io.BytesIO(data), mode="r:gz") as t:
+            m = next(x for x in t.getmembers() if x.name.split("/")[-1] == s["member"])
+            out.write_bytes(t.extractfile(m).read())
     else:
         out.write_bytes(data)
+    out.chmod(out.stat().st_mode | stat.S_IEXEC)
     manifest[s["name"]] = {"url": s["url"], "sha256": digest, "size": len(data)}
     print(s["name"], "ok", len(data))
 (TOOLS / "manifest.json").write_text(json.dumps(manifest, indent=1), encoding="utf-8")
