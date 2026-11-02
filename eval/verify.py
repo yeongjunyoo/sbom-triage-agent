@@ -47,10 +47,24 @@ def check_quote(repo: pathlib.Path, ev: dict) -> tuple[bool, str]:
     return False, f"인용 불일치: {rel}:{ln}"
 
 
+def _split_scope(scope: str) -> list[str]:
+    """쉼표로 나누되 중괄호 안의 쉼표는 나누지 않는다. **/*.{go,mod} 는 글롭 하나다."""
+    parts, depth, cur = [], 0, ""
+    for c in scope:
+        depth += (c == "{") - (c == "}")
+        if c == "," and depth <= 0:
+            parts.append(cur)
+            cur, depth = "", 0
+        else:
+            cur += c
+    parts.append(cur)
+    return [x.strip() for x in parts if x.strip()]
+
+
 def _scope_globs(scope: str) -> tuple[list[str], str]:
     """에이전트가 적은 범위를 ripgrep 인자로 바꾼다. 쉼표 목록과 설명 문구를 견딘다."""
     scope = re.sub(r"\(.*?\)", " ", scope).replace("\\", "/").strip()
-    parts = [x.strip() for x in scope.split(",") if x.strip()]
+    parts = _split_scope(scope)
     globs, target = [], "."
     for x in parts:
         if " " in x:
@@ -106,16 +120,19 @@ def rerun_search(repo: pathlib.Path, s: dict, timeout: int = 90) -> tuple[bool, 
             return False, f"없는 범위에서 {claimed}건 주장: {pat[:40]} @ {target[:40]}", 0
         return True, "", 0
     actual = _rg_count(repo, pat, globs, target, timeout)
+    widened = False
     if actual is None:
         actual = _rg_count(repo, pat, [], ".", timeout)
         if actual is None:
             return True, f"검색 재현 불가, 판단에 쓰지 않음: {pat[:60]}", None
-        globs, target = [], "."
+        globs, target, widened = [], ".", True
     try:
         claimed = int(s.get("hits"))
     except (TypeError, ValueError):
         return True, f"건수 미기재: {pat[:60]}", None
     if claimed == 0 and actual > 0:
+        if widened:
+            return False, f"범위를 읽지 못해 저장소 전체로 다시 찾으니 {actual}건: {pat[:60]} @ {scope[:60]}", actual
         return False, f"0건 주장이 틀림({actual}건): {pat[:60]} @ {scope[:60]}", actual
     if claimed > 0 and actual == 0:
         whole = _rg_count(repo, pat, [], ".", timeout)

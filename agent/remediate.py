@@ -1,4 +1,4 @@
-"""조치안 만들기(Go): 패키지별로 버전을 올려 보고, 빌드가 되는 것만 남기고, 시험과 재스캔으로 확인한다.
+"""조치안 만들기(Go): 패키지별로 버전을 올려 빌드와 시험을 돌리고, 새 실패가 없는 것만 남기고, 재스캔으로 확인한다.
 
     python3 agent/remediate.py <저장소> --out out/<이름> [--test-timeout 1200]
 
@@ -6,6 +6,8 @@
 - 먼저 고치기 전 빌드와 시험을 재서, 원래 실패하던 것을 조치 탓으로 돌리지 않는다.
 - 한 번에 다 올리면 하나가 전체를 깨뜨린다(2026-11-02 headscale: runc 를 올리자 dockertest 가 깨졌다). 하나씩 시도해 깨지면 되돌리고 사람에게 넘긴다.
 - 정식 릴리스가 없는 수정 버전(rc, beta)은 자동으로 고르지 않는다.
+- 시험 비교는 패키지가 아니라 시험 이름까지 본다. 원래 실패하던 패키지 안의 새 실패를 놓치지 않으려는 것이다. 종료 코드가 0이 아닌데 실패를 읽지 못하면 통과로 치지 않는다.
+- 언어 버전 상승과 간접 의존성 상승은 빌드가 되어도 담당자가 볼 일이라 따로 적는다.
 - 시험은 저장소 코드를 실행하므로 sandbox-exec 로 비밀 폴더 읽기를 막고 돌린다(맥).
 """
 from __future__ import annotations
@@ -20,6 +22,55 @@ PROFILE = """(version 1)
 (deny file-read* file-write*
   (subpath "{h}/.nova") (subpath "{h}/.ssh") (subpath "{h}/.codex") (subpath "{h}/.claude") (subpath "{h}/.aws") (subpath "{h}/.gnupg"))
 """.format(h=HOME)
+
+
+def parse_go_test(out: str) -> dict:
+    """go test 출력에서 실패 패키지와 실패 시험 이름을 읽는다.
+
+    줄 안의 공백만 건너뛴다. 줄바꿈까지 건너뛰면 단독 「FAIL」 줄이 다음 줄의 「FAIL 패키지」 를 삼켜 실패가 안 보인다.
+    """
+    packages = sorted({" ".join(m.groups(default="")).strip() for m in re.finditer(r"^FAIL[ \t]+(\S+)(?:[ \t]+(\[\w+ failed\]))?", out, re.M)})
+    tests = sorted(set(re.findall(r"^[ \t]*--- FAIL:[ \t]+(\S+)", out, re.M)))
+    return {"ok_packages": len(re.findall(r"^ok[ \t]", out, re.M)), "failed_packages": packages, "failed_tests": tests}
+
+
+def new_failures(base: dict, now: dict) -> list[str]:
+    """고치기 전에 없던 실패. 실패를 읽지 못했거나 통과 패키지가 줄어도 새 실패로 친다."""
+    seen = set(base["failed_packages"]) | set(base["failed_tests"])
+    found = set(now["failed_packages"]) | set(now["failed_tests"])
+    new = sorted(found - seen)
+    if now["exit"] != 0 and not found:
+        new.append(f"읽지 못한 시험 실패(종료 코드 {now['exit']})")
+    if now["ok_packages"] < base["ok_packages"]:
+        new.append(f"통과 패키지 감소({base['ok_packages']}에서 {now['ok_packages']}로)")
+    return new
+
+
+def go_mod_state(text: str) -> tuple[str | None, dict[str, str]]:
+    """go.mod 의 언어 버전과 모듈별 버전."""
+    m = re.search(r"^go[ \t]+(\S+)", text, re.M)
+    mods = {a: b for a, b in re.findall(r"^[ \t]*(?:require[ \t]+)?(\S+)[ \t]+(v\S+)", text, re.M)}
+    return (m.group(1) if m else None), mods
+
+
+def side_effects(before: str, after: str, targets: set[str]) -> dict:
+    """요청하지 않았는데 함께 바뀐 것."""
+    go_a, mods_a = go_mod_state(before)
+    go_b, mods_b = go_mod_state(after)
+    bumps = {k: [mods_a[k], v] for k, v in mods_b.items() if k in mods_a and mods_a[k] != v and k not in targets}
+    return {"go_directive": [go_a, go_b] if go_a != go_b else None, "also_changed": bumps}
+
+
+def alert_ids(raw: str) -> tuple[set[str], set[str], int]:
+    """스캐너 JSON 의 경보 ID, 별칭까지 합친 ID, 경보 수. JSON 이 아니면 오류를 낸다(빈 결과를 「다 고침」 으로 읽지 않는다)."""
+    ids, names, n = set(), set(), 0
+    for res in json.loads(raw).get("results", []):
+        for pk in res.get("packages", []):
+            for v in pk.get("vulnerabilities", []):
+                n += 1
+                ids.add(v.get("id", ""))
+                names.update([v.get("id", "")] + (v.get("aliases") or []))
+    return ids, names, n
 
 
 def semver_key(v: str):
@@ -67,9 +118,7 @@ class Work:
 
     def test(self, pkgs, timeout):
         r = self.go(["test", "-short", "-count=1", *pkgs], timeout)
-        failed = sorted(set(re.findall(r"^(?:FAIL|--- FAIL:?)\s+(\S+)", r["out"], re.M)))
-        ok = len(re.findall(r"^ok\s", r["out"], re.M))
-        return {"exit": r["exit"], "seconds": r["seconds"], "ok_packages": ok, "failed": [f for f in failed if "/" in f], "tail": r["out"][-700:]}
+        return {"exit": r["exit"], "seconds": r["seconds"], **parse_go_test(r["out"]), "tail": r["out"][-700:]}
 
 
 def main() -> int:
@@ -103,14 +152,16 @@ def main() -> int:
     w = Work(repo, out)
     pkgs = w.packages()
     base_build = w.go(["build", *pkgs], 1200)
-    base_test = w.test(pkgs, a.test_timeout) if base_build["exit"] == 0 else {"exit": -1, "failed": [], "ok_packages": 0, "seconds": 0, "tail": base_build["out"][-500:]}
-    print("고치기 전 빌드", base_build["exit"], "시험", base_test["exit"], "통과 패키지", base_test["ok_packages"], "실패", base_test["failed"][:5], flush=True)
+    base_test = w.test(pkgs, a.test_timeout) if base_build["exit"] == 0 else {"exit": -1, "failed_packages": [], "failed_tests": [], "ok_packages": 0, "seconds": 0, "tail": base_build["out"][-500:]}
+    print("고치기 전 빌드", base_build["exit"], "시험", base_test["exit"], "통과 패키지", base_test["ok_packages"], "실패", base_test["failed_packages"][:5], base_test["failed_tests"][:5], flush=True)
     accepted, rejected = [], []
     for pkg, t in sorted(targets.items(), key=lambda kv: (order[kv[1]["decision"]], kv[0])):
         g = w.go(["get", f"{pkg}@{t['version']}"], 300)
         tidy = w.go(["mod", "tidy"], 300) if g["exit"] == 0 else {"exit": 1, "out": ""}
         b = w.go(["build", *pkgs], 1200) if tidy["exit"] == 0 else {"exit": 1, "out": tidy["out"]}
-        if g["exit"] == 0 and tidy["exit"] == 0 and b["exit"] == 0:
+        tried = w.test(pkgs, a.test_timeout) if g["exit"] == 0 and tidy["exit"] == 0 and b["exit"] == 0 else None
+        broke = new_failures(base_test, tried) if tried else []
+        if tried and not broke:
             w.git("add", "-A")
             w.git("-c", "user.name=agent", "-c", "user.email=agent@local", "commit", "-qm", f"bump {pkg} {t['version']}")
             accepted.append(pkg)
@@ -118,34 +169,29 @@ def main() -> int:
         else:
             w.git("checkout", "--", ".")
             w.git("clean", "-fdq")
-            reason = (g["out"] if g["exit"] else (tidy["out"] if tidy["exit"] else b["out"]))[-400:]
+            reason = "새 시험 실패: " + ", ".join(broke[:8]) if broke else (g["out"] if g["exit"] else (tidy["out"] if tidy["exit"] else b["out"]))[-400:]
             rejected.append({"package": pkg, "version": t["version"], "cves": t["cves"], "reason": reason})
             print("되돌림", pkg, t["version"], reason[-120:].replace("\n", " "), flush=True)
     after_test = w.test(pkgs, a.test_timeout)
-    new_failures = sorted(set(after_test["failed"]) - set(base_test["failed"]))
+    still_broken = new_failures(base_test, after_test)
+    mod_before = w.git("show", f"HEAD~{len(accepted)}:go.mod").stdout
+    effects = side_effects(mod_before, (w.dir / "go.mod").read_text(encoding="utf-8"), set(accepted))
     diff = w.git("diff", "HEAD~%d" % len(accepted), "--", "go.mod").stdout if accepted else ""
     full = w.git("diff", "HEAD~%d" % len(accepted)).stdout if accepted else ""
     (out / "fix.patch").write_text(full, encoding="utf-8")
     bom2 = out / "bom_after.cdx.json"
     subprocess.run([str(ROOT / "tools" / "syft"), "scan", f"dir:{w.dir}", "-o", f"cyclonedx-json={bom2}", "-q"], capture_output=True, timeout=600)
     r = subprocess.run([str(ROOT / "tools" / "osv-scanner"), "scan", "source", "-L", str(bom2), "--format", "json"], capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=600)
-    still, raw_after = set(), 0
-    try:
-        for res in json.loads(r.stdout).get("results", []):
-            for pk in res.get("packages", []):
-                for v in pk.get("vulnerabilities", []):
-                    raw_after += 1
-                    still.update([v.get("id", "")] + (v.get("aliases") or []))
-    except ValueError:
-        pass
+    ids_after, still, raw_after = alert_ids(r.stdout)
+    ids_before, _, _ = alert_ids((out / "scan.json").read_text(encoding="utf-8"))
     wanted = sorted({c for p in accepted for c in targets[p]["cves"]})
     before = json.loads((out / "scan_counts.json").read_text(encoding="utf-8"))["raw_alerts"]
     result = {
         "targets": targets, "accepted": accepted, "rejected": rejected, "prerelease_only": prerelease_only,
-        "baseline": {"build": base_build["exit"], "test_exit": base_test["exit"], "ok_packages": base_test["ok_packages"], "failed": base_test["failed"]},
-        "after": {"test_exit": after_test["exit"], "ok_packages": after_test["ok_packages"], "failed": after_test["failed"], "seconds": after_test["seconds"]},
-        "new_test_failures": new_failures, "cves_fixed_targeted": wanted, "cves_still_reported": [c for c in wanted if c in still],
-        "alerts_before": before, "alerts_after": raw_after, "go_mod_diff": diff[:3000],
+        "baseline": {"build": base_build["exit"], "test_exit": base_test["exit"], "ok_packages": base_test["ok_packages"], "failed_packages": base_test["failed_packages"], "failed_tests": base_test["failed_tests"]},
+        "after": {"test_exit": after_test["exit"], "ok_packages": after_test["ok_packages"], "failed_packages": after_test["failed_packages"], "failed_tests": after_test["failed_tests"], "seconds": after_test["seconds"]},
+        "new_test_failures": still_broken, "side_effects": effects, "cves_fixed_targeted": wanted, "cves_still_reported": [c for c in wanted if c in still],
+        "alerts_before": before, "alerts_after": raw_after, "alerts_new_ids": sorted(ids_after - ids_before), "go_mod_diff": diff[:3000],
     }
     (out / "remediation.json").write_text(json.dumps(result, ensure_ascii=False, indent=1), encoding="utf-8")
     print(json.dumps({k: v for k, v in result.items() if k not in ("targets", "go_mod_diff", "rejected")}, ensure_ascii=False)[:1500], flush=True)

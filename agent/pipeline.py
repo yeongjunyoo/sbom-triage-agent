@@ -288,13 +288,15 @@ def write_report(findings, decisions, counts, feeds, out, repo, components, wall
     n = {k: sum(1 for d in ds if d["decision"] == k) for k in ("OPEN", "REVIEW", "CLOSE")}
     cost = sum(d.get("cost") or 0 for d in ds)
     tiers = {t: sum(1 for f in findings if f["tier"] == t) for t in (1, 2, 3, 4)}
+    rounds = sum(len(d.get("categories") or []) for d in ds)
+    model_seconds = sum(float(d.get("seconds") or 0) for d in ds)
     L = [
         f"# SW 공급망 점검 보고서: {repo.name}", "",
         "| 단계 | 건수 |", "|---|---:|",
         f"| SBOM 구성요소 | {components} |", f"| 스캐너 경보(중복 포함) | {counts['raw_alerts']} |", f"| 패키지와 CVE 기준 고유 건 | {counts['unique']} |",
         f"| 규칙 등급 1 실제 악용(KEV) / 2 / 3 / 4 | {tiers[1]} / {tiers[2]} / {tiers[3]} / {tiers[4]} |",
         f"| 에이전트 판단 | {len(ds)} |", f"| 조치 대상 OPEN | {n['OPEN']} |", f"| 사람 검토 REVIEW | {n['REVIEW']} |", f"| 근거와 함께 닫음 CLOSE | {n['CLOSE']} |", "",
-        f"소요 {wall/60:.1f}분, 모델 비용 환산 {cost:.2f}달러. KEV 판 {feeds['kev_total']}건, EPSS {feeds['epss_day']}.", "",
+        f"판단 {rounds}회(건당 독립 2회), 회당 평균 {model_seconds / max(rounds, 1):.0f}초, 모델 비용 환산 {cost:.2f}달러. KEV 판 {feeds['kev_total']}건, EPSS {feeds['epss_day']}.", "",
     ]
     for key, title in (("OPEN", "조치 대상"), ("REVIEW", "사람 검토 필요"), ("CLOSE", "근거와 함께 닫음")):
         L += [f"## {title}", "", "| 패키지 | 버전 | CVE | KEV | EPSS | 수정 버전 | 이유 |", "|---|---|---|---|---:|---|---|"]
