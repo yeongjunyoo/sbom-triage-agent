@@ -13,7 +13,7 @@ r = vex_score.score(preds, gt)
 print(json.dumps({k: v for k, v in r.items() if k != "wrong"}, ensure_ascii=False))
 print("스캔 실패(JSON 못 읽음)", len(failed), "총 스캔", len(s["preds"]))
 stats = s.get("stats", {})
-print("종료 코드 분포", dict(collections.Counter(v["exit"] for v in stats.values())), "평균초", round(sum(v["seconds"] for v in stats.values()) / max(len(stats), 1), 1))
+print("평균초", round(sum(v.get("seconds", 0) for v in stats.values()) / max(len(stats), 1), 1), "syft 실패", sum(1 for v in stats.values() if v.get("syft") not in (0, None)))
 for lang in ("go", "java", "python"):
     sub = {t["task_id"]: gt[t["task_id"]] for t in vex_run.tasks() if t["language"] == lang}
     rr = vex_score.score({k: v for k, v in preds.items() if k in sub}, sub)

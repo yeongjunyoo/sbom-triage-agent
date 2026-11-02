@@ -62,6 +62,14 @@ def avail_mb() -> int:
         return 99999
 
 
+def _parses(text) -> bool:
+    sys.path.insert(0, str(ROOT / "eval"))
+    from verify import parse_obj
+
+    o = parse_obj(text)
+    return isinstance(o, dict) and isinstance(o.get("category") or o.get("verdict"), str)
+
+
 def agent_env() -> dict:
     env = dict(os.environ)
     tok = pathlib.Path.home() / ".nova" / "claude_oauth_token"
@@ -75,10 +83,12 @@ def run_one(t: dict, a) -> dict:
     out_dir.mkdir(parents=True, exist_ok=True)
     tag = f"{t['task_id']}__r{a.repeat}"
     meta_path = out_dir / f"{tag}.json"
+    attempt = 1
     if meta_path.exists():
         m = json.loads(meta_path.read_text(encoding="utf-8"))
-        if m.get("final_text") and m.get("exit") == 0:
+        if m.get("final_text") and m.get("exit") == 0 and not (a.retry_parse and not m.get("retried") and not _parses(m.get("final_text"))):
             return m
+        attempt = 2 if a.retry_parse and m.get("final_text") else 1
     while avail_mb() < RAM_FLOOR_MB:
         print("RAM 바닥, 대기", flush=True)
         time.sleep(60)
@@ -136,7 +146,10 @@ def run_one(t: dict, a) -> dict:
         "model": model_used, "tools": tools, "denials": denials,
         "usage": {k: (usage or {}).get(k) for k in ("input_tokens", "cache_read_input_tokens", "cache_creation_input_tokens", "output_tokens")},
     }
+    m["retried"] = attempt > 1
     meta_path.write_text(json.dumps(m, ensure_ascii=False, indent=0), encoding="utf-8")
+    if a.retry_parse and attempt == 1 and not _parses(final):
+        return run_one(t, a)
     with lock:
         print(f"{tag} exit={code} {m['seconds']}s turns={turns} cost_eq={cost} tools={len(tools)}", flush=True)
     return m
@@ -156,6 +169,7 @@ def main() -> int:
     ap.add_argument("--split", default="", choices=["", "dev", "test"])
     ap.add_argument("--context-run", default="", help="앞 단계 실행 이름. {prior} 에 그 결과를 넣고, 닫는 판단이 난 과제만 돌린다")
     ap.add_argument("--context-repeat", type=int, default=0)
+    ap.add_argument("--retry-parse", action="store_true", help="JSON 을 못 읽으면 한 번 다시 묻는다")
     ap.add_argument("--claude", default=str(pathlib.Path.home() / ".local" / "bin" / ("claude.exe" if IS_WIN else "claude")))
     a = ap.parse_args()
     ts = tasks()

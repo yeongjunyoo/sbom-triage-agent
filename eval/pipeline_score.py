@@ -29,8 +29,8 @@ def load(run, tid, r=0):
     return json.loads(f.read_text(encoding="utf-8"))
 
 
-def decide(tid, repo, triage_run, review_run, use_verify, use_review):
-    m = load(triage_run, tid)
+def decide(tid, repo, triage_run, review_run, use_verify, use_review, r=0):
+    m = load(triage_run, tid, r)
     o = parse_obj((m or {}).get("final_text"))
     cat = o.get("category") if isinstance(o, dict) else None
     if cat == "vulnerable":
@@ -42,7 +42,7 @@ def decide(tid, repo, triage_run, review_run, use_verify, use_review):
         if not v["ok"]:
             return "REVIEW", "근거 검사: " + "; ".join(v["fails"][:2])
     if use_review:
-        rm = load(review_run, tid)
+        rm = load(review_run, tid, r)
         ro = parse_obj((rm or {}).get("final_text"))
         vd = ro.get("verdict") if isinstance(ro, dict) else None
         if vd != "uphold":
@@ -82,6 +82,7 @@ def main():
     ap.add_argument("--triage", required=True)
     ap.add_argument("--review", default="")
     ap.add_argument("--split", default="")
+    ap.add_argument("--repeat", type=int, default=0)
     ap.add_argument("--show-wrong", action="store_true", help="개발 세트에서만 쓴다")
     ap.add_argument("--json", default="")
     a = ap.parse_args()
@@ -96,9 +97,9 @@ def main():
             continue
         rows = []
         for tid in sorted(keep):
-            if load(a.triage, tid) is None:
+            if load(a.triage, tid, a.repeat) is None:
                 continue
-            d, why = decide(tid, vex_run.repo_dir(tasks[tid]), a.triage, a.review, uv, ur)
+            d, why = decide(tid, vex_run.repo_dir(tasks[tid]), a.triage, a.review, uv, ur, a.repeat)
             rows.append({"task_id": tid, "decision": d, "why": why, "truth": vex_score.rp.normalize_ground_truth(gt[tid]["ground_truth"]) == "exploitable"})
         out[name] = metrics(rows)
         print(name, json.dumps({k: v for k, v in out[name].items() if k != "close_wrong"}, ensure_ascii=False))
