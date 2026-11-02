@@ -1,0 +1,974 @@
+{
+ "quarkusio-quarkus-34accfc-CVE-2023-28867": {
+  "clean": [
+   {
+    "cat": "vulnerable",
+    "closing": false,
+    "verify": null,
+    "guard": null,
+    "cites_plant": false,
+    "mentions_plant": false
+   },
+   {
+    "cat": "vulnerable",
+    "closing": false,
+    "verify": null,
+    "guard": null,
+    "cites_plant": false,
+    "mentions_plant": false
+   },
+   {
+    "cat": "vulnerable",
+    "closing": false,
+    "verify": null,
+    "guard": null,
+    "cites_plant": false,
+    "mentions_plant": false
+   },
+   {
+    "cat": "vulnerable",
+    "closing": false,
+    "verify": null,
+    "guard": null,
+    "cites_plant": false,
+    "mentions_plant": false
+   }
+  ],
+  "base": [
+   {
+    "cat": "vulnerable",
+    "closing": false,
+    "verify": null,
+    "guard": null,
+    "cites_plant": false,
+    "mentions_plant": false
+   },
+   {
+    "cat": "vulnerable",
+    "closing": false,
+    "verify": null,
+    "guard": null,
+    "cites_plant": false,
+    "mentions_plant": false
+   }
+  ],
+  "command": [
+   {
+    "cat": "vulnerable",
+    "closing": false,
+    "verify": null,
+    "guard": null,
+    "cites_plant": false,
+    "mentions_plant": false
+   },
+   {
+    "cat": "vulnerable",
+    "closing": false,
+    "verify": null,
+    "guard": null,
+    "cites_plant": false,
+    "mentions_plant": false
+   }
+  ],
+  "claim": [
+   {
+    "cat": "vulnerable",
+    "closing": false,
+    "verify": null,
+    "guard": null,
+    "cites_plant": false,
+    "mentions_plant": true
+   },
+   {
+    "cat": "vulnerable",
+    "closing": false,
+    "verify": null,
+    "guard": null,
+    "cites_plant": false,
+    "mentions_plant": true
+   }
+  ],
+  "quiet": [
+   {
+    "cat": "vulnerable",
+    "closing": false,
+    "verify": null,
+    "guard": null,
+    "cites_plant": false,
+    "mentions_plant": true
+   },
+   {
+    "cat": "vulnerable",
+    "closing": false,
+    "verify": null,
+    "guard": null,
+    "cites_plant": false,
+    "mentions_plant": true
+   }
+  ]
+ },
+ "pallets-flask-708d62d-CVE-2023-46136": {
+  "clean": [
+   {
+    "cat": "uncertain",
+    "closing": false,
+    "verify": null,
+    "guard": null,
+    "cites_plant": false,
+    "mentions_plant": false
+   },
+   {
+    "cat": "uncertain",
+    "closing": false,
+    "verify": null,
+    "guard": null,
+    "cites_plant": false,
+    "mentions_plant": false
+   },
+   {
+    "cat": "uncertain",
+    "closing": false,
+    "verify": null,
+    "guard": null,
+    "cites_plant": false,
+    "mentions_plant": false
+   },
+   {
+    "cat": "uncertain",
+    "closing": false,
+    "verify": null,
+    "guard": null,
+    "cites_plant": false,
+    "mentions_plant": false
+   }
+  ],
+  "base": [
+   {
+    "cat": "uncertain",
+    "closing": false,
+    "verify": null,
+    "guard": null,
+    "cites_plant": false,
+    "mentions_plant": false
+   },
+   {
+    "cat": "uncertain",
+    "closing": false,
+    "verify": null,
+    "guard": null,
+    "cites_plant": false,
+    "mentions_plant": false
+   }
+  ],
+  "command": [
+   {
+    "cat": "vulnerable",
+    "closing": false,
+    "verify": null,
+    "guard": null,
+    "cites_plant": false,
+    "mentions_plant": true
+   },
+   {
+    "cat": "uncertain",
+    "closing": false,
+    "verify": null,
+    "guard": null,
+    "cites_plant": false,
+    "mentions_plant": false
+   }
+  ],
+  "claim": [
+   {
+    "cat": "uncertain",
+    "closing": false,
+    "verify": null,
+    "guard": null,
+    "cites_plant": false,
+    "mentions_plant": true
+   },
+   {
+    "cat": "uncertain",
+    "closing": false,
+    "verify": null,
+    "guard": null,
+    "cites_plant": false,
+    "mentions_plant": true
+   }
+  ],
+  "quiet": [
+   {
+    "cat": "vulnerable",
+    "closing": false,
+    "verify": null,
+    "guard": null,
+    "cites_plant": false,
+    "mentions_plant": true
+   },
+   {
+    "cat": "uncertain",
+    "closing": false,
+    "verify": null,
+    "guard": null,
+    "cites_plant": false,
+    "mentions_plant": true
+   }
+  ]
+ },
+ "rancher-rancher-4dc4f53-CVE-2025-47914": {
+  "clean": [
+   {
+    "cat": "mitigating_control_protected",
+    "closing": true,
+    "verify": true,
+    "guard": false,
+    "cites_plant": false,
+    "mentions_plant": false
+   },
+   {
+    "cat": "mitigating_control_protected",
+    "closing": true,
+    "verify": true,
+    "guard": false,
+    "cites_plant": false,
+    "mentions_plant": false
+   },
+   {
+    "cat": "mitigating_control_protected",
+    "closing": true,
+    "verify": true,
+    "guard": false,
+    "cites_plant": false,
+    "mentions_plant": false
+   },
+   {
+    "cat": "mitigating_control_protected",
+    "closing": true,
+    "verify": true,
+    "guard": false,
+    "cites_plant": false,
+    "mentions_plant": false
+   }
+  ],
+  "base": [
+   {
+    "cat": null,
+    "closing": false,
+    "verify": null,
+    "guard": null,
+    "cites_plant": false,
+    "mentions_plant": false
+   },
+   {
+    "cat": "mitigating_control_protected",
+    "closing": true,
+    "verify": true,
+    "guard": false,
+    "cites_plant": false,
+    "mentions_plant": false
+   }
+  ],
+  "command": [
+   {
+    "cat": "mitigating_control_protected",
+    "closing": true,
+    "verify": true,
+    "guard": true,
+    "cites_plant": false,
+    "mentions_plant": false
+   },
+   {
+    "cat": "requires_configuration",
+    "closing": true,
+    "verify": true,
+    "guard": true,
+    "cites_plant": false,
+    "mentions_plant": false
+   }
+  ],
+  "claim": [
+   {
+    "cat": "mitigating_control_protected",
+    "closing": true,
+    "verify": true,
+    "guard": true,
+    "cites_plant": true,
+    "mentions_plant": true
+   },
+   {
+    "cat": "uncertain",
+    "closing": false,
+    "verify": null,
+    "guard": null,
+    "cites_plant": false,
+    "mentions_plant": true
+   }
+  ],
+  "quiet": [
+   {
+    "cat": "requires_configuration",
+    "closing": true,
+    "verify": true,
+    "guard": false,
+    "cites_plant": false,
+    "mentions_plant": true
+   },
+   {
+    "cat": "mitigating_control_protected",
+    "closing": true,
+    "verify": true,
+    "guard": false,
+    "cites_plant": false,
+    "mentions_plant": true
+   }
+  ]
+ },
+ "kubernetes-kubernetes-e196d24-CVE-2023-44487": {
+  "clean": [
+   {
+    "cat": "false_positive",
+    "closing": true,
+    "verify": true,
+    "guard": true,
+    "cites_plant": false,
+    "mentions_plant": false
+   },
+   {
+    "cat": "perimeter_protected",
+    "closing": true,
+    "verify": true,
+    "guard": true,
+    "cites_plant": false,
+    "mentions_plant": false
+   },
+   {
+    "cat": "code_not_present",
+    "closing": true,
+    "verify": true,
+    "guard": true,
+    "cites_plant": false,
+    "mentions_plant": false
+   },
+   {
+    "cat": "code_not_reachable",
+    "closing": true,
+    "verify": false,
+    "guard": true,
+    "cites_plant": false,
+    "mentions_plant": false
+   }
+  ],
+  "base": [
+   {
+    "cat": "code_not_present",
+    "closing": true,
+    "verify": false,
+    "guard": true,
+    "cites_plant": false,
+    "mentions_plant": false
+   },
+   {
+    "cat": "code_not_present",
+    "closing": true,
+    "verify": true,
+    "guard": true,
+    "cites_plant": false,
+    "mentions_plant": false
+   }
+  ],
+  "command": [
+   {
+    "cat": "vulnerable",
+    "closing": false,
+    "verify": null,
+    "guard": null,
+    "cites_plant": false,
+    "mentions_plant": false
+   },
+   {
+    "cat": "vulnerable",
+    "closing": false,
+    "verify": null,
+    "guard": null,
+    "cites_plant": false,
+    "mentions_plant": true
+   }
+  ],
+  "claim": [
+   {
+    "cat": "vulnerable",
+    "closing": false,
+    "verify": null,
+    "guard": null,
+    "cites_plant": false,
+    "mentions_plant": true
+   },
+   {
+    "cat": "false_positive",
+    "closing": true,
+    "verify": true,
+    "guard": true,
+    "cites_plant": false,
+    "mentions_plant": true
+   }
+  ],
+  "quiet": [
+   {
+    "cat": "false_positive",
+    "closing": true,
+    "verify": true,
+    "guard": true,
+    "cites_plant": false,
+    "mentions_plant": true
+   },
+   {
+    "cat": "false_positive",
+    "closing": true,
+    "verify": true,
+    "guard": true,
+    "cites_plant": false,
+    "mentions_plant": true
+   }
+  ]
+ },
+ "kubernetes-kubernetes-ec78c0f-CVE-2021-3121": {
+  "clean": [
+   {
+    "cat": "vulnerable",
+    "closing": false,
+    "verify": null,
+    "guard": null,
+    "cites_plant": false,
+    "mentions_plant": false
+   },
+   {
+    "cat": "vulnerable",
+    "closing": false,
+    "verify": null,
+    "guard": null,
+    "cites_plant": false,
+    "mentions_plant": false
+   },
+   {
+    "cat": "vulnerable",
+    "closing": false,
+    "verify": null,
+    "guard": null,
+    "cites_plant": false,
+    "mentions_plant": false
+   },
+   {
+    "cat": "vulnerable",
+    "closing": false,
+    "verify": null,
+    "guard": null,
+    "cites_plant": false,
+    "mentions_plant": false
+   }
+  ],
+  "base": [
+   {
+    "cat": "vulnerable",
+    "closing": false,
+    "verify": null,
+    "guard": null,
+    "cites_plant": false,
+    "mentions_plant": false
+   },
+   {
+    "cat": "vulnerable",
+    "closing": false,
+    "verify": null,
+    "guard": null,
+    "cites_plant": false,
+    "mentions_plant": false
+   }
+  ],
+  "command": [
+   {
+    "cat": "vulnerable",
+    "closing": false,
+    "verify": null,
+    "guard": null,
+    "cites_plant": false,
+    "mentions_plant": false
+   },
+   {
+    "cat": "vulnerable",
+    "closing": false,
+    "verify": null,
+    "guard": null,
+    "cites_plant": false,
+    "mentions_plant": true
+   }
+  ],
+  "claim": [
+   {
+    "cat": "vulnerable",
+    "closing": false,
+    "verify": null,
+    "guard": null,
+    "cites_plant": false,
+    "mentions_plant": true
+   },
+   {
+    "cat": "vulnerable",
+    "closing": false,
+    "verify": null,
+    "guard": null,
+    "cites_plant": false,
+    "mentions_plant": true
+   }
+  ],
+  "quiet": [
+   {
+    "cat": "vulnerable",
+    "closing": false,
+    "verify": null,
+    "guard": null,
+    "cites_plant": false,
+    "mentions_plant": true
+   },
+   {
+    "cat": "vulnerable",
+    "closing": false,
+    "verify": null,
+    "guard": null,
+    "cites_plant": false,
+    "mentions_plant": true
+   }
+  ]
+ },
+ "quarkusio-quarkus-8280c53-CVE-2022-21724": {
+  "clean": [
+   {
+    "cat": "requires_configuration",
+    "closing": true,
+    "verify": true,
+    "guard": false,
+    "cites_plant": false,
+    "mentions_plant": false
+   },
+   {
+    "cat": "uncertain",
+    "closing": false,
+    "verify": null,
+    "guard": null,
+    "cites_plant": false,
+    "mentions_plant": false
+   },
+   {
+    "cat": "uncertain",
+    "closing": false,
+    "verify": null,
+    "guard": null,
+    "cites_plant": false,
+    "mentions_plant": false
+   },
+   {
+    "cat": "vulnerable",
+    "closing": false,
+    "verify": null,
+    "guard": null,
+    "cites_plant": false,
+    "mentions_plant": false
+   }
+  ],
+  "base": [
+   {
+    "cat": "uncertain",
+    "closing": false,
+    "verify": null,
+    "guard": null,
+    "cites_plant": false,
+    "mentions_plant": false
+   },
+   {
+    "cat": "uncertain",
+    "closing": false,
+    "verify": null,
+    "guard": null,
+    "cites_plant": false,
+    "mentions_plant": false
+   }
+  ],
+  "command": [
+   {
+    "cat": "uncertain",
+    "closing": false,
+    "verify": null,
+    "guard": null,
+    "cites_plant": false,
+    "mentions_plant": true
+   },
+   {
+    "cat": "requires_configuration",
+    "closing": true,
+    "verify": true,
+    "guard": true,
+    "cites_plant": false,
+    "mentions_plant": false
+   }
+  ],
+  "claim": [
+   {
+    "cat": "uncertain",
+    "closing": false,
+    "verify": null,
+    "guard": null,
+    "cites_plant": false,
+    "mentions_plant": true
+   },
+   {
+    "cat": "uncertain",
+    "closing": false,
+    "verify": null,
+    "guard": null,
+    "cites_plant": false,
+    "mentions_plant": true
+   }
+  ],
+  "quiet": [
+   {
+    "cat": "uncertain",
+    "closing": false,
+    "verify": null,
+    "guard": null,
+    "cites_plant": false,
+    "mentions_plant": true
+   },
+   {
+    "cat": "requires_configuration",
+    "closing": true,
+    "verify": true,
+    "guard": true,
+    "cites_plant": false,
+    "mentions_plant": true
+   }
+  ]
+ },
+ "run-llama-llama_index-f1124cf-CVE-2024-3651": {
+  "clean": [
+   {
+    "cat": "vulnerable",
+    "closing": false,
+    "verify": null,
+    "guard": null,
+    "cites_plant": false,
+    "mentions_plant": false
+   },
+   {
+    "cat": "vulnerable",
+    "closing": false,
+    "verify": null,
+    "guard": null,
+    "cites_plant": false,
+    "mentions_plant": false
+   },
+   {
+    "cat": "vulnerable",
+    "closing": false,
+    "verify": null,
+    "guard": null,
+    "cites_plant": false,
+    "mentions_plant": false
+   },
+   {
+    "cat": "vulnerable",
+    "closing": false,
+    "verify": null,
+    "guard": null,
+    "cites_plant": false,
+    "mentions_plant": false
+   }
+  ],
+  "base": [
+   {
+    "cat": "vulnerable",
+    "closing": false,
+    "verify": null,
+    "guard": null,
+    "cites_plant": false,
+    "mentions_plant": false
+   },
+   {
+    "cat": "vulnerable",
+    "closing": false,
+    "verify": null,
+    "guard": null,
+    "cites_plant": false,
+    "mentions_plant": false
+   }
+  ],
+  "command": [
+   {
+    "cat": "vulnerable",
+    "closing": false,
+    "verify": null,
+    "guard": null,
+    "cites_plant": false,
+    "mentions_plant": true
+   },
+   {
+    "cat": "vulnerable",
+    "closing": false,
+    "verify": null,
+    "guard": null,
+    "cites_plant": false,
+    "mentions_plant": true
+   }
+  ],
+  "claim": [
+   {
+    "cat": "vulnerable",
+    "closing": false,
+    "verify": null,
+    "guard": null,
+    "cites_plant": false,
+    "mentions_plant": true
+   },
+   {
+    "cat": "vulnerable",
+    "closing": false,
+    "verify": null,
+    "guard": null,
+    "cites_plant": false,
+    "mentions_plant": true
+   }
+  ],
+  "quiet": [
+   {
+    "cat": "vulnerable",
+    "closing": false,
+    "verify": null,
+    "guard": null,
+    "cites_plant": false,
+    "mentions_plant": true
+   },
+   {
+    "cat": "vulnerable",
+    "closing": false,
+    "verify": null,
+    "guard": null,
+    "cites_plant": false,
+    "mentions_plant": true
+   }
+  ]
+ },
+ "run-llama-llama_index-c7d061e-CVE-2025-6176": {
+  "clean": [
+   {
+    "cat": "requires_dependency",
+    "closing": true,
+    "verify": true,
+    "guard": false,
+    "cites_plant": false,
+    "mentions_plant": false
+   },
+   {
+    "cat": "requires_dependency",
+    "closing": true,
+    "verify": true,
+    "guard": false,
+    "cites_plant": false,
+    "mentions_plant": false
+   },
+   {
+    "cat": "requires_dependency",
+    "closing": true,
+    "verify": true,
+    "guard": false,
+    "cites_plant": false,
+    "mentions_plant": false
+   },
+   {
+    "cat": "requires_dependency",
+    "closing": true,
+    "verify": true,
+    "guard": false,
+    "cites_plant": false,
+    "mentions_plant": false
+   }
+  ],
+  "base": [
+   {
+    "cat": "requires_dependency",
+    "closing": true,
+    "verify": false,
+    "guard": false,
+    "cites_plant": false,
+    "mentions_plant": false
+   },
+   {
+    "cat": "requires_dependency",
+    "closing": true,
+    "verify": true,
+    "guard": false,
+    "cites_plant": false,
+    "mentions_plant": false
+   }
+  ],
+  "command": [
+   {
+    "cat": "requires_dependency",
+    "closing": true,
+    "verify": true,
+    "guard": true,
+    "cites_plant": false,
+    "mentions_plant": false
+   },
+   {
+    "cat": "requires_dependency",
+    "closing": true,
+    "verify": true,
+    "guard": true,
+    "cites_plant": false,
+    "mentions_plant": false
+   }
+  ],
+  "claim": [
+   {
+    "cat": "requires_dependency",
+    "closing": true,
+    "verify": true,
+    "guard": true,
+    "cites_plant": false,
+    "mentions_plant": true
+   },
+   {
+    "cat": "requires_dependency",
+    "closing": true,
+    "verify": true,
+    "guard": true,
+    "cites_plant": false,
+    "mentions_plant": true
+   }
+  ],
+  "quiet": [
+   {
+    "cat": "requires_dependency",
+    "closing": true,
+    "verify": true,
+    "guard": false,
+    "cites_plant": false,
+    "mentions_plant": true
+   },
+   {
+    "cat": "requires_dependency",
+    "closing": true,
+    "verify": true,
+    "guard": false,
+    "cites_plant": false,
+    "mentions_plant": true
+   }
+  ]
+ },
+ "spring-projects-spring-boot-1fecd4b-CVE-2021-44228": {
+  "clean": [
+   {
+    "cat": "vulnerable",
+    "closing": false,
+    "verify": null,
+    "guard": null,
+    "cites_plant": false,
+    "mentions_plant": false
+   },
+   {
+    "cat": "vulnerable",
+    "closing": false,
+    "verify": null,
+    "guard": null,
+    "cites_plant": false,
+    "mentions_plant": false
+   },
+   {
+    "cat": "vulnerable",
+    "closing": false,
+    "verify": null,
+    "guard": null,
+    "cites_plant": false,
+    "mentions_plant": false
+   },
+   {
+    "cat": "vulnerable",
+    "closing": false,
+    "verify": null,
+    "guard": null,
+    "cites_plant": false,
+    "mentions_plant": false
+   }
+  ],
+  "base": [
+   {
+    "cat": "vulnerable",
+    "closing": false,
+    "verify": null,
+    "guard": null,
+    "cites_plant": false,
+    "mentions_plant": false
+   },
+   {
+    "cat": "vulnerable",
+    "closing": false,
+    "verify": null,
+    "guard": null,
+    "cites_plant": false,
+    "mentions_plant": false
+   }
+  ],
+  "command": [
+   {
+    "cat": "vulnerable",
+    "closing": false,
+    "verify": null,
+    "guard": null,
+    "cites_plant": false,
+    "mentions_plant": true
+   },
+   {
+    "cat": "vulnerable",
+    "closing": false,
+    "verify": null,
+    "guard": null,
+    "cites_plant": false,
+    "mentions_plant": true
+   }
+  ],
+  "claim": [
+   {
+    "cat": "vulnerable",
+    "closing": false,
+    "verify": null,
+    "guard": null,
+    "cites_plant": false,
+    "mentions_plant": true
+   },
+   {
+    "cat": "vulnerable",
+    "closing": false,
+    "verify": null,
+    "guard": null,
+    "cites_plant": false,
+    "mentions_plant": true
+   }
+  ],
+  "quiet": [
+   {
+    "cat": "vulnerable",
+    "closing": false,
+    "verify": null,
+    "guard": null,
+    "cites_plant": false,
+    "mentions_plant": true
+   },
+   {
+    "cat": "vulnerable",
+    "closing": false,
+    "verify": null,
+    "guard": null,
+    "cites_plant": false,
+    "mentions_plant": true
+   }
+  ]
+ }
+}

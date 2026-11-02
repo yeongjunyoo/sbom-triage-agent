@@ -1,0 +1,495 @@
+{
+"preds": {
+"prestodb-presto-8136f7c-CVE-2024-47535": true,
+"apache-pulsar-137df29-CVE-2024-51504": true,
+"apache-dubbo-218aab1-CVE-2024-7254": true,
+"prestodb-presto-368bcc7-CVE-2025-58457": true,
+"quarkusio-quarkus-d392404-CVE-2017-18640": true,
+"quarkusio-quarkus-34accfc-CVE-2023-28867": false,
+"redisson-redisson-47f6a39-CVE-2020-25638": true,
+"quarkusio-quarkus-f4a1bce-CVE-2021-20218": false,
+"apache-flink-e4ea3d8-CVE-2025-48924": true,
+"alibaba-nacos-20caf99-CVE-2025-55752": true,
+"apache-airflow-3dbad4f-CVE-2023-47248": false,
+"fastapi-fastapi-febf6b6-CVE-2024-47874": false,
+"infiniflow-ragflow-c68767a-CVE-2024-36039": true,
+"langflow-ai-langflow-c46a3ee-CVE-2024-23342": true,
+"pallets-flask-708d62d-CVE-2023-46136": true,
+"caddyserver-caddy-8dc7667-CVE-2025-29785": true,
+"aquasecurity-trivy-37da98d-CVE-2024-32473": true,
+"kubernetes-minikube-e7bf515-CVE-2019-5736": false,
+"juanfont-headscale-e172c29-CVE-2024-45338": true,
+"zeromicro-go-zero-bae061a-CVE-2022-32149": true,
+"cilium-cilium-43bff35-CVE-2026-35469": true,
+"containers-podman-6541fc4-CVE-2025-58181": true,
+"rancher-rancher-4dc4f53-CVE-2025-47914": true,
+"rancher-rancher-4dc4f53-CVE-2025-58181": true,
+"cilium-cilium-3977f6a-CVE-2026-33186": true,
+"moby-moby-3ede246-CVE-2026-39984": true,
+"kubernetes-kubernetes-e196d24-CVE-2023-44487": false,
+"kubernetes-kubernetes-1ee2acb-CVE-2024-24786": true,
+"stretchr-testify-285adcc-CVE-2022-28948": true,
+"labstack-echo-fdacff0-CVE-2020-26160": true,
+"aquasecurity-trivy-98e136e-CVE-2024-24791": true,
+"containers-podman-38ccfa2-CVE-2024-37298": true,
+"containers-podman-6a65597-CVE-2023-48795": true,
+"cilium-cilium-1228cbc-CVE-2026-35469": true,
+"helm-helm-b76a950-CVE-2024-25621": true,
+"rancher-rancher-8761419-CVE-2026-24051": true,
+"rancher-rancher-8761419-CVE-2026-39883": true,
+"istio-istio-042afc3-CVE-2023-48795": true,
+"istio-istio-8903f65-CVE-2024-45338": true,
+"helm-helm-fbb24fe-CVE-2021-21334": true,
+"kubernetes-kubernetes-ec78c0f-CVE-2021-3121": true,
+"mitmproxy-mitmproxy-ab470e5-CVE-2026-27448": true,
+"containers-podman-5ae6347-CVE-2025-47914": true,
+"gitleaks-gitleaks-f487f85-CVE-2025-22871": false,
+"kubernetes-kubernetes-6d4b94f-CVE-2022-41717": true,
+"moby-moby-caea5f7-CVE-2026-39883": true,
+"quarkusio-quarkus-5c7a469-CVE-2024-1300": true,
+"quarkusio-quarkus-8280c53-CVE-2022-21724": false,
+"apache-hadoop-3bf43b4-CVE-2024-47535": false,
+"apache-flink-46cbe8b-CVE-2025-12183": true,
+"apache-flink-46cbe8b-CVE-2025-66566": true,
+"keycloak-keycloak-9b01bf3-CVE-2022-3143": true,
+"apache-pulsar-5e6e6ce-CVE-2023-2976": true,
+"apache-hadoop-ff451f5-CVE-2025-66566": true,
+"apache-hadoop-c528566-CVE-2025-14763": true,
+"apache-dubbo-1d1bb26-CVE-2023-6378": true,
+"home-assistant-core-44293a3-CVE-2021-21330": true,
+"home-assistant-core-cd0e983-CVE-2023-38325": true,
+"infiniflow-ragflow-c68767a-CVE-2024-28219": true,
+"infiniflow-ragflow-c68767a-CVE-2024-34069": true,
+"infiniflow-ragflow-5c955a3-CVE-2026-28804": false,
+"infiniflow-ragflow-5c955a3-CVE-2026-31826": true,
+"langchain-ai-langchain-fa6397d-CVE-2024-21503": true,
+"langflow-ai-langflow-374508c-CVE-2024-1135": true,
+"mitmproxy-mitmproxy-0ace627-CVE-2023-30861": false,
+"mitmproxy-mitmproxy-3214581-CVE-2020-8927": false,
+"mitmproxy-mitmproxy-b089c5f-CVE-2025-43859": true,
+"roboflow-supervision-1bbe03c-CVE-2024-35195": false,
+"run-llama-llama_index-f1124cf-CVE-2024-3651": true,
+"run-llama-llama_index-c7d061e-CVE-2025-6176": true,
+"keycloak-keycloak-731414e-CVE-2019-17571": true,
+"apache-hadoop-5b1346f-CVE-2024-23944": true,
+"apache-pulsar-7ab9c70-CVE-2023-34462": true,
+"apache-flink-0630952-CVE-2022-42003": true,
+"spring-projects-spring-boot-1fecd4b-CVE-2021-44228": false
+},
+"stats": {
+"airflow_3dbad4f5ca": {
+"syft": 0,
+"osv": 1,
+"seconds": 8.8,
+"bom_bytes": 2245306
+},
+"caddy_8dc76676fb": {
+"syft": 0,
+"osv": 1,
+"seconds": 7.3,
+"bom_bytes": 122663
+},
+"cilium_1228cbc922": {
+"syft": 0,
+"osv": 1,
+"seconds": 7.7,
+"bom_bytes": 1645085
+},
+"cilium_3977f6a112": {
+"syft": 0,
+"osv": 1,
+"seconds": 9.6,
+"bom_bytes": 1084143
+},
+"cilium_43bff35359": {
+"syft": 0,
+"osv": 1,
+"seconds": 6.2,
+"bom_bytes": 1090707
+},
+"core_44293a3738": {
+"syft": 0,
+"osv": 1,
+"seconds": 6.3,
+"bom_bytes": 2564010
+},
+"core_cd0e9839a0": {
+"syft": 0,
+"osv": 1,
+"seconds": 9.5,
+"bom_bytes": 3730346
+},
+"dubbo_1d1bb26e79": {
+"syft": 0,
+"osv": 1,
+"seconds": 4.6,
+"bom_bytes": 604846
+},
+"dubbo_218aab1e4a": {
+"syft": 0,
+"osv": 1,
+"seconds": 4.6,
+"bom_bytes": 604477
+},
+"echo_fdacff0d93": {
+"syft": 0,
+"osv": 1,
+"seconds": 2.5,
+"bom_bytes": 11511
+},
+"fastapi_febf6b6a52": {
+"syft": 0,
+"osv": 1,
+"seconds": 4.4,
+"bom_bytes": 101411
+},
+"flask_708d62d717": {
+"syft": 0,
+"osv": 1,
+"seconds": 3.0,
+"bom_bytes": 62286
+},
+"flink_0630952860": {
+"syft": 0,
+"osv": 1,
+"seconds": 6.8,
+"bom_bytes": 863350
+},
+"flink_46cbe8bc9d": {
+"syft": 0,
+"osv": 1,
+"seconds": 5.8,
+"bom_bytes": 690536
+},
+"flink_e4ea3d8194": {
+"syft": 0,
+"osv": 1,
+"seconds": 6.0,
+"bom_bytes": 705013
+},
+"gitleaks_f487f85378": {
+"syft": 0,
+"osv": 1,
+"seconds": 2.4,
+"bom_bytes": 64974
+},
+"go-zero_bae061a67e": {
+"syft": 0,
+"osv": 1,
+"seconds": 3.7,
+"bom_bytes": 62571
+},
+"hadoop_3bf43b4144": {
+"syft": 0,
+"osv": 1,
+"seconds": 9.6,
+"bom_bytes": 1687439
+},
+"hadoop_5b1346fb88": {
+"syft": 0,
+"osv": 1,
+"seconds": 7.1,
+"bom_bytes": 1627809
+},
+"hadoop_c528566811": {
+"syft": 0,
+"osv": 1,
+"seconds": 9.9,
+"bom_bytes": 2092320
+},
+"hadoop_ff451f53a6": {
+"syft": 0,
+"osv": 1,
+"seconds": 6.9,
+"bom_bytes": 2092320
+},
+"headscale_e172c29360": {
+"syft": 0,
+"osv": 1,
+"seconds": 3.5,
+"bom_bytes": 211597
+},
+"helm_b76a950f68": {
+"syft": 0,
+"osv": 1,
+"seconds": 5.8,
+"bom_bytes": 149265
+},
+"helm_fbb24fe545": {
+"syft": 0,
+"osv": 1,
+"seconds": 3.5,
+"bom_bytes": 35617
+},
+"istio_042afc3802": {
+"syft": 0,
+"osv": 1,
+"seconds": 4.2,
+"bom_bytes": 227297
+},
+"istio_8903f65dc2": {
+"syft": 0,
+"osv": 1,
+"seconds": 5.3,
+"bom_bytes": 323204
+},
+"keycloak_731414e44a": {
+"syft": 0,
+"osv": 1,
+"seconds": 9.8,
+"bom_bytes": 2440636
+},
+"keycloak_9b01bf382d": {
+"syft": 0,
+"osv": 1,
+"seconds": 5.2,
+"bom_bytes": 1762001
+},
+"kubernetes_1ee2acbb2e": {
+"syft": 0,
+"osv": 1,
+"seconds": 7.9,
+"bom_bytes": 1498502
+},
+"kubernetes_6d4b94f0ab": {
+"syft": 0,
+"osv": 1,
+"seconds": 11.7,
+"bom_bytes": 1473688
+},
+"kubernetes_e196d24910": {
+"syft": 0,
+"osv": 1,
+"seconds": 7.2,
+"bom_bytes": 1605522
+},
+"kubernetes_ec78c0f487": {
+"syft": 0,
+"osv": 1,
+"seconds": 7.1,
+"bom_bytes": 755618
+},
+"langchain_fa6397d76a": {
+"syft": 0,
+"osv": 1,
+"seconds": 16.4,
+"bom_bytes": 24877435
+},
+"langflow_374508cf18": {
+"syft": 0,
+"osv": 1,
+"seconds": 6.2,
+"bom_bytes": 4432305
+},
+"langflow_c46a3eec9a": {
+"syft": 0,
+"osv": 1,
+"seconds": 9.6,
+"bom_bytes": 9983500
+},
+"llama_index_c7d061e7ea": {
+"syft": 0,
+"osv": 1,
+"seconds": 84.8,
+"bom_bytes": 305581657
+},
+"llama_index_f1124cffd4": {
+"syft": 0,
+"osv": 1,
+"seconds": 13.2,
+"bom_bytes": 8266756
+},
+"minikube_e7bf515c48": {
+"syft": 0,
+"osv": 1,
+"seconds": 4.8,
+"bom_bytes": 534154
+},
+"mitmproxy_0ace627f6e": {
+"syft": 0,
+"osv": 1,
+"seconds": 3.2,
+"bom_bytes": 94867
+},
+"mitmproxy_3214581060": {
+"syft": 0,
+"osv": 1,
+"seconds": 2.7,
+"bom_bytes": 94867
+},
+"mitmproxy_ab470e5397": {
+"syft": 0,
+"osv": 1,
+"seconds": 3.6,
+"bom_bytes": 377951
+},
+"mitmproxy_b089c5fb83": {
+"syft": 0,
+"osv": 1,
+"seconds": 5.6,
+"bom_bytes": 378933
+},
+"moby_3ede246fb2": {
+"syft": 0,
+"osv": 1,
+"seconds": 4.8,
+"bom_bytes": 335544
+},
+"moby_caea5f77ad": {
+"syft": 0,
+"osv": 1,
+"seconds": 6.6,
+"bom_bytes": 331056
+},
+"nacos_20caf99db3": {
+"syft": 0,
+"osv": 1,
+"seconds": 4.1,
+"bom_bytes": 347314
+},
+"podman_38ccfa2b33": {
+"syft": 0,
+"osv": 1,
+"seconds": 6.7,
+"bom_bytes": 174567
+},
+"podman_5ae63471cf": {
+"syft": 0,
+"osv": 1,
+"seconds": 5.5,
+"bom_bytes": 221571
+},
+"podman_6541fc4fb2": {
+"syft": 0,
+"osv": 1,
+"seconds": 4.4,
+"bom_bytes": 228047
+},
+"podman_6a65597358": {
+"syft": 0,
+"osv": 1,
+"seconds": 4.4,
+"bom_bytes": 221979
+},
+"presto_368bcc7460": {
+"syft": 0,
+"osv": 1,
+"seconds": 6.6,
+"bom_bytes": 1939498
+},
+"presto_8136f7cc23": {
+"syft": 0,
+"osv": 1,
+"seconds": 6.2,
+"bom_bytes": 2610281
+},
+"pulsar_137df29f85": {
+"syft": 0,
+"osv": 1,
+"seconds": 5.1,
+"bom_bytes": 1037494
+},
+"pulsar_5e6e6cebcd": {
+"syft": 0,
+"osv": 1,
+"seconds": 4.8,
+"bom_bytes": 950837
+},
+"pulsar_7ab9c700a5": {
+"syft": 0,
+"osv": 1,
+"seconds": 4.2,
+"bom_bytes": 950805
+},
+"quarkus_34accfcd59": {
+"syft": 0,
+"osv": 1,
+"seconds": 14.4,
+"bom_bytes": 6689311
+},
+"quarkus_5c7a469cc6": {
+"syft": 0,
+"osv": 1,
+"seconds": 13.7,
+"bom_bytes": 6924020
+},
+"quarkus_8280c5349e": {
+"syft": 0,
+"osv": 1,
+"seconds": 11.8,
+"bom_bytes": 5829673
+},
+"quarkus_d392404a6f": {
+"syft": 0,
+"osv": 1,
+"seconds": 9.1,
+"bom_bytes": 4598673
+},
+"quarkus_f4a1bce45b": {
+"syft": 0,
+"osv": 1,
+"seconds": 9.0,
+"bom_bytes": 4541186
+},
+"ragflow_5c955a31cc": {
+"syft": 0,
+"osv": 1,
+"seconds": 5.6,
+"bom_bytes": 2812592
+},
+"ragflow_c68767acdd": {
+"syft": 0,
+"osv": 1,
+"seconds": 5.6,
+"bom_bytes": 2721686
+},
+"rancher_4dc4f534ee": {
+"syft": 0,
+"osv": 1,
+"seconds": 5.3,
+"bom_bytes": 639399
+},
+"rancher_876141989e": {
+"syft": 0,
+"osv": 1,
+"seconds": 4.9,
+"bom_bytes": 640617
+},
+"redisson_47f6a3926b": {
+"syft": 0,
+"osv": 1,
+"seconds": 4.0,
+"bom_bytes": 389726
+},
+"spring-boot_1fecd4b38a": {
+"syft": 0,
+"osv": 1,
+"seconds": 3.3,
+"bom_bytes": 810243
+},
+"supervision_1bbe03ca27": {
+"syft": 0,
+"osv": 1,
+"seconds": 4.3,
+"bom_bytes": 501577
+},
+"testify_285adcc5ce": {
+"syft": 0,
+"osv": 1,
+"seconds": 2.0,
+"bom_bytes": 6808
+},
+"trivy_37da98df45": {
+"syft": 0,
+"osv": 1,
+"seconds": 10.1,
+"bom_bytes": 1058802
+},
+"trivy_98e136eb7b": {
+"syft": 0,
+"osv": 1,
+"seconds": 7.6,
+"bom_bytes": 1297049
+}
+}
+}

@@ -72,7 +72,7 @@ def _parses(text) -> bool:
 
 def agent_env() -> dict:
     env = dict(os.environ)
-    tok = pathlib.Path(os.environ.get("LOTTE_TOKEN_FILE") or pathlib.Path.home() / ".nova" / "claude_oauth_token")
+    tok = pathlib.Path(os.environ.get("AGENT_TOKEN_FILE") or os.devnull)
     if not IS_WIN and tok.exists():
         env["CLAUDE_CODE_OAUTH_TOKEN"] = tok.read_text().strip()
     return env

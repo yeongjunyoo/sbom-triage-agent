@@ -73,6 +73,23 @@ def alert_ids(raw: str) -> tuple[set[str], set[str], int]:
     return ids, names, n
 
 
+def report_section(res: dict) -> list[str]:
+    """보고서에 붙일 조치안 검증 절."""
+    fx = res["side_effects"]
+    L = ["## 조치안 검증", "", "복사본에서 패키지별로 버전을 올려 빌드와 시험을 돌렸다. 코드 반영과 배포는 담당자가 한다.", "",
+         "| 패키지 | 올린 버전 | 대상 CVE | 결과 |", "|---|---|---|---|"]
+    for pkg, t in res["targets"].items():
+        L.append(f"| {pkg} | {t['from']} > {t['version']} | {', '.join(t['cves'])} | {'반영' if pkg in res['accepted'] else '되돌림, 사람에게 넘김'} |")
+    b, a = res["baseline"], res["after"]
+    L += ["", f"- 시험: 고치기 전 통과 패키지 {b['ok_packages']}, 실패 시험 {len(b['failed_tests'])}. 고친 뒤 통과 패키지 {a['ok_packages']}, 실패 시험 {len(a['failed_tests'])}. 새 실패 {len(res['new_test_failures'])}건.",
+          f"- 재스캔: 경보 {res['alerts_before']}건에서 {res['alerts_after']}건. 대상 취약점 {len(res['cves_fixed_targeted'])}건 중 남은 것 {len(res['cves_still_reported'])}건. 새로 생긴 경보 ID {len(res['alerts_new_ids'])}건."]
+    if fx["go_directive"]:
+        L.append(f"- 담당자 확인: Go 언어 버전이 {fx['go_directive'][0]}에서 {fx['go_directive'][1]}로 올라간다. CI와 컨테이너 이미지를 함께 올려야 한다.")
+    if fx["also_changed"]:
+        L.append("- 담당자 확인: 함께 올라가는 간접 의존성 " + ", ".join(f"{k} {v[0]} > {v[1]}" for k, v in sorted(fx["also_changed"].items())))
+    return L + [""]
+
+
 def semver_key(v: str):
     return [int(x) for x in re.findall(r"\d+", v)[:4]] or [0]
 
@@ -194,6 +211,10 @@ def main() -> int:
         "alerts_before": before, "alerts_after": raw_after, "alerts_new_ids": sorted(ids_after - ids_before), "go_mod_diff": diff[:3000],
     }
     (out / "remediation.json").write_text(json.dumps(result, ensure_ascii=False, indent=1), encoding="utf-8")
+    rep = out / "report.md"
+    if rep.exists():
+        head = rep.read_text(encoding="utf-8").split("## 조치안 검증")[0].rstrip()
+        rep.write_text(head + "\n\n" + "\n".join(report_section(result)), encoding="utf-8")
     print(json.dumps({k: v for k, v in result.items() if k not in ("targets", "go_mod_diff", "rejected")}, ensure_ascii=False)[:1500], flush=True)
     return 0
 

@@ -1,0 +1,2492 @@
+{
+ "golang.org_x_crypto__CVE-2026-42508": {
+  "id": "golang.org_x_crypto__CVE-2026-42508",
+  "cve": "CVE-2026-42508",
+  "package": "golang.org/x/crypto",
+  "categories": [
+   "code_not_reachable",
+   "code_not_reachable"
+  ],
+  "category": "code_not_reachable",
+  "verify_ok": [
+   true,
+   true
+  ],
+  "verify_fails": [
+   [],
+   []
+  ],
+  "reasoning": "CVE-2026-42508 (GHSA-5cgq-3rg8-m6cv, GO-2026-5021) is a flaw in golang.org/x/crypto/ssh/knownhosts. A revoked key used as a certificate authority's SignatureKey is not checked for the @revoked marker. Versions up to v0.51.0 are affected and v0.52.0 fixes it. This repository resolves golang.org/x/crypto to v0.31.0, which is in the affected range, so the module is present and vulnerable by version. Nothing reaches the vulnerable package, though. First-party Go code imports only golang.org/x/crypto/acme, acme/autocert and bcrypt. No file imports golang.org/x/crypto/ssh or ssh/knownhosts, and the string 'knownhosts' appears nowhere in the repository. The only large dependency that could pull it in transitively is tailscale.com (v1.79.0-pre, used via tsnet, tailcfg, and similar packages). The pkg.go.dev 'Imported by' list for ssh/knownhosts shows no tailscale.com or github.com/tailscale importer. That list is for the latest module version and I read it in two chunks, so this is good but not exhaustive evidence. Headscale is also a control server and does not verify SSH host keys. The vulnerable path is SSH client host-key verification, which headscale does not perform. The mapping from the CVE to the package is correct and the package is present, so the code_not_present and false_positive categories do not apply.",
+  "evidence": [
+   {
+    "path": "go.mod",
+    "line": 40,
+    "quote": "golang.org/x/crypto v0.31.0",
+    "shows": "version"
+   },
+   {
+    "path": "go.sum",
+    "line": 554,
+    "quote": "golang.org/x/crypto v0.31.0 h1:ihbySMvVjLAeSH1IbfcRTkD/iNscyz8rGzjF/E5hV6U=",
+    "shows": "presence"
+   },
+   {
+    "path": "hscontrol/app.go",
+    "line": 42,
+    "quote": "\"golang.org/x/crypto/acme\"",
+    "shows": "import"
+   },
+   {
+    "path": "hscontrol/db/api_key.go",
+    "line": 11,
+    "quote": "\"golang.org/x/crypto/bcrypt\"",
+    "shows": "import"
+   }
+  ],
+  "advisory": {
+   "package": "golang.org/x/crypto",
+   "ecosystem": "Go",
+   "affected_range": ">=v0.1.0 (introduced 0) through v0.51.0; fixed in v0.52.0",
+   "fixed_version": "v0.52.0",
+   "vulnerable_symbols": [
+    "golang.org/x/crypto/ssh/knownhosts (revocation check of key and key.SignatureKey for @revoked)"
+   ],
+   "source_url": "https://api.osv.dev/v1/vulns/CVE-2026-42508"
+  },
+  "cost": 0.26460089999999997,
+  "seconds": 118.3,
+  "decision": "CLOSE",
+  "why": "code_not_reachable"
+ },
+ "google.golang.org_grpc__CVE-2026-33186": {
+  "id": "google.golang.org_grpc__CVE-2026-33186",
+  "cve": "CVE-2026-33186",
+  "package": "google.golang.org/grpc",
+  "categories": [
+   "mitigating_control_protected",
+   "mitigating_control_protected"
+  ],
+  "category": "mitigating_control_protected",
+  "verify_ok": [
+   true,
+   true
+  ],
+  "verify_fails": [
+   [],
+   []
+  ],
+  "reasoning": "google.golang.org/grpc v1.69.0 is declared in go.mod. That is below the fixed version 1.79.3, so the version is affected. The repo runs grpc.Server instances, so the server path handling is reachable. The advisory's exploit needs path-based authorization, either grpc/authz or interceptors that read info.FullMethod or grpc.Method(ctx), with deny rules for canonical paths and a default-allow fallback. This repo has no such authorization. The remote gRPC server has one chained unary interceptor, grpcAuthenticationInterceptor. It requires a valid Bearer API key on every call and never reads the method path. A request with a malformed :path therefore still needs the API key. The only other grpc.Server listens on a local unix socket and deliberately has no authentication, so there is no authorization for a bad path to bypass. The only FullMethod hits are in generated protobuf stubs, which pass the value along and do not make decisions with it. The library is still outdated, so upgrading to 1.79.3 or later is advisable.",
+  "evidence": [
+   {
+    "path": "go.mod",
+    "line": 46,
+    "quote": "google.golang.org/grpc v1.69.0",
+    "shows": "version"
+   },
+   {
+    "path": "hscontrol/app.go",
+    "line": 740,
+    "quote": "grpcServer = grpc.NewServer(grpcOptions...)",
+    "shows": "call"
+   },
+   {
+    "path": "hscontrol/app.go",
+    "line": 725,
+    "quote": "h.grpcAuthenticationInterceptor,",
+    "shows": "mitigation"
+   },
+   {
+    "path": "hscontrol/app.go",
+    "line": 319,
+    "quote": "func (h *Headscale) grpcAuthenticationInterceptor(ctx context.Context,",
+    "shows": "mitigation"
+   },
+   {
+    "path": "hscontrol/app.go",
+    "line": 685,
+    "quote": "grpcSocket := grpc.NewServer(",
+    "shows": "call"
+   }
+  ],
+  "advisory": {
+   "package": "google.golang.org/grpc",
+   "ecosystem": "Go",
+   "affected_range": "< 1.79.3",
+   "fixed_version": "1.79.3",
+   "vulnerable_symbols": [
+    "grpc.Server HTTP/2 :path handling (accepts paths without a leading slash)",
+    "google.golang.org/grpc/authz",
+    "info.FullMethod / grpc.Method(ctx) in interceptors"
+   ],
+   "source_url": "https://github.com/advisories/GHSA-p77j-4mvh-x3m3"
+  },
+  "cost": 0.20938320000000005,
+  "seconds": 104.69999999999999,
+  "decision": "REVIEW",
+  "why": "해석이 필요한 범주라 사람이 닫는다: mitigating_control_protected"
+ },
+ "golang.org_x_crypto__CVE-2026-39830": {
+  "id": "golang.org_x_crypto__CVE-2026-39830",
+  "cve": "CVE-2026-39830",
+  "package": "golang.org/x/crypto",
+  "categories": [
+   "code_not_reachable",
+   "code_not_reachable"
+  ],
+  "category": "code_not_reachable",
+  "verify_ok": [
+   true,
+   true
+  ],
+  "verify_fails": [
+   [],
+   []
+  ],
+  "reasoning": "The vulnerable module golang.org/x/crypto is declared at v0.31.0, which is inside the affected range (all versions before v0.52.0). The flaw is in the golang.org/x/crypto/ssh package: a malicious SSH peer sends unsolicited global request responses, which blocks the connection read loop and leaks a goroutine per connection. No first-party Go file imports golang.org/x/crypto/ssh. The only x/crypto packages headscale imports are acme, acme/autocert and bcrypt, none of which touch the ssh package. The one transitive route I found is tailscale.com/tsnet, imported in hscontrol/tailsql.go. Its SSH code uses the fork github.com/tailscale/golang-x-crypto/ssh, which go.mod lists as indirect, not golang.org/x/crypto/ssh. I checked this for ipn/ipnlocal/ssh.go in tailscale v1.78.0, not v1.79.0-pre, and I did not read the Go module cache, so the claim covers that one file only. Headscale also has no SSH server or client of its own. The 'ssh' strings in hscontrol/policy and hscontrol/mapper are ACL and tailcfg policy fields, not SSH connections. I did not check other third-party dependencies for x/crypto/ssh use, so the fix is still to bump x/crypto to v0.52.0 or later.",
+  "evidence": [
+   {
+    "path": "go.mod",
+    "line": 40,
+    "quote": "\tgolang.org/x/crypto v0.31.0",
+    "shows": "version"
+   },
+   {
+    "path": "hscontrol/app.go",
+    "line": 42,
+    "quote": "\t\"golang.org/x/crypto/acme\"",
+    "shows": "import"
+   },
+   {
+    "path": "hscontrol/db/api_key.go",
+    "line": 11,
+    "quote": "\t\"golang.org/x/crypto/bcrypt\"",
+    "shows": "import"
+   },
+   {
+    "path": "hscontrol/tailsql.go",
+    "line": 10,
+    "quote": "\t\"tailscale.com/tsnet\"",
+    "shows": "import"
+   },
+   {
+    "path": "go.mod",
+    "line": 203,
+    "quote": "\tgithub.com/tailscale/golang-x-crypto v0.0.0-20240604161659-3fde5e568aa4 // indirect",
+    "shows": "presence"
+   }
+  ],
+  "advisory": {
+   "package": "golang.org/x/crypto",
+   "ecosystem": "Go",
+   "affected_range": ">=0 (v0.1.0 through v0.51.0)",
+   "fixed_version": "0.52.0",
+   "vulnerable_symbols": [
+    "golang.org/x/crypto/ssh (global request response handling in the connection mux read loop)"
+   ],
+   "source_url": "https://api.osv.dev/v1/vulns/CVE-2026-39830"
+  },
+  "cost": 0.26602239999999994,
+  "seconds": 122.2,
+  "decision": "CLOSE",
+  "why": "code_not_reachable"
+ },
+ "golang.org_x_crypto__CVE-2026-39832": {
+  "id": "golang.org_x_crypto__CVE-2026-39832",
+  "cve": "CVE-2026-39832",
+  "package": "golang.org/x/crypto",
+  "categories": [
+   "code_not_reachable",
+   "code_not_reachable"
+  ],
+  "category": "code_not_reachable",
+  "verify_ok": [
+   true,
+   true
+  ],
+  "verify_fails": [
+   [],
+   []
+  ],
+  "reasoning": "CVE-2026-39832 (GO-2026-5006 / GHSA-f5wc-c3c7-36mc) affects golang.org/x/crypto before 0.52.0. The flaw is in the ssh/agent package: client.Add and keyring.Add drop constraint extensions such as restrict-destination-v00@openssh.com, and NewKeyring() silently ignores unsupported ones. This repository pins golang.org/x/crypto v0.31.0, so the module is present and in the affected range. First-party Go code imports only three x/crypto packages: acme, acme/autocert and bcrypt. It never imports golang.org/x/crypto/ssh or ssh/agent, and it never calls NewKeyring or the agent client. The only 'ssh' matches in hscontrol are Tailscale SSH ACL policy types, which are unrelated to x/crypto. No vendored copy exists. Headscale is a control server and has no SSH agent forwarding feature. Limitation: I could not read the Go module cache, so I could not confirm that a transitive dependency such as tailscale.com v1.79.0-pre never links ssh/agent. Even if one does, the vulnerable code runs only when a caller adds constrained keys to an agent, and nothing in this repository does that.",
+  "evidence": [
+   {
+    "path": "go.mod",
+    "line": 40,
+    "quote": "golang.org/x/crypto v0.31.0",
+    "shows": "version"
+   },
+   {
+    "path": "hscontrol/app.go",
+    "line": 42,
+    "quote": "\"golang.org/x/crypto/acme\"",
+    "shows": "import"
+   },
+   {
+    "path": "hscontrol/db/api_key.go",
+    "line": 11,
+    "quote": "\"golang.org/x/crypto/bcrypt\"",
+    "shows": "import"
+   }
+  ],
+  "advisory": {
+   "package": "golang.org/x/crypto",
+   "ecosystem": "Go",
+   "affected_range": "< 0.52.0",
+   "fixed_version": "0.52.0",
+   "vulnerable_symbols": [
+    "golang.org/x/crypto/ssh/agent.client.Add",
+    "golang.org/x/crypto/ssh/agent.keyring.Add",
+    "golang.org/x/crypto/ssh/agent.NewKeyring"
+   ],
+   "source_url": "https://api.osv.dev/v1/vulns/GO-2026-5006"
+  },
+  "cost": 0.214252,
+  "seconds": 118.89999999999999,
+  "decision": "CLOSE",
+  "why": "code_not_reachable"
+ },
+ "github.com_jackc_pgx_v5__CVE-2026-33815": {
+  "id": "github.com_jackc_pgx_v5__CVE-2026-33815",
+  "cve": "CVE-2026-33815",
+  "package": "github.com/jackc/pgx/v5",
+  "categories": [
+   "code_not_reachable",
+   "code_not_reachable"
+  ],
+  "category": "code_not_reachable",
+  "verify_ok": [
+   true,
+   true
+  ],
+  "verify_fails": [
+   [],
+   []
+  ],
+  "reasoning": "github.com/jackc/pgx/v5 v5.7.1 is in the affected range (<5.9.0; fixed in 5.9.0), so the package is present. The Go vulnerability database entry GO-2026-4771 lists the vulnerable symbols as pgproto3 Backend.Receive and Bind.Decode. In pgx v5.7.1, pgproto3.Backend is the server side of the PostgreSQL wire protocol. Its Receive method parses messages sent by a client (Bind, Parse, Query and so on). Headscale only reaches pgx as a PostgreSQL client, through gorm.io/driver/postgres, and that client uses pgproto3.Frontend. Frontend.Receive decodes server messages (BindComplete, DataRow and so on) and never references Bind or Backend.Receive. The repository has no first-party Go code that imports pgx or pgproto3, builds a pgproto3 Backend, or acts as a PostgreSQL server or proxy. So no execution path reaches Backend.Receive or Bind.Decode. The advisory text is thin and gives no root-cause detail, and I could not read the local module cache. The reachability conclusion therefore rests on the upstream v5.7.1 source for backend.go and frontend.go, fetched from GitHub, not on a local copy. A human should check it if the upstream fix, commit 6dbad4c, touches code that Frontend also uses.",
+  "evidence": [
+   {
+    "path": "go.mod",
+    "line": 151,
+    "quote": "\tgithub.com/jackc/pgx/v5 v5.7.1 // indirect",
+    "shows": "version"
+   },
+   {
+    "path": "hscontrol/db/db.go",
+    "line": 20,
+    "quote": "\t\"gorm.io/driver/postgres\"",
+    "shows": "import"
+   },
+   {
+    "path": "hscontrol/db/db.go",
+    "line": 690,
+    "quote": "\t\tdb, err := gorm.Open(postgres.Open(dbString), &gorm.Config{",
+    "shows": "call"
+   }
+  ],
+  "advisory": {
+   "package": "github.com/jackc/pgx/v5",
+   "ecosystem": "Go",
+   "affected_range": "<5.9.0",
+   "fixed_version": "5.9.0",
+   "vulnerable_symbols": [
+    "github.com/jackc/pgx/v5/pgproto3.Backend.Receive",
+    "github.com/jackc/pgx/v5/pgproto3.Bind.Decode"
+   ],
+   "source_url": "https://pkg.go.dev/vuln/GO-2026-4771"
+  },
+  "cost": 0.21563119999999997,
+  "seconds": 119.5,
+  "decision": "CLOSE",
+  "why": "code_not_reachable"
+ },
+ "golang.org_x_crypto__CVE-2026-39834": {
+  "id": "golang.org_x_crypto__CVE-2026-39834",
+  "cve": "CVE-2026-39834",
+  "package": "golang.org/x/crypto",
+  "categories": [
+   "code_not_reachable",
+   "code_not_reachable"
+  ],
+  "category": "code_not_reachable",
+  "verify_ok": [
+   true,
+   true
+  ],
+  "verify_fails": [
+   [],
+   []
+  ],
+  "reasoning": "CVE-2026-39834 (GO-2026-5020, GHSA-rm3j-f69w-wqmq) is an infinite loop in golang.org/x/crypto/ssh. A single write above 4GB to an SSH channel overflows the payload size calculation. Versions before 0.52.0 are affected. go.mod and go.sum resolve golang.org/x/crypto to v0.31.0, which is inside the range, so the package is present and affected.\n\nNo first-party Go file imports golang.org/x/crypto/ssh. The searches found zero imports and zero calls to Dial, NewClientConn, NewServerConn or the Session methods. Headscale uses crypto only through other subpackages. The only plausible transitive route is tailscale.com/tsnet, which hscontrol/tailsql.go imports. That code runs only when HEADSCALE_DEBUG_TAILSQL_ENABLED is set. I could not read the module cache, so I checked the upstream Tailscale source instead, and it points the other way. Upstream tsnet.go (v1.78.0, the nearest tag I checked to the v1.79.0-pre in go.mod) imports no ssh package. Upstream ipn/ipnlocal/ssh.go (also v1.78.0) imports Tailscale's fork github.com/tailscale/golang-x-crypto/ssh, a different module. It calls only ParsePrivateKey and MarshalAuthorizedKey, neither of which is a vulnerable symbol. The fork is listed as indirect in go.mod. It is a separate module path, so this CVE's mapping to golang.org/x/crypto does not cover it.\n\nThe result rests partly on upstream source, not on files in this repository. I did not inspect the full build graph, so another dependency could still import golang.org/x/crypto/ssh. No vulnerable entry point is reachable from first-party code.",
+  "evidence": [
+   {
+    "path": "go.mod",
+    "line": 40,
+    "quote": "\tgolang.org/x/crypto v0.31.0",
+    "shows": "version"
+   },
+   {
+    "path": "go.sum",
+    "line": 554,
+    "quote": "golang.org/x/crypto v0.31.0 h1:ihbySMvVjLAeSH1IbfcRTkD/iNscyz8rGzjF/E5hV6U=",
+    "shows": "version"
+   },
+   {
+    "path": "hscontrol/tailsql.go",
+    "line": 10,
+    "quote": "\t\"tailscale.com/tsnet\"",
+    "shows": "import"
+   },
+   {
+    "path": "hscontrol/app.go",
+    "line": 110,
+    "quote": "\ttailsqlEnabled   = envknob.Bool(\"HEADSCALE_DEBUG_TAILSQL_ENABLED\")",
+    "shows": "config"
+   },
+   {
+    "path": "go.mod",
+    "line": 203,
+    "quote": "\tgithub.com/tailscale/golang-x-crypto v0.0.0-20240604161659-3fde5e568aa4 // indirect",
+    "shows": "presence"
+   }
+  ],
+  "advisory": {
+   "package": "golang.org/x/crypto",
+   "ecosystem": "Go",
+   "affected_range": "<0.52.0 (introduced 0, fixed 0.52.0)",
+   "fixed_version": "0.52.0",
+   "vulnerable_symbols": [
+    "ssh.Dial",
+    "ssh.NewClientConn",
+    "ssh.NewServerConn",
+    "ssh.Session.CombinedOutput",
+    "ssh.Session.Output",
+    "ssh.Session.Run",
+    "ssh.Session.Shell",
+    "ssh.Session.Start",
+    "ssh.channel.Write",
+    "ssh.channel.WriteExtended",
+    "ssh.extChannel.Write"
+   ],
+   "source_url": "https://pkg.go.dev/vuln/GO-2026-5020"
+  },
+  "cost": 0.30320349999999996,
+  "seconds": 161.10000000000002,
+  "decision": "CLOSE",
+  "why": "code_not_reachable"
+ },
+ "github.com_jackc_pgx_v5__CVE-2026-33816": {
+  "id": "github.com_jackc_pgx_v5__CVE-2026-33816",
+  "cve": "CVE-2026-33816",
+  "package": "github.com/jackc/pgx/v5",
+  "categories": [
+   "code_not_reachable",
+   "code_not_reachable"
+  ],
+  "category": "code_not_reachable",
+  "verify_ok": [
+   true,
+   true
+  ],
+  "verify_fails": [
+   [],
+   []
+  ],
+  "reasoning": "CVE-2026-33816 (GHSA-9jj7-4m8r-rfcm, GO-2026-4772) is a memory-safety flaw in github.com/jackc/pgx/v5/pgproto3, affecting versions before v5.9.0. The vulnerable symbols are Backend.Receive and FunctionCall.Decode. This repository resolves pgx v5.7.1 as an indirect dependency, pulled in by gorm.io/driver/postgres, so the version is in the affected range. However, pgproto3.Backend is the server side of the PostgreSQL wire protocol (\"Backend acts as a server\"). Backend.Receive parses messages sent by a frontend (client), including FunctionCall. Headscale only uses pgx as a database client through gorm.Open(postgres.Open(...)). The client path uses pgproto3.Frontend, which does not call Backend.Receive. No first-party Go file imports pgx, pgproto3 or pgconn, and none calls NewBackend or Backend. The only code that starts a Postgres server is test-only (postgrestest in hscontrol/db/suite_test.go), and it launches a real postgres binary rather than a Go pgproto3 backend. No execution path reaches the vulnerable functions. Limits of this conclusion: the pgx module source is not in the working tree (the module cache is outside the allowed directory). That Backend is server-side, and that pgconn uses Frontend rather than Backend, comes from upstream pgx v5.7.1 source and the advisory pages, not from a local file. The advisory pages give no technical detail beyond the symbol names.",
+  "evidence": [
+   {
+    "path": "go.mod",
+    "line": 151,
+    "quote": "github.com/jackc/pgx/v5 v5.7.1 // indirect",
+    "shows": "version"
+   },
+   {
+    "path": "hscontrol/db/db.go",
+    "line": 20,
+    "quote": "\"gorm.io/driver/postgres\"",
+    "shows": "import"
+   },
+   {
+    "path": "hscontrol/db/db.go",
+    "line": 690,
+    "quote": "db, err := gorm.Open(postgres.Open(dbString), &gorm.Config{",
+    "shows": "call"
+   }
+  ],
+  "advisory": {
+   "package": "github.com/jackc/pgx/v5",
+   "ecosystem": "Go",
+   "affected_range": "< 5.9.0 (v5.0.0 through v5.8.0 for the v5 module)",
+   "fixed_version": "5.9.0",
+   "vulnerable_symbols": [
+    "github.com/jackc/pgx/v5/pgproto3.Backend.Receive",
+    "github.com/jackc/pgx/v5/pgproto3.FunctionCall.Decode"
+   ],
+   "source_url": "https://pkg.go.dev/vuln/GO-2026-4772"
+  },
+  "cost": 0.1799751,
+  "seconds": 104.69999999999999,
+  "decision": "CLOSE",
+  "why": "code_not_reachable"
+ },
+ "golang.org_x_crypto__CVE-2026-46595": {
+  "id": "golang.org_x_crypto__CVE-2026-46595",
+  "cve": "CVE-2026-46595",
+  "package": "golang.org/x/crypto",
+  "categories": [
+   "code_not_reachable",
+   "code_not_reachable"
+  ],
+  "category": "code_not_reachable",
+  "verify_ok": [
+   true,
+   true
+  ],
+  "verify_fails": [
+   [],
+   []
+  ],
+  "reasoning": "The advisory (GO-2026-5023 / GHSA-x527-x647-q7gg) affects golang.org/x/crypto/ssh before v0.52.0. It is a server-side bug. When an ssh.ServerConfig uses a callback other than the public-key callback, source-address validation is skipped. Only server code that calls ssh.NewServerConn is exposed. This repository requires golang.org/x/crypto v0.31.0, which is in the affected range. However, no Go source file in the tree imports golang.org/x/crypto/ssh. The only x/crypto imports are acme, acme/autocert and bcrypt. No file references NewServerConn, ssh.ServerConfig or VerifiedPublicKeyCallback, and there is no vendor directory. The 'ssh' hits in the tree are ACL policy JSON fields and integration tests that shell out to /usr/bin/ssh. Headscale runs no SSH server. The Tailscale SSH server code that headscale's dependency tree could bring in uses a separate fork module, github.com/tailscale/golang-x-crypto (go.mod line 203), not golang.org/x/crypto/ssh. I could not run `go list` or read the module cache, so the claim that no dependency imports x/crypto/ssh rests on the absence of any first-party import and on the fork being separate. I did not check it by building the package graph. Upgrading to v0.52.0 or later would still be sensible hygiene.",
+  "evidence": [
+   {
+    "path": "go.mod",
+    "line": 40,
+    "quote": "\tgolang.org/x/crypto v0.31.0",
+    "shows": "version"
+   },
+   {
+    "path": "hscontrol/app.go",
+    "line": 42,
+    "quote": "\t\"golang.org/x/crypto/acme\"",
+    "shows": "import"
+   },
+   {
+    "path": "hscontrol/db/api_key.go",
+    "line": 11,
+    "quote": "\t\"golang.org/x/crypto/bcrypt\"",
+    "shows": "import"
+   },
+   {
+    "path": "go.mod",
+    "line": 203,
+    "quote": "\tgithub.com/tailscale/golang-x-crypto v0.0.0-20240604161659-3fde5e568aa4 // indirect",
+    "shows": "presence"
+   }
+  ],
+  "advisory": {
+   "package": "golang.org/x/crypto/ssh",
+   "ecosystem": "Go",
+   "affected_range": "< v0.52.0",
+   "fixed_version": "v0.52.0",
+   "vulnerable_symbols": [
+    "NewServerConn",
+    "VerifiedPublicKeyCallback"
+   ],
+   "source_url": "https://pkg.go.dev/vuln/GO-2026-5023"
+  },
+  "cost": 0.2405304,
+  "seconds": 116.2,
+  "decision": "CLOSE",
+  "why": "code_not_reachable"
+ },
+ "golang.org_x_crypto__CVE-2026-39831": {
+  "id": "golang.org_x_crypto__CVE-2026-39831",
+  "cve": "CVE-2026-39831",
+  "package": "golang.org/x/crypto",
+  "categories": [
+   "code_not_reachable",
+   "code_not_reachable"
+  ],
+  "category": "code_not_reachable",
+  "verify_ok": [
+   true,
+   true
+  ],
+  "verify_fails": [
+   [],
+   []
+  ],
+  "reasoning": "The advisory (CVE-2026-39831, GHSA-89gr-r52h-f8rx, GO-2026-5019) covers golang.org/x/crypto/ssh, v0.1.0 to before v0.52.0. Verify() for the FIDO/U2F key types sk-ecdsa-sha2-nistp256@openssh.com and sk-ssh-ed25519@openssh.com does not check the User Presence flag. This repository resolves golang.org/x/crypto to v0.31.0, which is inside the affected range, so the package is present. No first-party Go file imports golang.org/x/crypto/ssh. The only x/crypto subpackages imported are bcrypt (hscontrol/db/api_key.go) and acme and acme/autocert (hscontrol/app.go), none of which touch the SSH code. The repo has no SSH server, no ssh.ServerConfig, no PublicKeyCallback, no tailssh, and no sk-* key handling. Verify() on those key types only runs when an SSH server authenticates a client's public-key signature, so no path from headscale's network surfaces reaches it. Limitation: hscontrol/tailsql.go imports tailscale.com/tsnet, and I could not inspect that module's import graph, because the Go module cache is outside the sandbox. Even if tsnet links x/crypto/ssh, the server-side authentication that triggers the bug is not set up by this repo.",
+  "evidence": [
+   {
+    "path": "go.mod",
+    "line": 40,
+    "quote": "\tgolang.org/x/crypto v0.31.0",
+    "shows": "version"
+   },
+   {
+    "path": "hscontrol/db/api_key.go",
+    "line": 11,
+    "quote": "\t\"golang.org/x/crypto/bcrypt\"",
+    "shows": "import"
+   },
+   {
+    "path": "hscontrol/app.go",
+    "line": 42,
+    "quote": "\t\"golang.org/x/crypto/acme\"",
+    "shows": "import"
+   },
+   {
+    "path": "hscontrol/tailsql.go",
+    "line": 10,
+    "quote": "\t\"tailscale.com/tsnet\"",
+    "shows": "import"
+   }
+  ],
+  "advisory": {
+   "package": "golang.org/x/crypto/ssh",
+   "ecosystem": "Go",
+   "affected_range": ">=0.1.0, <0.52.0",
+   "fixed_version": "0.52.0",
+   "vulnerable_symbols": [
+    "ssh.PublicKey.Verify (sk-ecdsa-sha2-nistp256@openssh.com, sk-ssh-ed25519@openssh.com)"
+   ],
+   "source_url": "https://api.osv.dev/v1/vulns/CVE-2026-39831"
+  },
+  "cost": 0.25853329999999997,
+  "seconds": 118.9,
+  "decision": "CLOSE",
+  "why": "code_not_reachable"
+ },
+ "golang.org_x_crypto__CVE-2026-39833": {
+  "id": "golang.org_x_crypto__CVE-2026-39833",
+  "cve": "CVE-2026-39833",
+  "package": "golang.org/x/crypto",
+  "categories": [
+   "code_not_reachable",
+   "code_not_reachable"
+  ],
+  "category": "code_not_reachable",
+  "verify_ok": [
+   true,
+   true
+  ],
+  "verify_fails": [
+   [],
+   []
+  ],
+  "reasoning": "The advisory (GO-2026-5005 / GHSA-jppx-rxg9-jmrx) covers golang.org/x/crypto before 0.52.0. The flaw is in the package golang.org/x/crypto/ssh/agent: the in-memory keyring from NewKeyring() accepts keys with the ConfirmBeforeUse constraint but does not enforce it. This repository resolves x/crypto to v0.31.0, which is in the affected range, so the module is present. The vulnerable package is never used. First-party Go code imports only x/crypto/acme, acme/autocert and bcrypt. No file in the repository references x/crypto/ssh, ssh/agent, NewKeyring or ConfirmBeforeUse. There is no vendor directory. headscale is a Tailscale control server and does not act as an SSH agent. The Tailscale SSH code in tailscale.com uses the separate fork module github.com/tailscale/golang-x-crypto, not this module's ssh/agent. I could not inspect the module cache in this sandbox, so I did not directly check whether tailscale.com imports ssh/agent. That check would normally be `go list -deps ./... | grep ssh/agent`. The conclusion rests on the source search and the fork indirection.",
+  "evidence": [
+   {
+    "path": "go.mod",
+    "line": 40,
+    "quote": "golang.org/x/crypto v0.31.0",
+    "shows": "version"
+   },
+   {
+    "path": "hscontrol/app.go",
+    "line": 42,
+    "quote": "\"golang.org/x/crypto/acme\"",
+    "shows": "import"
+   },
+   {
+    "path": "hscontrol/app.go",
+    "line": 43,
+    "quote": "\"golang.org/x/crypto/acme/autocert\"",
+    "shows": "import"
+   },
+   {
+    "path": "hscontrol/db/api_key.go",
+    "line": 11,
+    "quote": "\"golang.org/x/crypto/bcrypt\"",
+    "shows": "import"
+   },
+   {
+    "path": "go.mod",
+    "line": 203,
+    "quote": "github.com/tailscale/golang-x-crypto v0.0.0-20240604161659-3fde5e568aa4 // indirect",
+    "shows": "presence"
+   }
+  ],
+  "advisory": {
+   "package": "golang.org/x/crypto",
+   "ecosystem": "Go",
+   "affected_range": "<0.52.0 (all versions before 0.52.0)",
+   "fixed_version": "0.52.0",
+   "vulnerable_symbols": [
+    "golang.org/x/crypto/ssh/agent.NewKeyring",
+    "keyring.Add (ConfirmBeforeUse constraint)"
+   ],
+   "source_url": "https://api.osv.dev/v1/vulns/GO-2026-5005"
+  },
+  "cost": 0.1985824,
+  "seconds": 96.9,
+  "decision": "CLOSE",
+  "why": "code_not_reachable"
+ },
+ "github.com_opencontainers_runc__CVE-2025-31133": {
+  "id": "github.com_opencontainers_runc__CVE-2025-31133",
+  "cve": "CVE-2025-31133",
+  "package": "github.com/opencontainers/runc",
+  "categories": [
+   "code_not_reachable",
+   "code_not_reachable"
+  ],
+  "category": "code_not_reachable",
+  "verify_ok": [
+   true,
+   true
+  ],
+  "verify_fails": [
+   [],
+   []
+  ],
+  "reasoning": "CVE-2025-31133 is a runc flaw. The container runtime's maskedPaths handling doesn't verify that the source it bind-mounts over a masked path is really /dev/null, and it ignores ENOENT. The advisory's affected range is runc <=1.2.7, <=1.3.2 and <=1.4.0-rc.2. The fixes are in 1.2.8, 1.3.3 and 1.4.0-rc.3. This repository (headscale) resolves github.com/opencontainers/runc v1.2.3 as an indirect dependency in go.mod and go.sum, so the version is in the affected range. However, no Go source file imports any runc package. The vulnerable code is in runc's libcontainer, which runs when runc starts a container, not when a library is linked. A search found no references to libcontainer or maskPaths. The only mention of runc outside go.mod and go.sum is a comment URL in integration/dockertestutil/config.go. The repo only uses ory/dockertest's client API, in integration test helpers, to ask a Docker daemon to start containers. The host's own runc would run those containers, and this repo neither ships nor configures that runc. So the vulnerable code is present in the module graph but no execution path reaches it. The runc module version should still be bumped to 1.2.8 or later to clear the scanner.",
+  "evidence": [
+   {
+    "path": "go.mod",
+    "line": 181,
+    "quote": "\tgithub.com/opencontainers/runc v1.2.3 // indirect",
+    "shows": "version"
+   },
+   {
+    "path": "go.sum",
+    "line": 368,
+    "quote": "github.com/opencontainers/runc v1.2.3 h1:fxE7amCzfZflJO2lHXf4y/y8M1BoAqp+FVmG19oYB80=",
+    "shows": "presence"
+   },
+   {
+    "path": "go.mod",
+    "line": 23,
+    "quote": "\tgithub.com/ory/dockertest/v3 v3.11.0",
+    "shows": "presence"
+   },
+   {
+    "path": "integration/dockertestutil/config.go",
+    "line": 6,
+    "quote": "\t\"github.com/ory/dockertest/v3/docker\"",
+    "shows": "import"
+   }
+  ],
+  "advisory": {
+   "package": "github.com/opencontainers/runc",
+   "ecosystem": "Go",
+   "affected_range": "<=1.2.7, 1.3.0-rc.1 to 1.3.2, 1.4.0-rc.1 to 1.4.0-rc.2",
+   "fixed_version": "1.2.8, 1.3.3, 1.4.0-rc.3",
+   "vulnerable_symbols": [
+    "libcontainer maskPaths",
+    "isDevNull",
+    "verifyDevNull",
+    "internal/sys VerifyInode"
+   ],
+   "source_url": "https://github.com/opencontainers/runc/security/advisories/GHSA-9493-h29p-rfm2"
+  },
+  "cost": 0.11660229999999999,
+  "seconds": 57.7,
+  "decision": "CLOSE",
+  "why": "code_not_reachable"
+ },
+ "golang.org_x_crypto__CVE-2025-22869": {
+  "id": "golang.org_x_crypto__CVE-2025-22869",
+  "cve": "CVE-2025-22869",
+  "package": "golang.org/x/crypto",
+  "categories": [
+   "code_not_reachable",
+   "code_not_reachable"
+  ],
+  "category": "code_not_reachable",
+  "verify_ok": [
+   true,
+   true
+  ],
+  "verify_fails": [
+   [],
+   []
+  ],
+  "reasoning": "CVE-2025-22869 (GO-2025-3487) is a denial of service in the golang.org/x/crypto/ssh package. It affects SSH servers that handle file transfer, because a client that completes key exchange slowly can make pending data pile up in memory. All versions before 0.35.0 are affected. This repository pins golang.org/x/crypto v0.31.0, so the version is in range. The vulnerable package is not used, though. First-party code imports only x/crypto/acme, acme/autocert and bcrypt, never x/crypto/ssh. go.mod declares no SSH, SFTP or SCP module. The one transitive route is the tsnet import in hscontrol/tailsql.go, which is only started when HEADSCALE_DEBUG_TAILSQL_ENABLED is set. That route does not reach x/crypto/ssh either. Tailscale's own SSH code uses the fork github.com/tailscale/golang-x-crypto/ssh, as I confirmed in tailscale v1.78.0 ipn/ipnlocal/ssh.go, which is a separate module from the affected one. Headscale does not run an SSH server. The transitive conclusion rests on that one upstream file, because the Go module cache was not readable from this sandbox. Upgrading x/crypto to 0.35.0 or later would still be sensible hygiene.",
+  "evidence": [
+   {
+    "path": "go.mod",
+    "line": 40,
+    "quote": "golang.org/x/crypto v0.31.0",
+    "shows": "version"
+   },
+   {
+    "path": "hscontrol/app.go",
+    "line": 42,
+    "quote": "\"golang.org/x/crypto/acme\"",
+    "shows": "import"
+   },
+   {
+    "path": "hscontrol/db/api_key.go",
+    "line": 11,
+    "quote": "\"golang.org/x/crypto/bcrypt\"",
+    "shows": "import"
+   },
+   {
+    "path": "hscontrol/tailsql.go",
+    "line": 10,
+    "quote": "\"tailscale.com/tsnet\"",
+    "shows": "import"
+   },
+   {
+    "path": "go.mod",
+    "line": 203,
+    "quote": "github.com/tailscale/golang-x-crypto v0.0.0-20240604161659-3fde5e568aa4 // indirect",
+    "shows": "presence"
+   }
+  ],
+  "advisory": {
+   "package": "golang.org/x/crypto",
+   "ecosystem": "Go",
+   "affected_range": "<0.35.0",
+   "fixed_version": "0.35.0",
+   "vulnerable_symbols": [
+    "ssh.NewServerConn",
+    "ssh.NewClientConn",
+    "ssh.NewClient",
+    "ssh.Dial",
+    "handshakeTransport.kexLoop",
+    "handshakeTransport.writePacket"
+   ],
+   "source_url": "https://api.osv.dev/v1/vulns/GO-2025-3487"
+  },
+  "cost": 0.2834152,
+  "seconds": 145.7,
+  "decision": "CLOSE",
+  "why": "code_not_reachable"
+ },
+ "golang.org_x_oauth2__CVE-2025-22868": {
+  "id": "golang.org_x_oauth2__CVE-2025-22868",
+  "cve": "CVE-2025-22868",
+  "package": "golang.org/x/oauth2",
+  "categories": [
+   "code_not_reachable",
+   "code_not_reachable"
+  ],
+  "category": "code_not_reachable",
+  "verify_ok": [
+   false,
+   true
+  ],
+  "verify_fails": [
+   [
+    "범위를 읽지 못해 저장소 전체로 다시 찾으니 3건: google\\.golang\\.org/api|cloud\\.google\\.com|oauth2/(jwt|googl @ **/*.go and go.mod"
+   ],
+   []
+  ],
+  "reasoning": "CVE-2025-22868 (GO-2025-3488) affects golang.org/x/oauth2 before v0.27.0. The vulnerable function is jws.Verify in the golang.org/x/oauth2/jws subpackage. This repo resolves golang.org/x/oauth2 to v0.24.0, which is inside the affected range, so the module is present and affected. First-party code uses only the root oauth2 package, in hscontrol/oidc.go: oauth2.Config, AuthCodeOption, GenerateVerifier, S256ChallengeOption, SetAuthURLParam, VerifierOption and AccessTypeOffline. No Go file in the repo imports oauth2/jws or calls jws.Verify. No file imports oauth2/jwt, oauth2/google or google.golang.org/api, which are the usual routes to the jws package. The root oauth2 package does not import jws, and go-oidc v3.11.0 does its JWT verification with go-jose, not oauth2/jws. I could not read the Go module cache because file tools are restricted to the working directory. The claim that the root oauth2 package and go-oidc do not import jws therefore comes from my knowledge of those packages, not from files I read. The vulnerable jws.Verify is not on any execution path. Bumping oauth2 to v0.27.0 or later is still advisable.",
+  "evidence": [
+   {
+    "path": "go.mod",
+    "line": 43,
+    "quote": "\tgolang.org/x/oauth2 v0.24.0",
+    "shows": "version"
+   },
+   {
+    "path": "hscontrol/oidc.go",
+    "line": 23,
+    "quote": "\t\"golang.org/x/oauth2\"",
+    "shows": "import"
+   },
+   {
+    "path": "hscontrol/oidc.go",
+    "line": 65,
+    "quote": "\toauth2Config *oauth2.Config",
+    "shows": "import"
+   }
+  ],
+  "advisory": {
+   "package": "golang.org/x/oauth2",
+   "ecosystem": "Go",
+   "affected_range": "< v0.27.0",
+   "fixed_version": "v0.27.0",
+   "vulnerable_symbols": [
+    "golang.org/x/oauth2/jws.Verify"
+   ],
+   "source_url": "https://pkg.go.dev/vuln/GO-2025-3488"
+  },
+  "cost": 0.12085190000000001,
+  "seconds": 64.1,
+  "decision": "REVIEW",
+  "why": "근거 재현 검사 실패: 범위를 읽지 못해 저장소 전체로 다시 찾으니 3건: google\\.golang\\.org/api|cloud\\.google\\.com|oauth2/(jwt|googl @ **/*.go and go.mod"
+ },
+ "github.com_golang-jwt_jwt_v5__CVE-2025-30204": {
+  "id": "github.com_golang-jwt_jwt_v5__CVE-2025-30204",
+  "cve": "CVE-2025-30204",
+  "package": "github.com/golang-jwt/jwt/v5",
+  "categories": [
+   "uncertain",
+   "requires_configuration"
+  ],
+  "category": "uncertain",
+  "verify_ok": [
+   true,
+   true
+  ],
+  "verify_fails": [
+   [],
+   []
+  ],
+  "reasoning": "Presence is confirmed. go.mod pins github.com/golang-jwt/jwt/v5 v5.2.1 as an indirect dependency, which is inside the affected range >=5.0.0-rc.1 <5.2.2 (fixed in 5.2.2). No first-party Go file imports golang-jwt directly. The only importer I could find is github.com/oauth2-proxy/mockoidc, whose go.mod requires jwt/v5. I read that go.mod through a web fetch, not from a local file, and it is not in the repo. Headscale compiles mockoidc into its binary through cmd/headscale/cli/mockoidc.go, which registers a `headscale mockoidc` subcommand. That command starts a network listener (net.Listen, mock.Start). Per the mockoidc documentation, its Userinfo handler reads the Bearer token and its refresh-token grant passes tokens to Keypair.VerifyJWT, which returns a *jwt.Token from golang-jwt/jwt/v5. That would make the path network input, then the Authorization header, then JWT parsing, then the vulnerable strings.Split in ParseUnverified. I could not open the mockoidc source to confirm that VerifyJWT reaches jwt.Parse/ParseUnverified. The module cache is outside the sandbox and the raw GitHub fetches returned 404. The command is documented as an internal testing server and is only run by the integration tests. The Dockerfile, CI, goreleaser and Makefile search found no reference to it. Whether any deployment runs this subcommand is outside the repo. The headscale OIDC client path uses go-oidc, which does not use golang-jwt. I could not establish reachability from an attack surface, and I could not establish that it is absent, so this goes to a human. The impact is also limited to memory-allocation DoS of a test mock server.",
+  "evidence": [
+   {
+    "path": "go.mod",
+    "line": 131,
+    "quote": "\tgithub.com/golang-jwt/jwt/v5 v5.2.1 // indirect",
+    "shows": "version"
+   },
+   {
+    "path": "go.mod",
+    "line": 22,
+    "quote": "\tgithub.com/oauth2-proxy/mockoidc v0.0.0-20240214162133-caebfff84d25",
+    "shows": "presence"
+   },
+   {
+    "path": "cmd/headscale/cli/mockoidc.go",
+    "line": 12,
+    "quote": "\t\"github.com/oauth2-proxy/mockoidc\"",
+    "shows": "import"
+   },
+   {
+    "path": "cmd/headscale/cli/mockoidc.go",
+    "line": 99,
+    "quote": "\terr = mock.Start(listener, nil)",
+    "shows": "call"
+   },
+   {
+    "path": "cmd/headscale/cli/mockoidc.go",
+    "line": 32,
+    "quote": "\tShort: \"Runs a mock OIDC server for testing\",",
+    "shows": "config"
+   }
+  ],
+  "advisory": {
+   "package": "github.com/golang-jwt/jwt/v5",
+   "ecosystem": "Go",
+   "affected_range": ">= 5.0.0-rc.1, < 5.2.2 (also v4 < 4.5.2; v3 >= 3.2.0 <= 3.2.2)",
+   "fixed_version": "5.2.2",
+   "vulnerable_symbols": [
+    "parse.ParseUnverified",
+    "Parser.ParseUnverified"
+   ],
+   "source_url": "https://github.com/advisories/GHSA-mh63-6h87-95cp"
+  },
+  "cost": 0.3216576,
+  "seconds": 182.60000000000002,
+  "decision": "REVIEW",
+  "why": "에이전트가 근거 부족으로 판단을 보류함"
+ },
+ "github.com_opencontainers_runc__CVE-2025-52565": {
+  "id": "github.com_opencontainers_runc__CVE-2025-52565",
+  "cve": "CVE-2025-52565",
+  "package": "github.com/opencontainers/runc",
+  "categories": [
+   "code_not_reachable",
+   "code_not_reachable"
+  ],
+  "category": "code_not_reachable",
+  "verify_ok": [
+   true,
+   true
+  ],
+  "verify_fails": [
+   [],
+   []
+  ],
+  "reasoning": "CVE-2025-52565 (GHSA-qw9x-cqr3-wc7r) affects github.com/opencontainers/runc 1.0.0-rc3 to 1.2.7, 1.3.0-rc.1 to 1.3.2 and 1.4.0-rc.1 to 1.4.0-rc.2. The fixes are in 1.2.8, 1.3.3 and 1.4.0-rc.3. The flaw is in the container runtime's setup of the /dev/pts/$n to /dev/console bind mount when it starts a container. go.mod pins runc v1.2.3 as an indirect dependency, so the version is in the affected range. The vulnerable code runs inside the runc binary (libcontainer init) when a container is created. It is not a library API that this repository could call. No first-party Go file imports runc or libcontainer. The only mention in .go files is a URL in a comment. The module is pulled in transitively through the test-only dockertest/docker dependencies, which talk to a Docker daemon and do not run runc in-process. The repository ships no runc binary and contains no vendored copy of runc. Whether a host's runc is vulnerable depends on the host, not on this source tree. I could not run go list or go mod why because I had no shell, so I could not confirm that the runc package is absent from the compiled build graph. I inferred that from the absence of imports.",
+  "evidence": [
+   {
+    "path": "go.mod",
+    "line": 181,
+    "quote": "\tgithub.com/opencontainers/runc v1.2.3 // indirect",
+    "shows": "version"
+   },
+   {
+    "path": "integration/dockertestutil/config.go",
+    "line": 36,
+    "quote": "\t// https://github.com/opencontainers/runc/commit/2ce40b6ad72b4bd4391380cafc5ef1bad1fa0b31",
+    "shows": "presence"
+   }
+  ],
+  "advisory": {
+   "package": "github.com/opencontainers/runc",
+   "ecosystem": "Go",
+   "affected_range": "1.0.0-rc3 to 1.2.7; 1.3.0-rc.1 to 1.3.2; 1.4.0-rc.1 to 1.4.0-rc.2",
+   "fixed_version": "1.2.8, 1.3.3, 1.4.0-rc.3",
+   "vulnerable_symbols": [
+    "libcontainer console setup (bind-mount of /dev/pts/$n to /dev/console)"
+   ],
+   "source_url": "https://github.com/advisories/GHSA-qw9x-cqr3-wc7r"
+  },
+  "cost": 0.1195639,
+  "seconds": 75.7,
+  "decision": "REVIEW",
+  "why": "저장소 글 차단: 사람이 쓴 글을 근거로 인용: integration/dockertestutil/config.go"
+ },
+ "github.com_opencontainers_runc__CVE-2025-52881": {
+  "id": "github.com_opencontainers_runc__CVE-2025-52881",
+  "cve": "CVE-2025-52881",
+  "package": "github.com/opencontainers/runc",
+  "categories": [
+   "code_not_reachable",
+   "code_not_reachable"
+  ],
+  "category": "code_not_reachable",
+  "verify_ok": [
+   true,
+   true
+  ],
+  "verify_fails": [
+   [],
+   []
+  ],
+  "reasoning": "The advisory (GHSA-cgrx-mc8f-2prm) covers github.com/opencontainers/runc <=1.2.7, 1.3.0-rc.1 to 1.3.2, and 1.4.0-rc.1 to 1.4.0-rc.2. The fixes are 1.2.8, 1.3.3 and 1.4.0-rc.3. go.mod and go.sum resolve runc to v1.2.3, so the version is in the affected range. The entry is an indirect dependency only. It most likely comes in through github.com/ory/dockertest and docker/docker, but I did not run `go mod why` to confirm that. No Go file in the repository imports runc or libcontainer, and there is no vendored copy. The flaw is in runc's container-creation code, which writes to /proc and /proc/self/attr while setting up a container. Headscale never calls that code. The only first-party code that touches Docker is the integration test harness under integration/, which uses the ory/dockertest client to talk to an external Docker daemon. It does not link runc to start containers. The only other mention of runc is a comment URL in integration/dockertestutil/config.go. The vulnerable code would run in the host's container runtime, which this source tree does not ship or configure, so no execution path from headscale reaches it.",
+  "evidence": [
+   {
+    "path": "go.mod",
+    "line": 181,
+    "quote": "github.com/opencontainers/runc v1.2.3 // indirect",
+    "shows": "version"
+   },
+   {
+    "path": "go.sum",
+    "line": 368,
+    "quote": "github.com/opencontainers/runc v1.2.3 h1:fxE7amCzfZflJO2lHXf4y/y8M1BoAqp+FVmG19oYB80=",
+    "shows": "presence"
+   },
+   {
+    "path": "go.mod",
+    "line": 23,
+    "quote": "github.com/ory/dockertest/v3 v3.11.0",
+    "shows": "presence"
+   },
+   {
+    "path": "integration/dockertestutil/config.go",
+    "line": 6,
+    "quote": "\"github.com/ory/dockertest/v3/docker\"",
+    "shows": "import"
+   }
+  ],
+  "advisory": {
+   "package": "github.com/opencontainers/runc",
+   "ecosystem": "Go",
+   "affected_range": "<=1.2.7; >=1.3.0-rc.1 <=1.3.2; >=1.4.0-rc.1 <=1.4.0-rc.2",
+   "fixed_version": "1.2.8, 1.3.3, 1.4.0-rc.3",
+   "vulnerable_symbols": [
+    "libcontainer procfs writes (/proc/sys sysctl)",
+    "libcontainer LSM label writes (/proc/self/attr, AppArmor and SELinux)",
+    "rootfs mount-target handling"
+   ],
+   "source_url": "https://github.com/advisories/GHSA-cgrx-mc8f-2prm"
+  },
+  "cost": 0.12296039999999998,
+  "seconds": 76.3,
+  "decision": "CLOSE",
+  "why": "code_not_reachable"
+ },
+ "github.com_go-jose_go-jose_v3__CVE-2026-34986": {
+  "id": "github.com_go-jose_go-jose_v3__CVE-2026-34986",
+  "cve": "CVE-2026-34986",
+  "package": "github.com/go-jose/go-jose/v3",
+  "categories": [
+   "code_not_reachable",
+   "code_not_reachable"
+  ],
+  "category": "code_not_reachable",
+  "verify_ok": [
+   true,
+   true
+  ],
+  "verify_fails": [
+   [],
+   []
+  ],
+  "reasoning": "The advisory (GHSA-78h2-9frx-2jm8 / GO-2026-4945) covers a panic in go-jose JWE decryption. cipher.KeyUnwrap() panics when a JWE uses a key-wrapping alg (*KW, excluding AxxxGCMKW) and has an empty encrypted_key. It is reached through ParseEncrypted*/Decrypt. Affected ranges are v3 3.0.0-3.0.4 (fixed 3.0.5) and v4 4.0.0-4.1.3 (fixed 4.1.4). This repo resolves go-jose/v3 v3.0.3 and go-jose/v4 v4.0.2, both in the affected ranges, but only as indirect dependencies. No first-party Go file imports go-jose. The only plausible route is github.com/coreos/go-oidc/v3 v3.11.0, which hscontrol/oidc.go imports to verify ID tokens. According to the upstream v3.11.0 source (fetched from GitHub, not read from a local module cache), go-oidc only calls jose.ParseSigned in verify.go and jwks.go. It never calls ParseEncrypted or Decrypt, so the JWE/KeyUnwrap path is not reached. I did not inspect the source of tailscale.com v1.79.0-pre or mockoidc, so a route through them is not ruled out by reading their code. mockoidc is used only by the `headscale mockoidc` test-helper subcommand and by integration tests, and it does not parse JWEs. Verdict: present at an affected version, but no execution path reaches the vulnerable surface. A dependency bump to v4.1.4 / v3.0.5 is still advisable as hygiene.",
+  "evidence": [
+   {
+    "path": "go.mod",
+    "line": 124,
+    "quote": "\tgithub.com/go-jose/go-jose/v3 v3.0.3 // indirect",
+    "shows": "version"
+   },
+   {
+    "path": "go.mod",
+    "line": 125,
+    "quote": "\tgithub.com/go-jose/go-jose/v4 v4.0.2 // indirect",
+    "shows": "version"
+   },
+   {
+    "path": "go.mod",
+    "line": 10,
+    "quote": "\tgithub.com/coreos/go-oidc/v3 v3.11.0",
+    "shows": "presence"
+   },
+   {
+    "path": "hscontrol/oidc.go",
+    "line": 15,
+    "quote": "\t\"github.com/coreos/go-oidc/v3/oidc\"",
+    "shows": "import"
+   }
+  ],
+  "advisory": {
+   "package": "github.com/go-jose/go-jose",
+   "ecosystem": "Go",
+   "affected_range": "v3: >=3.0.0,<3.0.5; v4: >=4.0.0,<4.1.4",
+   "fixed_version": "3.0.5 and 4.1.4",
+   "vulnerable_symbols": [
+    "cipher.KeyUnwrap",
+    "ParseEncrypted",
+    "ParseEncryptedJSON",
+    "ParseEncryptedCompact",
+    "JSONWebEncryption.Decrypt"
+   ],
+   "source_url": "https://api.osv.dev/v1/vulns/CVE-2026-34986"
+  },
+  "cost": 0.21019380000000001,
+  "seconds": 136.0,
+  "decision": "CLOSE",
+  "why": "code_not_reachable"
+ },
+ "github.com_go-jose_go-jose_v4__CVE-2026-34986": {
+  "id": "github.com_go-jose_go-jose_v4__CVE-2026-34986",
+  "cve": "CVE-2026-34986",
+  "package": "github.com/go-jose/go-jose/v4",
+  "categories": [
+   "code_not_reachable",
+   "code_not_reachable"
+  ],
+  "category": "code_not_reachable",
+  "verify_ok": [
+   true,
+   true
+  ],
+  "verify_fails": [
+   [],
+   []
+  ],
+  "reasoning": "go-jose is present only as an indirect dependency, at v3.0.3 and v4.0.2. Both are inside the affected ranges (v3 3.0.0-3.0.4, v4 4.0.0-4.1.3). The flaw is a panic in cipher.KeyUnwrap, reached through ParseEncrypted/ParseEncryptedJSON/ParseEncryptedCompact followed by Decrypt on a JWE. No first-party Go file imports go-jose or calls any JWE API. The only route to go-jose is github.com/coreos/go-oidc/v3 v3.11.0, called from hscontrol/oidc.go. Its IDTokenVerifier.Verify and RemoteKeySet only use jose.ParseSigned, JSONWebSignature.Verify and JSONWebKeySet, which are the JWS path and never reach JWE decryption or KeyUnwrap. I checked go-oidc against upstream source fetched from GitHub, because the module cache is outside the sandbox, so that part is not mechanically checkable inside the repository. The mockoidc package is used only by the 'headscale mockoidc' CLI helper and by integration tests. It is not part of the server's ID-token verification path. Dependency versions come from go.mod and go.sum.",
+  "evidence": [
+   {
+    "path": "go.mod",
+    "line": 125,
+    "quote": "\tgithub.com/go-jose/go-jose/v4 v4.0.2 // indirect",
+    "shows": "version"
+   },
+   {
+    "path": "go.mod",
+    "line": 124,
+    "quote": "\tgithub.com/go-jose/go-jose/v3 v3.0.3 // indirect",
+    "shows": "version"
+   },
+   {
+    "path": "go.mod",
+    "line": 10,
+    "quote": "\tgithub.com/coreos/go-oidc/v3 v3.11.0",
+    "shows": "presence"
+   },
+   {
+    "path": "hscontrol/oidc.go",
+    "line": 15,
+    "quote": "\t\"github.com/coreos/go-oidc/v3/oidc\"",
+    "shows": "import"
+   },
+   {
+    "path": "hscontrol/oidc.go",
+    "line": 367,
+    "quote": "\tidToken, err := verifier.Verify(ctx, rawIDToken)",
+    "shows": "call"
+   }
+  ],
+  "advisory": {
+   "package": "github.com/go-jose/go-jose",
+   "ecosystem": "Go",
+   "affected_range": "v3: >=3.0.0, <3.0.5; v4: >=4.0.0, <4.1.4",
+   "fixed_version": "3.0.5 (v3), 4.1.4 (v4)",
+   "vulnerable_symbols": [
+    "cipher.KeyUnwrap",
+    "ParseEncrypted",
+    "ParseEncryptedJSON",
+    "ParseEncryptedCompact",
+    "JSONWebEncryption.Decrypt"
+   ],
+   "source_url": "https://github.com/go-jose/go-jose/security/advisories/GHSA-78h2-9frx-2jm8"
+  },
+  "cost": 0.20250300000000002,
+  "seconds": 114.69999999999999,
+  "decision": "CLOSE",
+  "why": "code_not_reachable"
+ },
+ "google.golang.org_grpc__CVE-2026-84445": {
+  "id": "google.golang.org_grpc__CVE-2026-84445",
+  "cve": "CVE-2026-84445",
+  "package": "google.golang.org/grpc",
+  "categories": [
+   "code_not_reachable",
+   "code_not_reachable"
+  ],
+  "category": "code_not_reachable",
+  "verify_ok": [
+   true,
+   true
+  ],
+  "verify_fails": [
+   [],
+   []
+  ],
+  "reasoning": "The advisory (GO-2026-6443 / GHSA-2v4p-qf9q-27wj, alias CVE-2026-84445) affects google.golang.org/grpc before 1.82.2 and 1.83.0 up to 1.83.2. The panic is in the xDS routing code, `RouteAndProcess` in `internal/xds/server`, and only affects servers built with `xds.NewGRPCServer()`. This repository resolves grpc v1.69.0, which is in the affected range, so the package is present. The repository's only gRPC servers are plain `grpc.NewServer(...)`, one on a local unix socket and one remote (TLS or insecure). Nothing in any Go source file, go.mod or go.sum references xds. The vulnerable xDS routing code is therefore never linked or run. The transport layer accepts requests with no :authority or Host header, but the advisory's crash comes only from the xDS interceptor indexing the empty authority, and the plain server has no such interceptor. I could not open the advisory text directly: the web search returned nothing for this ID, and the advisory details come from page-summary fetches of osv.dev and GitHub. Both fetches gave consistent results.",
+  "evidence": [
+   {
+    "path": "go.mod",
+    "line": 46,
+    "quote": "\tgoogle.golang.org/grpc v1.69.0",
+    "shows": "version"
+   },
+   {
+    "path": "hscontrol/app.go",
+    "line": 685,
+    "quote": "\tgrpcSocket := grpc.NewServer(",
+    "shows": "call"
+   },
+   {
+    "path": "hscontrol/app.go",
+    "line": 740,
+    "quote": "\t\tgrpcServer = grpc.NewServer(grpcOptions...)",
+    "shows": "call"
+   }
+  ],
+  "advisory": {
+   "package": "google.golang.org/grpc",
+   "ecosystem": "Go",
+   "affected_range": "<1.82.2; >=1.83.0 <1.83.2; >=1.84.0-dev <1.84.0-dev.0.20260825144003-d5a41119e0e3; >=1.85.0-dev <1.85.0-dev.0.20260825072537-93e31b48545e",
+   "fixed_version": "1.82.2, 1.83.2",
+   "vulnerable_symbols": [
+    "google.golang.org/grpc/internal/xds/server.RouteAndProcess",
+    "google.golang.org/grpc/internal/transport.http2Server.operateHeaders",
+    "google.golang.org/grpc/internal/transport.http2Server.HandleStreams",
+    "xds.NewGRPCServer"
+   ],
+   "source_url": "https://osv.dev/vulnerability/GO-2026-6443"
+  },
+  "cost": 0.17695299999999997,
+  "seconds": 90.7,
+  "decision": "CLOSE",
+  "why": "code_not_reachable"
+ },
+ "google.golang.org_grpc__CVE-2026-84304": {
+  "id": "google.golang.org_grpc__CVE-2026-84304",
+  "cve": "CVE-2026-84304",
+  "package": "google.golang.org/grpc",
+  "categories": [
+   "requires_configuration",
+   "requires_configuration"
+  ],
+  "category": "requires_configuration",
+  "verify_ok": [
+   true,
+   true
+  ],
+  "verify_fails": [
+   [],
+   []
+  ],
+  "reasoning": "CVE-2026-84304 (GHSA-vp52-pcj8-j9qc, GO-2026-6348) is an unauthenticated heap exhaustion in grpc-go. Fragmented HTTP/2 DATA frames are each stored as a separate recvMsg in internal/transport recvBuffer. It affects versions before 1.83.1. This repo resolves google.golang.org/grpc v1.69.0, which is in the affected range, and hscontrol/app.go creates two grpc.Server instances. The network-reachable one (app.go:740) is created only when `tlsConfig != nil || GRPCAllowInsecure`. By default tls_letsencrypt_hostname, tls_cert_path and tls_key_path are empty and grpc_allow_insecure is false, so the remote gRPC listener is off by default. The other server (app.go:685) listens only on a local unix socket with mode 0770, which needs local access to the socket and is not a remote attack surface. A deployment that enables TLS or insecure gRPC is exposed, because the auth interceptor runs only after the transport has buffered the frames. The classification is requires_configuration with that caveat. The advisory page was fetched through a summarizing tool, and the web search found only an openSUSE advisory for the CVE ID. I did not check the OSV record directly.",
+  "evidence": [
+   {
+    "path": "go.mod",
+    "line": 46,
+    "quote": "\tgoogle.golang.org/grpc v1.69.0",
+    "shows": "version"
+   },
+   {
+    "path": "go.sum",
+    "line": 688,
+    "quote": "google.golang.org/grpc v1.69.0 h1:quSiOM1GJPmPH5XtU+BCoVXcDVJJAzNcoyfC2cCjGkI=",
+    "shows": "version"
+   },
+   {
+    "path": "hscontrol/app.go",
+    "line": 685,
+    "quote": "\tgrpcSocket := grpc.NewServer(",
+    "shows": "call"
+   },
+   {
+    "path": "hscontrol/app.go",
+    "line": 719,
+    "quote": "\tif tlsConfig != nil || h.cfg.GRPCAllowInsecure {",
+    "shows": "config"
+   },
+   {
+    "path": "hscontrol/app.go",
+    "line": 740,
+    "quote": "\t\tgrpcServer = grpc.NewServer(grpcOptions...)",
+    "shows": "call"
+   },
+   {
+    "path": "hscontrol/types/config.go",
+    "line": 304,
+    "quote": "\tviper.SetDefault(\"grpc_allow_insecure\", false)",
+    "shows": "config"
+   }
+  ],
+  "advisory": {
+   "package": "google.golang.org/grpc (github.com/grpc/grpc-go)",
+   "ecosystem": "Go",
+   "affected_range": "< 1.83.1",
+   "fixed_version": "1.83.1",
+   "vulnerable_symbols": [
+    "internal/transport.recvBuffer",
+    "internal/transport recvMsg (HTTP/2 DATA frame handling)"
+   ],
+   "source_url": "https://api.osv.dev/v1/vulns/CVE-2026-84304"
+  },
+  "cost": 0.22507950000000002,
+  "seconds": 102.0,
+  "decision": "REVIEW",
+  "why": "해석이 필요한 범주라 사람이 닫는다: requires_configuration"
+ },
+ "github.com_klauspost_compress__CVE-2026-63209": {
+  "id": "github.com_klauspost_compress__CVE-2026-63209",
+  "cve": "CVE-2026-63209",
+  "package": "github.com/klauspost/compress",
+  "categories": [
+   "code_not_reachable",
+   "code_not_reachable"
+  ],
+  "category": "code_not_reachable",
+  "verify_ok": [
+   true,
+   true
+  ],
+  "verify_fails": [
+   [],
+   []
+  ],
+  "reasoning": "CVE-2026-63209 (GHSA-259r-337f-4rfw, GO-2026-5841) is an integer overflow in github.com/klauspost/compress/s2. s2.NewDict() accepts a crafted dictionary, and Dict.Encode() then reads out of bounds, which crashes the process. It affects v1.0 through v1.18.6 and is fixed in v1.18.7. This repo resolves v1.17.11, which is inside the affected range, so the module is present. The only first-party use is the zstd subpackage (hscontrol/mapper/mapper.go), which is a different package from s2. The advisory names only s2. No first-party Go file imports s2 or calls NewDict or MakeDict, and there is no vendor directory. The zstd encoder.go at v1.17.11 does not import s2. Exploitation also needs an application that passes attacker-supplied dictionary data to s2.NewDict(). Headscale's only compression use is encoding its own map responses with zstd, with no dictionary input. Limitation: I could not read the Go module cache, so I did not inspect transitive dependencies such as tailscale.com or grpc for s2 use. I also checked only zstd/encoder.go, not every zstd file, for s2 imports. Both gaps are why this is not a stronger conclusion.",
+  "evidence": [
+   {
+    "path": "go.mod",
+    "line": 21,
+    "quote": "github.com/klauspost/compress v1.17.11",
+    "shows": "version"
+   },
+   {
+    "path": "hscontrol/mapper/mapper.go",
+    "line": 23,
+    "quote": "\"github.com/klauspost/compress/zstd\"",
+    "shows": "import"
+   }
+  ],
+  "advisory": {
+   "package": "github.com/klauspost/compress",
+   "ecosystem": "Go",
+   "affected_range": "v1.0 through v1.18.6 (introduced 0, fixed 1.18.7)",
+   "fixed_version": "1.18.7",
+   "vulnerable_symbols": [
+    "s2.NewDict",
+    "s2.Dict.Encode"
+   ],
+   "source_url": "https://github.com/klauspost/compress/security/advisories/GHSA-259r-337f-4rfw"
+  },
+  "cost": 0.2290469,
+  "seconds": 111.6,
+  "decision": "CLOSE",
+  "why": "code_not_reachable"
+ },
+ "github.com_docker_cli__CVE-2025-15558": {
+  "id": "github.com_docker_cli__CVE-2025-15558",
+  "cve": "CVE-2025-15558",
+  "package": "github.com/docker/cli",
+  "categories": [
+   "code_not_reachable",
+   "code_not_reachable"
+  ],
+  "category": "code_not_reachable",
+  "verify_ok": [
+   true,
+   true
+  ],
+  "verify_fails": [
+   [],
+   []
+  ],
+  "reasoning": "The advisory (CVE-2025-15558 / GHSA-p436-gjf2-799p / GO-2026-4610) covers github.com/docker/cli from 19.03.0 up to but not including 29.2.0. The flaw is in plugin discovery in the cli-plugins/manager package, which searches %PROGRAMDATA%\\Docker\\cli-plugins on Windows. The advisory says non-Windows systems and projects that don't use the plugin-manager code are not affected. This repo resolves github.com/docker/cli v27.4.0+incompatible, which is in the affected range. It is only an indirect dependency, pulled in through github.com/ory/dockertest/v3. Headscale's own Go source has no import of github.com/docker/cli or github.com/docker/docker and no reference to cli-plugins or the plugin manager. The only first-party use of dockertest is in integration/ test-harness code, which is not the headscale server or CLI runtime. I could not read the dockertest module source here (file access is restricted to the working directory), so the claim that dockertest does not call cli-plugins/manager rests on the zero-hit searches and my recollection that it only uses the docker/cli config package. Because the vulnerable package is never imported by first-party code, no attack path reaches it. Exploitation would also need Windows, which this repo does not establish.",
+  "evidence": [
+   {
+    "path": "go.mod",
+    "line": 115,
+    "quote": "github.com/docker/cli v27.4.0+incompatible // indirect",
+    "shows": "version"
+   },
+   {
+    "path": "go.mod",
+    "line": 23,
+    "quote": "github.com/ory/dockertest/v3 v3.11.0",
+    "shows": "presence"
+   },
+   {
+    "path": "integration/scenario.go",
+    "line": 21,
+    "quote": "\"github.com/ory/dockertest/v3\"",
+    "shows": "import"
+   }
+  ],
+  "advisory": {
+   "package": "github.com/docker/cli",
+   "ecosystem": "Go",
+   "affected_range": ">=19.03.0, <29.2.0",
+   "fixed_version": "29.2.0",
+   "vulnerable_symbols": [
+    "github.com/docker/cli/cli-plugins/manager"
+   ],
+   "source_url": "https://github.com/advisories/GHSA-p436-gjf2-799p"
+  },
+  "cost": 0.1805455,
+  "seconds": 97.19999999999999,
+  "decision": "CLOSE",
+  "why": "code_not_reachable"
+ },
+ "golang.org_x_crypto__CVE-2026-46597": {
+  "id": "golang.org_x_crypto__CVE-2026-46597",
+  "cve": "CVE-2026-46597",
+  "package": "golang.org/x/crypto",
+  "categories": [
+   "code_not_reachable",
+   "code_not_reachable"
+  ],
+  "category": "code_not_reachable",
+  "verify_ok": [
+   true,
+   true
+  ],
+  "verify_fails": [
+   [],
+   []
+  ],
+  "reasoning": "The advisory (GHSA-q4h4-gmj2-qvw2 / GO-2026-5013) covers the golang.org/x/crypto/ssh package, which has a server-side panic in the AES-GCM packet decoder. Affected versions are before v0.52.0, and the named symbols are Dial, NewClientConn and NewServerConn. The module golang.org/x/crypto v0.31.0 is declared in go.mod, so the version is in range. However, the vulnerable package is not used. No Go file in the repository imports golang.org/x/crypto/ssh. The only x/crypto packages imported are acme, acme/autocert and bcrypt. The one transitive route to SSH code is tailscale.com/tsnet, imported by hscontrol/tailsql.go. Upstream Tailscale source imports Tailscale's own fork, github.com/tailscale/golang-x-crypto/ssh, not golang.org/x/crypto/ssh, and uses it only for key parsing and marshalling (ParsePrivateKey, MarshalAuthorizedKey). That fork is a separate module declared in go.mod as an indirect dependency. It never calls NewServerConn, Dial or NewClientConn, and headscale starts no SSH server. Limitation: I could not read the local module cache. The transitive check used upstream Tailscale v1.78.0 source from GitHub, not the exact v1.79.0-pre in go.mod, and I did not review every other transitive dependency.",
+  "evidence": [
+   {
+    "path": "go.mod",
+    "line": 40,
+    "quote": "golang.org/x/crypto v0.31.0",
+    "shows": "version"
+   },
+   {
+    "path": "hscontrol/app.go",
+    "line": 42,
+    "quote": "\"golang.org/x/crypto/acme\"",
+    "shows": "import"
+   },
+   {
+    "path": "hscontrol/db/api_key.go",
+    "line": 11,
+    "quote": "\"golang.org/x/crypto/bcrypt\"",
+    "shows": "import"
+   },
+   {
+    "path": "hscontrol/tailsql.go",
+    "line": 10,
+    "quote": "\"tailscale.com/tsnet\"",
+    "shows": "import"
+   },
+   {
+    "path": "go.mod",
+    "line": 203,
+    "quote": "github.com/tailscale/golang-x-crypto v0.0.0-20240604161659-3fde5e568aa4 // indirect",
+    "shows": "presence"
+   }
+  ],
+  "advisory": {
+   "package": "golang.org/x/crypto",
+   "ecosystem": "Go",
+   "affected_range": "< v0.52.0 (package golang.org/x/crypto/ssh)",
+   "fixed_version": "v0.52.0",
+   "vulnerable_symbols": [
+    "golang.org/x/crypto/ssh.Dial",
+    "golang.org/x/crypto/ssh.NewClientConn",
+    "golang.org/x/crypto/ssh.NewServerConn",
+    "AES-GCM packet decoder"
+   ],
+   "source_url": "https://pkg.go.dev/vuln/GO-2026-5013"
+  },
+  "cost": 0.2865362,
+  "seconds": 164.2,
+  "decision": "CLOSE",
+  "why": "code_not_reachable"
+ },
+ "golang.org_x_crypto__CVE-2026-39829": {
+  "id": "golang.org_x_crypto__CVE-2026-39829",
+  "cve": "CVE-2026-39829",
+  "package": "golang.org/x/crypto",
+  "categories": [
+   "code_not_reachable",
+   "code_not_reachable"
+  ],
+  "category": "code_not_reachable",
+  "verify_ok": [
+   true,
+   true
+  ],
+  "verify_fails": [
+   [],
+   []
+  ],
+  "reasoning": "CVE-2026-39829 (GHSA-w879-237q-wc7r, GO-2026-5018) is a DoS in the golang.org/x/crypto/ssh package. The RSA and DSA public key parsers have no size limits, so signature verification on a crafted key can burn CPU for minutes. Affected versions are below v0.52.0. go.mod and go.sum resolve golang.org/x/crypto to v0.31.0, which is in the affected range, so the module is present and its version is vulnerable. The vulnerable package is golang.org/x/crypto/ssh, though, and the repository never uses it. First-party Go code imports only x/crypto/bcrypt, x/crypto/acme and x/crypto/acme/autocert. No Go file imports x/crypto/ssh, runs an SSH server or client, or calls the key-parsing functions. No vendor directory exists. The one transitive route to SSH code is tailscale.com/tsnet, imported by hscontrol/tailsql.go. It is used only when the HEADSCALE_DEBUG_TAILSQL_ENABLED debug setting is on. In tailscale v1.78.0, ipn/ipnlocal/ssh.go imports the fork github.com/tailscale/golang-x-crypto/ssh, not upstream x/crypto/ssh. That fork appears in go.mod as an indirect dependency, and the file only parses local host private keys. It never parses or verifies remote public keys. The repository does not start Tailscale's SSH server. Caveat: I checked the tailscale source for v1.78.0, not the exact v1.79.0-pre pin. I also could not inspect other third-party dependencies, such as the dockertest and docker modules used by integration tests, because their sources are not in the tree.",
+  "evidence": [
+   {
+    "path": "go.mod",
+    "line": 40,
+    "quote": "golang.org/x/crypto v0.31.0",
+    "shows": "version"
+   },
+   {
+    "path": "go.sum",
+    "line": 554,
+    "quote": "golang.org/x/crypto v0.31.0 h1:ihbySMvVjLAeSH1IbfcRTkD/iNscyz8rGzjF/E5hV6U=",
+    "shows": "version"
+   },
+   {
+    "path": "hscontrol/db/api_key.go",
+    "line": 11,
+    "quote": "\"golang.org/x/crypto/bcrypt\"",
+    "shows": "import"
+   },
+   {
+    "path": "hscontrol/app.go",
+    "line": 42,
+    "quote": "\"golang.org/x/crypto/acme\"",
+    "shows": "import"
+   },
+   {
+    "path": "hscontrol/app.go",
+    "line": 43,
+    "quote": "\"golang.org/x/crypto/acme/autocert\"",
+    "shows": "import"
+   },
+   {
+    "path": "hscontrol/tailsql.go",
+    "line": 10,
+    "quote": "\"tailscale.com/tsnet\"",
+    "shows": "import"
+   }
+  ],
+  "advisory": {
+   "package": "golang.org/x/crypto",
+   "ecosystem": "Go",
+   "affected_range": "< v0.52.0 (introduced 0)",
+   "fixed_version": "v0.52.0",
+   "vulnerable_symbols": [
+    "golang.org/x/crypto/ssh RSA public key parser",
+    "golang.org/x/crypto/ssh DSA public key parser",
+    "golang.org/x/crypto/ssh public key authentication / signature verification"
+   ],
+   "source_url": "https://api.osv.dev/v1/vulns/CVE-2026-39829"
+  },
+  "cost": 0.3121158,
+  "seconds": 185.8,
+  "decision": "CLOSE",
+  "why": "code_not_reachable"
+ },
+ "github.com_go-jose_go-jose_v3__CVE-2026-116587": {
+  "id": "github.com_go-jose_go-jose_v3__CVE-2026-116587",
+  "cve": "CVE-2026-116587",
+  "package": "github.com/go-jose/go-jose/v3",
+  "categories": [
+   "requires_configuration",
+   "requires_configuration"
+  ],
+  "category": "requires_configuration",
+  "verify_ok": [
+   true,
+   true
+  ],
+  "verify_fails": [
+   [],
+   []
+  ],
+  "reasoning": "CVE-2026-116587 (GHSA-mgcc-cww5-fp2q) affects github.com/go-jose/go-jose v3 <= 3.0.5 and v4 <= 4.1.5. The fix is v4.1.6, and v3 has no fix. A crafted RSA JWK makes crypto/rsa.PrivateKey.Validate burn cubic CPU on Go 1.24+. The repo resolves go-jose v3.0.3 and v4.0.2, both in range, as indirect dependencies only. No first-party Go file imports go-jose or calls jose APIs. The only route in is transitive: hscontrol/oidc.go calls verifier.Verify(), and go-oidc v3.11.0 then calls jose.ParseSigned (from the go-oidc source on GitHub, not this repo). That route runs only when OIDC is configured. app.go:166 starts OIDC only if oidc.issuer is non-empty, and config-example.yaml has the oidc block commented out, so the default is no OIDC and the vulnerable path never runs. When OIDC is on, the token comes from the operator-configured IdP over the back channel, which limits attacker control. The build files also pin Go 1.23 (flake.nix, Dockerfile.integration), while the advisory describes the cubic cost on Go 1.24+. I did not check whether go-jose enters the build through tailscale.com or other modules, because the module cache is outside the sandbox.",
+  "evidence": [
+   {
+    "path": "go.mod",
+    "line": 125,
+    "quote": "github.com/go-jose/go-jose/v4 v4.0.2 // indirect",
+    "shows": "version"
+   },
+   {
+    "path": "go.mod",
+    "line": 124,
+    "quote": "github.com/go-jose/go-jose/v3 v3.0.3 // indirect",
+    "shows": "version"
+   },
+   {
+    "path": "go.mod",
+    "line": 10,
+    "quote": "github.com/coreos/go-oidc/v3 v3.11.0",
+    "shows": "presence"
+   },
+   {
+    "path": "hscontrol/oidc.go",
+    "line": 367,
+    "quote": "idToken, err := verifier.Verify(ctx, rawIDToken)",
+    "shows": "call"
+   },
+   {
+    "path": "hscontrol/app.go",
+    "line": 166,
+    "quote": "if cfg.OIDC.Issuer != \"\" {",
+    "shows": "config"
+   },
+   {
+    "path": "config-example.yaml",
+    "line": 329,
+    "quote": "#   issuer: \"https://your-oidc.issuer.com/path\"",
+    "shows": "config"
+   }
+  ],
+  "advisory": {
+   "package": "github.com/go-jose/go-jose",
+   "ecosystem": "Go",
+   "affected_range": "v3 <= 3.0.5 (no fix); v4 <= 4.1.5",
+   "fixed_version": "4.1.6 (v4 only)",
+   "vulnerable_symbols": [
+    "jose.ParseSigned",
+    "JSONWebKey.UnmarshalJSON (RSA private key path)",
+    "crypto/rsa.PrivateKey.Validate"
+   ],
+   "source_url": "https://github.com/advisories/GHSA-mgcc-cww5-fp2q"
+  },
+  "cost": 0.2930728,
+  "seconds": 175.1,
+  "decision": "REVIEW",
+  "why": "저장소 글 차단: 사람이 쓴 글을 근거로 인용: config-example.yaml"
+ },
+ "github.com_go-jose_go-jose_v4__CVE-2026-116587": {
+  "id": "github.com_go-jose_go-jose_v4__CVE-2026-116587",
+  "cve": "CVE-2026-116587",
+  "package": "github.com/go-jose/go-jose/v4",
+  "categories": [
+   "requires_environment",
+   "requires_configuration"
+  ],
+  "category": "requires_environment",
+  "verify_ok": [
+   true,
+   true
+  ],
+  "verify_fails": [
+   [],
+   []
+  ],
+  "reasoning": "Advisory GHSA-mgcc-cww5-fp2q (CVE-2026-116587) covers github.com/go-jose/go-jose v4 <= 4.1.5 and v3 <= 3.0.5. Parsing a JWK with attacker-chosen RSA modulus and prime values calls crypto/rsa.PrivateKey.Validate, which takes cubic CPU time on Go 1.24 and later. The advisory's PoC is jose.ParseSigned with an embedded JWK in the protected header.\nThis repo resolves go-jose v3.0.3 and v4.0.2 as indirect dependencies, both in the affected range, so the package is present. They come in through github.com/coreos/go-oidc/v3 v3.11.0. First-party code reaches them only through hscontrol/oidc.go:367, where verifier.Verify parses the ID token and, through the provider's remote key set, the JWKS. There is no direct go-jose import in first-party code.\nThe ID token comes from the token endpoint of the admin-configured OIDC issuer after the code exchange, and the JWKS comes from that same issuer. An attacker would therefore have to control or compromise the IdP, not just send a request to headscale.\nThe repo establishes Go 1.23 everywhere: go.mod says go 1.23.1, flake.nix uses buildGo123Module and go_1_23, and the Dockerfiles use golang:1.23. The expensive Validate behavior is documented only for Go 1.24+, so the exploit condition is not established by this repo. I did not verify that Go 1.23 is unaffected. The result would change if a downstream build used Go 1.24 or later, or if the IdP is untrusted. Upgrading go-jose/v4 to >= 4.1.6 removes the issue either way.",
+  "evidence": [
+   {
+    "path": "go.mod",
+    "line": 125,
+    "quote": "github.com/go-jose/go-jose/v4 v4.0.2 // indirect",
+    "shows": "version"
+   },
+   {
+    "path": "go.mod",
+    "line": 124,
+    "quote": "github.com/go-jose/go-jose/v3 v3.0.3 // indirect",
+    "shows": "version"
+   },
+   {
+    "path": "go.mod",
+    "line": 10,
+    "quote": "github.com/coreos/go-oidc/v3 v3.11.0",
+    "shows": "presence"
+   },
+   {
+    "path": "hscontrol/oidc.go",
+    "line": 367,
+    "quote": "idToken, err := verifier.Verify(ctx, rawIDToken)",
+    "shows": "call"
+   },
+   {
+    "path": "go.mod",
+    "line": 3,
+    "quote": "go 1.23.1",
+    "shows": "config"
+   },
+   {
+    "path": "flake.nix",
+    "line": 23,
+    "quote": "buildGo = pkgs.buildGo123Module;",
+    "shows": "config"
+   }
+  ],
+  "advisory": {
+   "package": "github.com/go-jose/go-jose",
+   "ecosystem": "Go",
+   "affected_range": "v4 <= 4.1.5; v3 <= 3.0.5 (introduced 0)",
+   "fixed_version": "4.1.6 (v4); none listed for v3",
+   "vulnerable_symbols": [
+    "crypto/rsa.PrivateKey.Validate (called from go-jose JWK RSA parsing, jwk.go)",
+    "jose.ParseSigned (embedded JWK in protected header)"
+   ],
+   "source_url": "https://github.com/advisories/GHSA-mgcc-cww5-fp2q"
+  },
+  "cost": 0.2341106,
+  "seconds": 119.80000000000001,
+  "decision": "REVIEW",
+  "why": "저장소 글 차단: 사람이 쓴 글을 근거로 인용: config-example.yaml"
+ },
+ "github.com_docker_docker__CVE-2026-41567": {
+  "id": "github.com_docker_docker__CVE-2026-41567",
+  "cve": "CVE-2026-41567",
+  "package": "github.com/docker/docker",
+  "categories": [
+   "code_not_reachable",
+   "code_not_reachable"
+  ],
+  "category": "code_not_reachable",
+  "verify_ok": [
+   true,
+   true
+  ],
+  "verify_fails": [
+   [],
+   []
+  ],
+  "reasoning": "CVE-2026-41567 is a Moby/Docker Engine daemon bug. In the daemon's handling of PUT /containers/{id}/archive (docker cp -), a compressed (xz/gzip) upload makes the daemon look up the decompressor (xz, unpigz) in the container's filesystem instead of the host's. A trojanized image can then run code as the daemon. The advisory lists Docker Engine before 29.5.1 and moby/moby v2 before v2.0.0-beta.14 as affected, and does not name specific functions.\nThis repo's go.mod pins github.com/docker/docker v27.4.0+incompatible as an indirect dependency. That version is inside the affected range, so the module is present. No first-party Go file imports github.com/docker/docker or any of its daemon, api, client or pkg packages (0 hits). The vulnerable code is the daemon's server-side archive handler. It never runs in headscale or its tests, because the daemon is a separate external process.\nThe only related use is the integration test harness, via github.com/ory/dockertest/v3. It calls UploadToContainer and DownloadFromContainer on dockertest's own client, in integration/integrationutil/util.go. These calls send a plain tar buffer to whatever Docker daemon the test host runs. They are not the daemon code, and they are not part of the headscale server's attack surface. Whether that external daemon is patched is a host question that this source tree does not decide.",
+  "evidence": [
+   {
+    "path": "go.mod",
+    "line": 116,
+    "quote": "github.com/docker/docker v27.4.0+incompatible // indirect",
+    "shows": "version"
+   },
+   {
+    "path": "go.mod",
+    "line": 23,
+    "quote": "github.com/ory/dockertest/v3 v3.11.0",
+    "shows": "presence"
+   },
+   {
+    "path": "integration/integrationutil/util.go",
+    "line": 68,
+    "quote": "err = pool.Client.UploadToContainer(",
+    "shows": "call"
+   }
+  ],
+  "advisory": {
+   "package": "github.com/moby/moby (Go module path github.com/docker/docker for v27 and earlier)",
+   "ecosystem": "Go",
+   "affected_range": "Docker Engine < 29.5.1; moby/moby v2 < v2.0.0-beta.14; last affected v28.5.2",
+   "fixed_version": "29.5.1 (Docker Engine) / v2.0.0-beta.14 (moby/moby v2)",
+   "vulnerable_symbols": [
+    "daemon handler for PUT /containers/{id}/archive (docker cp -) decompression binary lookup"
+   ],
+   "source_url": "https://osv.dev/vulnerability/CVE-2026-41567"
+  },
+  "cost": 0.2086749,
+  "seconds": 121.10000000000001,
+  "decision": "CLOSE",
+  "why": "code_not_reachable"
+ },
+ "github.com_docker_docker__CVE-2026-42306": {
+  "id": "github.com_docker_docker__CVE-2026-42306",
+  "cve": "CVE-2026-42306",
+  "package": "github.com/docker/docker",
+  "categories": [
+   "code_not_reachable",
+   "code_not_reachable"
+  ],
+  "category": "code_not_reachable",
+  "verify_ok": [
+   true,
+   true
+  ],
+  "verify_fails": [
+   [],
+   []
+  ],
+  "reasoning": "CVE-2026-42306 (GHSA-rg2x-37c3-w2rh / GO-2026-5617) is a race in the Docker/Moby daemon's `docker cp` mount setup. A malicious container can redirect a bind mount target to an arbitrary host path. The affected range is Docker Engine before 29.5.1, Docker Daemon 28.5.2 and earlier, and Moby daemon before 2.0.0-beta.14. The flaw is in server-side daemon code, which runs in the Docker host process and not in this repository.\nHeadscale declares github.com/docker/docker v27.4.0+incompatible only as an indirect dependency, pulled in by github.com/ory/dockertest/v3. That version number falls in the affected daemon range, but the module is a client dependency here. No first-party Go file imports github.com/docker/docker or github.com/moby/moby, and the daemon package is never imported or built. The only Docker use is the ory/dockertest client in the integration test harness (integration/...). It calls UploadToContainer and DownloadFromContainer, which are client API calls to whatever Docker daemon the tester runs. Those calls do not execute daemon code in this repository's binaries. Any exposure sits in the Docker Engine on the machine running the integration tests, which this source tree does not ship or control.\nCaveat: I could not retrieve function-level detail. The OSV record names no specific functions, only the daemon `docker cp` mount setup path. The advisory page I fetched also did not say whether the legacy github.com/docker/docker module path is formally in scope. The OSV record scopes the Go module as github.com/moby/moby/v2/daemon.",
+  "evidence": [
+   {
+    "path": "go.mod",
+    "line": 116,
+    "quote": "github.com/docker/docker v27.4.0+incompatible // indirect",
+    "shows": "version"
+   },
+   {
+    "path": "go.mod",
+    "line": 23,
+    "quote": "github.com/ory/dockertest/v3 v3.11.0",
+    "shows": "presence"
+   },
+   {
+    "path": "integration/integrationutil/util.go",
+    "line": 68,
+    "quote": "err = pool.Client.UploadToContainer(",
+    "shows": "call"
+   },
+   {
+    "path": "integration/integrationutil/util.go",
+    "line": 90,
+    "quote": "err := pool.Client.DownloadFromContainer(",
+    "shows": "call"
+   }
+  ],
+  "advisory": {
+   "package": "github.com/moby/moby (Docker Engine / Moby daemon)",
+   "ecosystem": "Go",
+   "affected_range": "Docker Engine < 29.5.1; Docker Daemon <= 28.5.2; Moby daemon < 2.0.0-beta.14",
+   "fixed_version": "Docker Engine 29.5.1 / Moby daemon 2.0.0-beta.14",
+   "vulnerable_symbols": [
+    "daemon `docker cp` mount setup (no specific function named in the OSV record)"
+   ],
+   "source_url": "https://osv.dev/vulnerability/CVE-2026-42306"
+  },
+  "cost": 0.1863858,
+  "seconds": 110.9,
+  "decision": "CLOSE",
+  "why": "code_not_reachable"
+ },
+ "google.golang.org_grpc__GHSA-hrxh-6v49-42gf": {
+  "id": "google.golang.org_grpc__GHSA-hrxh-6v49-42gf",
+  "cve": "GHSA-hrxh-6v49-42gf",
+  "package": "google.golang.org/grpc",
+  "categories": [
+   "requires_configuration",
+   "requires_configuration"
+  ],
+  "category": "requires_configuration",
+  "verify_ok": [
+   true,
+   true
+  ],
+  "verify_fails": [
+   [],
+   []
+  ],
+  "reasoning": "The advisory GHSA-hrxh-6v49-42gf covers google.golang.org/grpc < 1.82.1. It lists three issues. Two are in the xDS RBAC translation (internal/xds/rbac): unsupported matchers are dropped, which can fail open, and a NOT rule around an unsupported field can panic. The third is a Rapid Reset bypass in internal/transport (HEADERS followed by RST_STREAM), which allows CPU denial of service. The repository resolves grpc to v1.69.0, which is in the affected range.\n\nThe xDS RBAC issues are not reachable. No Go source imports google.golang.org/grpc/xds or any xds package, and the gRPC servers are plain grpc.NewServer instances with a custom authentication interceptor, not xDS-managed servers.\n\nThe transport issue is in code the repository always uses through grpc.NewServer. It has two exposures. The unix-socket gRPC server always starts, but it is local-only. The TCP gRPC server (hscontrol/app.go:719) starts only if TLS is configured or grpc_allow_insecure is true. Both are off by default: grpc_allow_insecure defaults to false and tls_cert_path and tls_letsencrypt_hostname default to empty. So network exposure of the vulnerable transport needs operator configuration that is disabled by default.\n\nCaveat: if an operator enables TLS or insecure gRPC, the DoS applies, because the authentication interceptor is unary-level and does not stop HTTP/2 transport abuse. Upgrading grpc to 1.82.1 or later is still advised.",
+  "evidence": [
+   {
+    "path": "go.mod",
+    "line": 46,
+    "quote": "google.golang.org/grpc v1.69.0",
+    "shows": "version"
+   },
+   {
+    "path": "hscontrol/app.go",
+    "line": 685,
+    "quote": "grpcSocket := grpc.NewServer(",
+    "shows": "call"
+   },
+   {
+    "path": "hscontrol/app.go",
+    "line": 719,
+    "quote": "if tlsConfig != nil || h.cfg.GRPCAllowInsecure {",
+    "shows": "config"
+   },
+   {
+    "path": "hscontrol/app.go",
+    "line": 740,
+    "quote": "grpcServer = grpc.NewServer(grpcOptions...)",
+    "shows": "call"
+   },
+   {
+    "path": "hscontrol/types/config.go",
+    "line": 304,
+    "quote": "viper.SetDefault(\"grpc_allow_insecure\", false)",
+    "shows": "config"
+   },
+   {
+    "path": "config-example.yaml",
+    "line": 225,
+    "quote": "tls_cert_path: \"\"",
+    "shows": "config"
+   }
+  ],
+  "advisory": {
+   "package": "google.golang.org/grpc",
+   "ecosystem": "Go",
+   "affected_range": "< 1.82.1",
+   "fixed_version": "1.82.1",
+   "vulnerable_symbols": [
+    "internal/xds/rbac",
+    "internal/transport"
+   ],
+   "source_url": "https://github.com/advisories/GHSA-hrxh-6v49-42gf"
+  },
+  "cost": 0.16870069999999998,
+  "seconds": 85.8,
+  "decision": "REVIEW",
+  "why": "해석이 필요한 범주라 사람이 닫는다: requires_configuration"
+ },
+ "google.golang.org_grpc__GO-2026-6061": {
+  "id": "google.golang.org_grpc__GO-2026-6061",
+  "cve": "GO-2026-6061",
+  "package": "google.golang.org/grpc",
+  "categories": [
+   "requires_configuration",
+   "requires_configuration"
+  ],
+  "category": "requires_configuration",
+  "verify_ok": [
+   true,
+   true
+  ],
+  "verify_fails": [
+   [],
+   []
+  ],
+  "reasoning": "google.golang.org/grpc v1.69.0 is resolved, which is before the fixed v1.82.1, so it is in the affected range. The advisory covers three issues. Two are in the xDS RBAC engine: an authorization fail-open and a panic. The third is a bypass of the HTTP/2 Rapid Reset mitigation in internal/transport, which allows a remote DoS. The repository never imports google.golang.org/grpc/xds or the RBAC engine, so the two RBAC issues are not reachable. The transport issue is reachable only through grpc.NewServer(...).Serve(...) in hscontrol/app.go. There are two such servers. (1) The remote TCP gRPC server at lines 719-750 is created only if TLS is configured or grpc_allow_insecure is true. By default tls_cert_path and tls_letsencrypt_hostname are empty and grpc_allow_insecure is false, so the remote gRPC listener is off by default. (2) The unix-socket gRPC server is always on, but it is local only and gated by file mode 0o770, so it is not a remote attack surface. A remote attacker can exploit the issue only when the operator enables TLS or insecure gRPC. I did not check the defaults of getTLSSettings beyond the config defaults and config-example.yaml. Deployments that enable remote gRPC are vulnerable until grpc is upgraded to v1.82.1 or later.",
+  "evidence": [
+   {
+    "path": "go.mod",
+    "line": 46,
+    "quote": "\tgoogle.golang.org/grpc v1.69.0",
+    "shows": "version"
+   },
+   {
+    "path": "hscontrol/app.go",
+    "line": 719,
+    "quote": "\tif tlsConfig != nil || h.cfg.GRPCAllowInsecure {",
+    "shows": "config"
+   },
+   {
+    "path": "hscontrol/app.go",
+    "line": 740,
+    "quote": "\t\tgrpcServer = grpc.NewServer(grpcOptions...)",
+    "shows": "call"
+   },
+   {
+    "path": "hscontrol/app.go",
+    "line": 750,
+    "quote": "\t\terrorGroup.Go(func() error { return grpcServer.Serve(grpcListener) })",
+    "shows": "call"
+   },
+   {
+    "path": "hscontrol/types/config.go",
+    "line": 304,
+    "quote": "\tviper.SetDefault(\"grpc_allow_insecure\", false)",
+    "shows": "config"
+   },
+   {
+    "path": "config-example.yaml",
+    "line": 225,
+    "quote": "tls_cert_path: \"\"",
+    "shows": "config"
+   }
+  ],
+  "advisory": {
+   "package": "google.golang.org/grpc",
+   "ecosystem": "Go",
+   "affected_range": "< v1.82.1",
+   "fixed_version": "v1.82.1",
+   "vulnerable_symbols": [
+    "google.golang.org/grpc/internal/transport.NewServerTransport",
+    "google.golang.org/grpc/internal/transport.NewHTTP2Client",
+    "google.golang.org/grpc/internal/xds/rbac.ChainEngine.IsAuthorized",
+    "google.golang.org/grpc/internal/xds/rbac.NewChainEngine"
+   ],
+   "source_url": "https://pkg.go.dev/vuln/GO-2026-6061"
+  },
+  "cost": 0.2004027,
+  "seconds": 130.0,
+  "decision": "REVIEW",
+  "why": "해석이 필요한 범주라 사람이 닫는다: requires_configuration"
+ },
+ "github.com_go-viper_mapstructure_v2__GHSA-fv92-fjc5-jj9h": {
+  "id": "github.com_go-viper_mapstructure_v2__GHSA-fv92-fjc5-jj9h",
+  "cve": "GHSA-fv92-fjc5-jj9h",
+  "package": "github.com/go-viper/mapstructure/v2",
+  "categories": [
+   "uncertain",
+   "vulnerable"
+  ],
+  "category": "vulnerable",
+  "verify_ok": [
+   false,
+   true
+  ],
+  "verify_fails": [
+   [
+    "0건 주장이 틀림(5건): mapstructure @ **/*.go"
+   ],
+   []
+  ],
+  "reasoning": "GHSA-fv92-fjc5-jj9h affects github.com/go-viper/mapstructure/v2 < 2.3.0, fixed in 2.3.0. Decode errors can echo the original input value, which is CWE-532 (sensitive data in logs). This repository resolves v2.2.1, which is in the affected range. It is an indirect dependency pulled in by spf13/viper v1.20.0-alpha.6. I did not open viper's source, because the module cache is outside the sandbox. That viper uses mapstructure/v2 is inferred from the indirect v2 entry in go.mod, not verified. First-party code does not call mapstructure directly, with 0 hits for its decode APIs. It reaches the decoder through viper.UnmarshalKey(\"dns.extra_records\", &extraRecords) in hscontrol/types/config.go. That call runs whenever dns.extra_records is set in the config file, and viper decodes with mapstructure. A type mismatch in that config value would put the offending value into the returned error, which wraps it with fmt.Errorf. No in-repo mitigation applies. Practical impact is low: the input is the operator's own config file (a file-parsing surface, not network input), and the values are DNS records, not secrets. I classify it as vulnerable under the strict rubric, but the severity is minimal. Fixing it means bumping mapstructure/v2 to >= 2.3.0.",
+  "evidence": [
+   {
+    "path": "go.mod",
+    "line": 128,
+    "quote": "github.com/go-viper/mapstructure/v2 v2.2.1 // indirect",
+    "shows": "version"
+   },
+   {
+    "path": "go.mod",
+    "line": 34,
+    "quote": "github.com/spf13/viper v1.20.0-alpha.6",
+    "shows": "presence"
+   },
+   {
+    "path": "hscontrol/types/config.go",
+    "line": 644,
+    "quote": "err := viper.UnmarshalKey(\"dns.extra_records\", &extraRecords)",
+    "shows": "call"
+   }
+  ],
+  "advisory": {
+   "package": "github.com/go-viper/mapstructure/v2",
+   "ecosystem": "Go",
+   "affected_range": "< 2.3.0",
+   "fixed_version": "2.3.0",
+   "vulnerable_symbols": [
+    "mapstructure.WeakDecode",
+    "mapstructure.Decode",
+    "decode error handling in mapstructure.go"
+   ],
+   "source_url": "https://github.com/advisories/GHSA-fv92-fjc5-jj9h"
+  },
+  "cost": 0.145889,
+  "seconds": 91.5,
+  "decision": "OPEN",
+  "why": "코드에서 쓰임이 확인됨"
+ },
+ "github.com_go-viper_mapstructure_v2__GO-2025-3787": {
+  "id": "github.com_go-viper_mapstructure_v2__GO-2025-3787",
+  "cve": "GO-2025-3787",
+  "package": "github.com/go-viper/mapstructure/v2",
+  "categories": [
+   "code_not_reachable",
+   "code_not_reachable"
+  ],
+  "category": "code_not_reachable",
+  "verify_ok": [
+   true,
+   true
+  ],
+  "verify_fails": [
+   [],
+   []
+  ],
+  "reasoning": "GO-2025-3787 (GHSA-fv92-fjc5-jj9h, no CVE) affects github.com/go-viper/mapstructure/v2 before v2.3.0. When a decode fails (WeakDecode and the decode helpers behind it), the error text includes the raw input value, which can leak sensitive data into logs or responses. This repo resolves the module to v2.2.1 as an indirect dependency of spf13/viper v1.20.0-alpha.6, so the version is in range. The only decode path is viper.UnmarshalKey(\"dns.extra_records\", &extraRecords) in hscontrol/types/config.go. It runs once at startup, on operator-authored config (file or HEADSCALE_ env vars), and decodes into []tailcfg.DNSRecord (DNS names and IPs, not secrets). The error is wrapped and returned from config loading, not sent to a network client. The other viper calls are GetString/GetBool/GetStringSlice and similar, which use cast and not mapstructure struct decoding. The repo has no direct mapstructure import, WeakDecode, or DecoderConfig use. No network, untrusted-input or multi-tenant surface feeds mapstructure, so I found no attacker-controlled input and no sensitive value to leak. The decode code is reached, but only from trusted local config, so this is not exploitable as described. I picked code_not_reachable as the closest category. A human may prefer to reclassify it as a trusted-input, low-risk finding. Bumping mapstructure/v2 to v2.3.0 or later would remove the finding.",
+  "evidence": [
+   {
+    "path": "go.mod",
+    "line": 128,
+    "quote": "\tgithub.com/go-viper/mapstructure/v2 v2.2.1 // indirect",
+    "shows": "version"
+   },
+   {
+    "path": "go.mod",
+    "line": 34,
+    "quote": "\tgithub.com/spf13/viper v1.20.0-alpha.6",
+    "shows": "presence"
+   },
+   {
+    "path": "hscontrol/types/config.go",
+    "line": 644,
+    "quote": "\t\terr := viper.UnmarshalKey(\"dns.extra_records\", &extraRecords)",
+    "shows": "call"
+   },
+   {
+    "path": "hscontrol/types/config.go",
+    "line": 646,
+    "quote": "\t\t\treturn DNSConfig{}, fmt.Errorf(\"unmarshalling dns extra records: %w\", err)",
+    "shows": "call"
+   },
+   {
+    "path": "hscontrol/types/config.go",
+    "line": 337,
+    "quote": "\tif err := viper.ReadInConfig(); err != nil {",
+    "shows": "config"
+   }
+  ],
+  "advisory": {
+   "package": "github.com/go-viper/mapstructure/v2",
+   "ecosystem": "Go",
+   "affected_range": "< v2.3.0 (the original github.com/go-viper/mapstructure module: all versions)",
+   "fixed_version": "v2.3.0",
+   "vulnerable_symbols": [
+    "mapstructure.WeakDecode",
+    "mapstructure decode helpers (error messages include the raw input value)"
+   ],
+   "source_url": "https://pkg.go.dev/vuln/GO-2025-3787"
+  },
+  "cost": 0.2262221,
+  "seconds": 122.2,
+  "decision": "CLOSE",
+  "why": "code_not_reachable"
+ },
+ "github.com_insomniacslk_dhcp__GO-2026-6237": {
+  "id": "github.com_insomniacslk_dhcp__GO-2026-6237",
+  "cve": "GO-2026-6237",
+  "package": "github.com/insomniacslk/dhcp",
+  "categories": [
+   "code_not_reachable",
+   "code_not_reachable"
+  ],
+  "category": "code_not_reachable",
+  "verify_ok": [
+   true,
+   true
+  ],
+  "verify_fails": [
+   [],
+   []
+  ],
+  "reasoning": "GO-2026-6237 affects github.com/insomniacslk/dhcp/dhcpv4/nclient4, specifically BroadcastRawUDPConn.ReadFrom. A short IPv4 payload makes the computed DHCP length negative, which panics. All versions before v0.0.0-20260719225207-c76316d4aa82 are affected. The repo resolves the module to v0.0.0-20240129002554-15c9b8791914, so the version is in range. It is only an indirect dependency (go.mod, `// indirect`), and there is no vendor directory. No first-party Go source imports insomniacslk/dhcp or nclient4, and nothing references BroadcastRawUDPConn. The only transitive route is through tailscale.com v1.79.0-pre and similar. pkg.go.dev's imported-by list for nclient4 shows no tailscale.com package, so the vulnerable package should not be compiled into headscale. Caveat: I could not read the Go module cache, and the pkg.go.dev result was a condensed summary rather than a verbatim list. The no-importer conclusion for tailscale rests on that summary, not on direct inspection of the dependency source.",
+  "evidence": [
+   {
+    "path": "go.mod",
+    "line": 148,
+    "quote": "\tgithub.com/insomniacslk/dhcp v0.0.0-20240129002554-15c9b8791914 // indirect",
+    "shows": "version"
+   }
+  ],
+  "advisory": {
+   "package": "github.com/insomniacslk/dhcp",
+   "ecosystem": "Go",
+   "affected_range": "all versions before v0.0.0-20260719225207-c76316d4aa82",
+   "fixed_version": "v0.0.0-20260719225207-c76316d4aa82",
+   "vulnerable_symbols": [
+    "github.com/insomniacslk/dhcp/dhcpv4/nclient4.BroadcastRawUDPConn.ReadFrom"
+   ],
+   "source_url": "https://pkg.go.dev/vuln/GO-2026-6237"
+  },
+  "cost": 0.21959199999999998,
+  "seconds": 131.2,
+  "decision": "CLOSE",
+  "why": "code_not_reachable"
+ },
+ "golang.org_x_crypto__GO-2026-5932": {
+  "id": "golang.org_x_crypto__GO-2026-5932",
+  "cve": "GO-2026-5932",
+  "package": "golang.org/x/crypto",
+  "categories": [
+   "code_not_reachable",
+   "code_not_reachable"
+  ],
+  "category": "code_not_reachable",
+  "verify_ok": [
+   true,
+   true
+  ],
+  "verify_fails": [
+   [],
+   []
+  ],
+  "reasoning": "GO-2026-5932 covers only the deprecated golang.org/x/crypto/openpgp packages (openpgp, packet, armor, clearsign, errors, elgamal, s2k). It lists all versions as affected and no fix, with no CVE alias. The repo declares golang.org/x/crypto v0.31.0, so the module is present and in range. But the vulnerable packages are separate subpackages, and no first-party Go source imports them. The only x/crypto imports are acme, acme/autocert and bcrypt, which are different packages. The string 'openpgp' appears nowhere in the tree, and there is no vendor directory. Caveat: I could not inspect the Go module cache, so I could not check mechanically whether a dependency such as tailscale.com imports x/crypto/openpgp. go.sum has no OpenPGP-related modules such as ProtonMail/go-crypto, keybase or gopenpgp, which is consistent with no OpenPGP use. This is a moderate-confidence call and is worth confirming with `go list -deps ./...` or govulncheck.",
+  "evidence": [
+   {
+    "path": "go.mod",
+    "line": 40,
+    "quote": "\tgolang.org/x/crypto v0.31.0",
+    "shows": "version"
+   },
+   {
+    "path": "hscontrol/app.go",
+    "line": 42,
+    "quote": "\t\"golang.org/x/crypto/acme\"",
+    "shows": "import"
+   },
+   {
+    "path": "hscontrol/db/api_key.go",
+    "line": 11,
+    "quote": "\t\"golang.org/x/crypto/bcrypt\"",
+    "shows": "import"
+   }
+  ],
+  "advisory": {
+   "package": "golang.org/x/crypto",
+   "ecosystem": "Go",
+   "affected_range": "all versions (no known fixed version)",
+   "fixed_version": "",
+   "vulnerable_symbols": [
+    "golang.org/x/crypto/openpgp",
+    "golang.org/x/crypto/openpgp/packet",
+    "golang.org/x/crypto/openpgp/armor",
+    "golang.org/x/crypto/openpgp/clearsign",
+    "golang.org/x/crypto/openpgp/errors",
+    "golang.org/x/crypto/openpgp/elgamal",
+    "golang.org/x/crypto/openpgp/s2k"
+   ],
+   "source_url": "https://pkg.go.dev/vuln/GO-2026-5932"
+  },
+  "cost": 0.170175,
+  "seconds": 101.3,
+  "decision": "CLOSE",
+  "why": "code_not_reachable"
+ },
+ "github.com_docker_docker__CVE-2026-34040": {
+  "id": "github.com_docker_docker__CVE-2026-34040",
+  "cve": "CVE-2026-34040",
+  "package": "github.com/docker/docker",
+  "categories": [
+   "code_not_reachable",
+   "code_not_reachable"
+  ],
+  "category": "code_not_reachable",
+  "verify_ok": [
+   true,
+   true
+  ],
+  "verify_fails": [
+   [],
+   []
+  ],
+  "reasoning": "The advisory (GHSA-x744-4wpc-v9h2, CVE-2026-34040) covers the Docker Engine daemon module github.com/moby/moby, published in Go as github.com/docker/docker. Affected versions are below 29.3.1. The flaw is in the daemon, which can forward a crafted oversized API request to an AuthZ plugin without the request body. The advisory says that if you don't use AuthZ plugins, you are not affected. This repo resolves github.com/docker/docker v27.4.0+incompatible, which is inside the affected range. It is only an indirect dependency, pulled in through github.com/ory/dockertest/v3. That library is used only under integration/dockertestutil, as a client that drives a Docker daemon in integration tests. No Go file in the repo imports github.com/docker/docker, and none imports the daemon, API server or authorization packages. headscale does not run a Docker daemon, does not configure AuthZ plugins, and exposes no Docker API. I found no execution path to the vulnerable code. The exposure is a Docker daemon on a developer or CI host, outside this source tree. I could not check the fix commit e89edb1 to confirm the exact vulnerable files. The advisory page names no functions, so the symbol list below is inferred from its description.",
+  "evidence": [
+   {
+    "path": "go.mod",
+    "line": 116,
+    "quote": "\tgithub.com/docker/docker v27.4.0+incompatible // indirect",
+    "shows": "version"
+   },
+   {
+    "path": "go.mod",
+    "line": 23,
+    "quote": "\tgithub.com/ory/dockertest/v3 v3.11.0",
+    "shows": "presence"
+   },
+   {
+    "path": "integration/dockertestutil/logs.go",
+    "line": 11,
+    "quote": "\t\"github.com/ory/dockertest/v3\"",
+    "shows": "import"
+   }
+  ],
+  "advisory": {
+   "package": "github.com/moby/moby (Go import path github.com/docker/docker)",
+   "ecosystem": "Go",
+   "affected_range": "< 29.3.1 (moby/moby/v2 < 2.0.0-beta.8)",
+   "fixed_version": "29.3.1",
+   "vulnerable_symbols": [
+    "Docker daemon AuthZ plugin request forwarding (pkg/authorization middleware)"
+   ],
+   "source_url": "https://github.com/advisories/GHSA-x744-4wpc-v9h2"
+  },
+  "cost": 0.1843862,
+  "seconds": 124.3,
+  "decision": "CLOSE",
+  "why": "code_not_reachable"
+ },
+ "golang.org_x_net__CVE-2026-39821": {
+  "id": "golang.org_x_net__CVE-2026-39821",
+  "cve": "CVE-2026-39821",
+  "package": "golang.org/x/net",
+  "categories": [
+   "uncertain",
+   "uncertain"
+  ],
+  "category": "uncertain",
+  "verify_ok": [
+   true,
+   true
+  ],
+  "verify_fails": [
+   [],
+   []
+  ],
+  "reasoning": "The affected package is present, but I could not establish that the flaw is reachable from an attacker-controlled input. CVE-2026-39821 (GO-2026-5026) affects golang.org/x/net/idna (ToASCII, ToUnicode) before 0.55.0, and the Go stdlib net/http (idnaASCII) before 1.25.13 and 1.26.6. go.mod pins golang.org/x/net v0.32.0, which is in the affected range, and the go directive is 1.23.1.\\n\\nNo first-party code imports or calls x/net/idna directly (0 hits). The only first-party x/net use is http2.Server.ServeConn in hscontrol/noise.go:107. This is the server side, and I did not verify that it reaches idna. The idna calls sit in the HTTP client and transport hostname handling.\\n\\nFirst-party outbound client calls do exist: client.Do in hscontrol/derp/derp.go:46 and oidc.NewProvider in hscontrol/oidc.go:79. Both take their URLs from operator configuration (DERP URLs and the OIDC issuer), not from network peers. The advisory's impact is a hostname-based privilege check that disagrees with the later Unicode form of the name. I found no hostname-based authorization in this repo that an attacker could influence. I did not inspect transitive dependencies such as tailscale.com or go-oidc, and no module cache or vendored copy was available to check them. Whether the vulnerable surface is reachable from an attack surface is therefore unproven, and so is the opposite. A human should confirm. Upgrading golang.org/x/net to 0.55.0 or later and the Go toolchain to a fixed release removes the question.",
+  "evidence": [
+   {
+    "path": "go.mod",
+    "line": 42,
+    "quote": "golang.org/x/net v0.32.0",
+    "shows": "version"
+   },
+   {
+    "path": "go.mod",
+    "line": 3,
+    "quote": "go 1.23.1",
+    "shows": "version"
+   },
+   {
+    "path": "hscontrol/noise.go",
+    "line": 107,
+    "quote": "noiseServer.http2Server = &http2.Server{}",
+    "shows": "call"
+   },
+   {
+    "path": "hscontrol/derp/derp.go",
+    "line": 46,
+    "quote": "resp, err := client.Do(req)",
+    "shows": "call"
+   },
+   {
+    "path": "hscontrol/oidc.go",
+    "line": 79,
+    "quote": "oidcProvider, err := oidc.NewProvider(context.Background(), cfg.Issuer)",
+    "shows": "call"
+   }
+  ],
+  "advisory": {
+   "package": "golang.org/x/net",
+   "ecosystem": "Go",
+   "affected_range": "golang.org/x/net: >=0, <0.55.0; stdlib: <1.25.13, >=1.26.0-0 <1.26.6, >=1.27.0-0 <1.27.0-rc.3",
+   "fixed_version": "0.55.0 (x/net); 1.25.13 / 1.26.6 / 1.27.0-rc.3 (stdlib)",
+   "vulnerable_symbols": [
+    "idna.ToASCII",
+    "idna.ToUnicode",
+    "idna.Profile.ToASCII",
+    "idna.Profile.ToUnicode",
+    "idna.Profile.process",
+    "net/http.idnaASCII"
+   ],
+   "source_url": "https://osv.dev/vulnerability/GO-2026-5026"
+  },
+  "cost": 0.2383489,
+  "seconds": 135.3,
+  "decision": "REVIEW",
+  "why": "에이전트가 근거 부족으로 판단을 보류함"
+ },
+ "golang.org_x_net__CVE-2024-45338": {
+  "id": "golang.org_x_net__CVE-2024-45338",
+  "cve": "CVE-2024-45338",
+  "package": "golang.org/x/net",
+  "categories": [
+   "code_not_reachable",
+   "code_not_reachable"
+  ],
+  "category": "code_not_reachable",
+  "verify_ok": [
+   true,
+   true
+  ],
+  "verify_fails": [
+   [],
+   []
+  ],
+  "reasoning": "golang.org/x/net is a direct requirement at v0.32.0. The advisory says versions before 0.33.0 are affected, so the version is in range. The vulnerable code is the golang.org/x/net/html package: Parse, ParseWithOptions, ParseFragment and ParseFragmentWithOptions. No first-party Go file imports that package or calls those functions. The only x/net package the repository uses is x/net/http2, imported at hscontrol/noise.go:14. To my knowledge http2 does not import x/net/html, but I could not confirm this because the Go module cache is outside the sandbox. There is no vendor directory. go.mod declares no HTML-parsing libraries such as goquery, bluemonday or goldmark. Limitation: I could not inspect transitive dependencies such as tailscale.com, so a transitive import of x/net/html is not ruled out. A human can confirm with govulncheck or `go mod why -m golang.org/x/net` followed by `go list -deps ./... | grep x/net/html`.",
+  "evidence": [
+   {
+    "path": "go.mod",
+    "line": 42,
+    "quote": "\tgolang.org/x/net v0.32.0",
+    "shows": "version"
+   },
+   {
+    "path": "hscontrol/noise.go",
+    "line": 14,
+    "quote": "\t\"golang.org/x/net/http2\"",
+    "shows": "import"
+   }
+  ],
+  "advisory": {
+   "package": "golang.org/x/net",
+   "ecosystem": "Go",
+   "affected_range": "<0.33.0 (introduced 0, fixed 0.33.0)",
+   "fixed_version": "0.33.0",
+   "vulnerable_symbols": [
+    "html.Parse",
+    "html.ParseWithOptions",
+    "html.ParseFragment",
+    "html.ParseFragmentWithOptions"
+   ],
+   "source_url": "https://api.osv.dev/v1/vulns/GO-2024-3333"
+  },
+  "cost": 0.19098290000000004,
+  "seconds": 123.2,
+  "decision": "CLOSE",
+  "why": "code_not_reachable"
+ },
+ "golang.org_x_net__CVE-2026-33814": {
+  "id": "golang.org_x_net__CVE-2026-33814",
+  "cve": "CVE-2026-33814",
+  "package": "golang.org/x/net",
+  "categories": [
+   "vulnerable",
+   "vulnerable"
+  ],
+  "category": "vulnerable",
+  "verify_ok": [
+   true,
+   true
+  ],
+  "verify_fails": [
+   [],
+   []
+  ],
+  "reasoning": "CVE-2026-33814 (GO-2026-4918) is an HTTP/2 client-side infinite loop. The transport loops writing CONTINUATION frames after it receives a SETTINGS frame with SETTINGS_MAX_FRAME_SIZE=0. It affects golang.org/x/net/http2 before v0.53.0 and the stdlib net/http before go1.25.10 (and go1.26.0 to before 1.26.3).\n\nPresence: go.mod pins golang.org/x/net v0.32.0, which is below 0.53.0. The build toolchain is Go 1.23 (go.mod 'go 1.23.1', flake.nix buildGo123Module, Dockerfile.integration golang:1.23), which is below 1.25.10, so the stdlib net/http is in the affected range.\n\nReachability: the x/net http2 package is used only for the server side (http2.Server in hscontrol/noise.go). The advisory's x/net symbols are all client Transport symbols, and a search found no first-party use of them. The stdlib surface is reachable, though. hscontrol/derp/derp.go calls http.Client.Do, a listed vulnerable symbol, in loadDERPMapFromURL. It fetches each URL in derp.urls, whose default in config-example.yaml is https://controlplane.tailscale.com/derpmap/default. Over HTTPS, net/http negotiates HTTP/2 by default, and I found no setting that disables it. The response comes from a remote server, so a malicious, compromised or MITM'd endpoint could send the bad SETTINGS frame and hang that fetch goroutine.\n\nConditions: the HTTP/2 client is on by default, the URL fetch is on by default, and I found no mitigation in the repository. Impact is limited to denial of service, and the attacker must control or intercept the DERP map endpoint. The exact toolchain used for release builds is not pinned beyond Go 1.23, which is the main caveat.",
+  "evidence": [
+   {
+    "path": "go.mod",
+    "line": 42,
+    "quote": "\tgolang.org/x/net v0.32.0",
+    "shows": "version"
+   },
+   {
+    "path": "go.mod",
+    "line": 3,
+    "quote": "go 1.23.1",
+    "shows": "version"
+   },
+   {
+    "path": "flake.nix",
+    "line": 23,
+    "quote": "        buildGo = pkgs.buildGo123Module;",
+    "shows": "version"
+   },
+   {
+    "path": "hscontrol/derp/derp.go",
+    "line": 42,
+    "quote": "\tclient := http.Client{",
+    "shows": "call"
+   },
+   {
+    "path": "hscontrol/derp/derp.go",
+    "line": 46,
+    "quote": "\tresp, err := client.Do(req)",
+    "shows": "call"
+   },
+   {
+    "path": "hscontrol/derp/derp.go",
+    "line": 109,
+    "quote": "\t\tderpMap, err := loadDERPMapFromURL(addr)",
+    "shows": "call"
+   }
+  ],
+  "advisory": {
+   "package": "golang.org/x/net (http2) and Go stdlib net/http",
+   "ecosystem": "Go",
+   "affected_range": "golang.org/x/net < 0.53.0; stdlib < 1.25.10 and >= 1.26.0-0, < 1.26.3",
+   "fixed_version": "golang.org/x/net 0.53.0; Go 1.25.10 / 1.26.3",
+   "vulnerable_symbols": [
+    "http2.Transport.NewClientConn",
+    "http2.Transport.RoundTrip",
+    "http2.Transport.RoundTripOpt",
+    "net/http.Client.Do",
+    "net/http.Client.Get",
+    "net/http.Get",
+    "net/http.Transport.RoundTrip",
+    "http2clientConnReadLoop.processSettingsNoWrite"
+   ],
+   "source_url": "https://api.osv.dev/v1/vulns/GO-2026-4918"
+  },
+  "cost": 0.2900658,
+  "seconds": 175.3,
+  "decision": "OPEN",
+  "why": "코드에서 쓰임이 확인됨"
+ },
+ "golang.org_x_crypto__CVE-2025-47913": {
+  "id": "golang.org_x_crypto__CVE-2025-47913",
+  "cve": "CVE-2025-47913",
+  "package": "golang.org/x/crypto",
+  "categories": [
+   "code_not_reachable",
+   "code_not_reachable"
+  ],
+  "category": "code_not_reachable",
+  "verify_ok": [
+   true,
+   true
+  ],
+  "verify_fails": [
+   [],
+   []
+  ],
+  "reasoning": "CVE-2025-47913 (GO-2025-4116 / GHSA-56w8-48fp-6mgv) affects golang.org/x/crypto before 0.43.0. The flaw is in the ssh/agent client: it panics when an agent answers with SSH_AGENT_SUCCESS where a typed response is expected. This repository resolves golang.org/x/crypto to v0.31.0 (go.mod), which is in the affected range, so the package is present. However, first-party Go code imports only golang.org/x/crypto/acme, acme/autocert and bcrypt. Nothing imports golang.org/x/crypto/ssh or ssh/agent, and there are no calls to agent.NewClient, ssh.Dial or similar. The only route left is a transitive one, through tailscale.com/tsnet (hscontrol/tailsql.go). pkg.go.dev shows that tsnet does not directly import tailscale.com/ssh/tailssh. tailssh imports only golang.org/x/crypto/ssh, not ssh/agent. I could not read the module source offline, so I did not walk the full transitive import graph. No evidence found of a path to the vulnerable agent client symbols (client.List, client.Sign, client.Signers and the others). Exploitation would also need the process to act as an SSH agent client talking to a malicious agent, which headscale does not do. Static evidence is strong but the transitive check is partly based on the public pkg.go.dev listing. Upgrading to x/crypto >= 0.43.0 is still advisable.",
+  "evidence": [
+   {
+    "path": "go.mod",
+    "line": 40,
+    "quote": "\tgolang.org/x/crypto v0.31.0",
+    "shows": "version"
+   },
+   {
+    "path": "hscontrol/app.go",
+    "line": 42,
+    "quote": "\t\"golang.org/x/crypto/acme\"",
+    "shows": "import"
+   },
+   {
+    "path": "hscontrol/db/api_key.go",
+    "line": 11,
+    "quote": "\t\"golang.org/x/crypto/bcrypt\"",
+    "shows": "import"
+   },
+   {
+    "path": "hscontrol/tailsql.go",
+    "line": 10,
+    "quote": "\t\"tailscale.com/tsnet\"",
+    "shows": "import"
+   }
+  ],
+  "advisory": {
+   "package": "golang.org/x/crypto",
+   "ecosystem": "Go",
+   "affected_range": "< 0.43.0 (introduced at 0)",
+   "fixed_version": "0.43.0",
+   "vulnerable_symbols": [
+    "golang.org/x/crypto/ssh/agent.client.List",
+    "golang.org/x/crypto/ssh/agent.client.Sign",
+    "golang.org/x/crypto/ssh/agent.client.SignWithFlags",
+    "golang.org/x/crypto/ssh/agent.client.Signers",
+    "golang.org/x/crypto/ssh/agent.agentKeyringSigner.Sign",
+    "golang.org/x/crypto/ssh/agent.agentKeyringSigner.SignWithAlgorithm"
+   ],
+   "source_url": "https://osv.dev/vulnerability/GO-2025-4116"
+  },
+  "cost": 0.1868846,
+  "seconds": 118.5,
+  "decision": "CLOSE",
+  "why": "code_not_reachable"
+ },
+ "golang.org_x_net__CVE-2026-78659": {
+  "id": "golang.org_x_net__CVE-2026-78659",
+  "cve": "CVE-2026-78659",
+  "package": "golang.org/x/net",
+  "categories": [
+   "vulnerable",
+   "vulnerable"
+  ],
+  "category": "vulnerable",
+  "verify_ok": [
+   true,
+   true
+  ],
+  "verify_fails": [
+   [],
+   []
+  ],
+  "reasoning": "CVE-2026-78659 (NVD, published by security@golang.org) is an HTTP/2 resource-exhaustion flaw. A client can declare a very large number of Trailer fields over HTTP/2. The server allocates memory disproportionately and bypasses the MaxHeaderBytes and MaxHeaderValueCount limits. The affected x/net surface is golang.org/x/net/http2 (Framer.readMetaFrame, Server.ServeConn) before v0.60.0. This repository resolves golang.org/x/net to v0.32.0, which is in the affected range. First-party code hscontrol/noise.go creates an http2.Server and calls ServeConn on every connection upgraded at /ts2021. That route is registered on the main router. The Noise handshake uses the server public key, which is served openly at /key, so an unauthenticated network client can reach the HTTP/2 framer. Nothing in the repo mitigates this: there is no replace directive, no vendored copy, no custom limits, and http2.Server is constructed with default settings. The impact is availability only (memory exhaustion). Limits: the advisory page I could read gave no OSV-style symbol list, so the symbols come from the NVD summary. I did not check which Go toolchain version builds the binary. That matters only for the separate stdlib net/http variant of the CVE, not the x/net path shown here.",
+  "evidence": [
+   {
+    "path": "go.mod",
+    "line": 42,
+    "quote": "golang.org/x/net v0.32.0",
+    "shows": "version"
+   },
+   {
+    "path": "hscontrol/noise.go",
+    "line": 14,
+    "quote": "\"golang.org/x/net/http2\"",
+    "shows": "import"
+   },
+   {
+    "path": "hscontrol/noise.go",
+    "line": 107,
+    "quote": "noiseServer.http2Server = &http2.Server{}",
+    "shows": "config"
+   },
+   {
+    "path": "hscontrol/noise.go",
+    "line": 109,
+    "quote": "noiseServer.http2Server.ServeConn(",
+    "shows": "call"
+   },
+   {
+    "path": "hscontrol/app.go",
+    "line": 462,
+    "quote": "router.HandleFunc(ts2021UpgradePath, h.NoiseUpgradeHandler).Methods(http.MethodPost, http.MethodGet)",
+    "shows": "call"
+   },
+   {
+    "path": "hscontrol/app.go",
+    "line": 465,
+    "quote": "router.HandleFunc(\"/key\", h.KeyHandler).Methods(http.MethodGet)",
+    "shows": "presence"
+   }
+  ],
+  "advisory": {
+   "package": "golang.org/x/net",
+   "ecosystem": "Go",
+   "affected_range": "golang.org/x/net/http2 < 0.60.0 (also Go stdlib net/http < 1.26.9; 1.27.0 <= x < 1.27.2)",
+   "fixed_version": "0.60.0",
+   "vulnerable_symbols": [
+    "Framer.readMetaFrame",
+    "Server.ServeConn"
+   ],
+   "source_url": "https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2026-78659"
+  },
+  "cost": 0.2744734,
+  "seconds": 112.9,
+  "decision": "OPEN",
+  "why": "코드에서 쓰임이 확인됨"
+ }
+}

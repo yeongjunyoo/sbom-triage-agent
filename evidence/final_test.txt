@@ -1,0 +1,8 @@
+봉인 결과 없는 건 {0: 0, 1: 0, 2: 0}
+스캐너 단독                             close=7 close_err=3 close_err_pct=42.9 review=0 open=42 open_tp=10 expl_in_review=0 | 회차별 close/err [(7, 3)]
+논문 프롬프트 단일 실행                      close=36 close_err=4 close_err_pct=11.1 review=1 open=12 open_tp=8 expl_in_review=1 | 회차별 close/err [(37, 5), (36, 4), (35, 3)]
+판단 프롬프트 단일 실행                      close=36 close_err=3.7 close_err_pct=10.0 review=3.3 open=9.7 open_tp=7.7 expl_in_review=1.7 | 회차별 close/err [(33, 2), (37, 4), (38, 5)]
+단일 실행 + 근거 검사                      close=30.3 close_err=2.7 close_err_pct=8.6 review=9 open=9.7 open_tp=7.7 expl_in_review=2.7 | 회차별 close/err [(28, 1), (32, 3), (31, 4)]
+두 회차 일치(근거 검사 없음)                  close=33 close_err=2.7 close_err_pct=7.9 review=4.3 open=11.7 open_tp=8.3 expl_in_review=2 | 회차별 close/err [(32, 2), (32, 2), (35, 4)]
+★두 회차 일치 + 근거 검사(주 구성)             close=25.7 close_err=1.7 close_err_pct=6.3 review=11.7 open=11.7 open_tp=8.3 expl_in_review=3 | 회차별 close/err [(26, 1), (23, 1), (28, 3)]
+세 회차 일치 + 근거 검사                    close=23 close_err=1 close_err_pct=4.3 review=13 open=13 open_tp=9 expl_in_review=3 | 회차별 close/err [(23, 1)]

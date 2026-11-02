@@ -1,0 +1,420 @@
+{
+ "스캐너 단독": {
+  "mean": {
+   "close": 7,
+   "close_err": 3,
+   "close_err_pct": 42.9,
+   "review": 0,
+   "review_pct": 0.0,
+   "open": 42,
+   "open_tp": 10,
+   "open_precision": 23.8,
+   "expl_in_review": 0,
+   "not_exploitable_auto_closed_pct": 11.1
+  },
+  "runs": [
+   {
+    "n": 49,
+    "exploitable": 13,
+    "close": 7,
+    "close_err": 3,
+    "close_err_pct": 42.9,
+    "close_err_ci": [
+     15.8,
+     75.0
+    ],
+    "review": 0,
+    "review_pct": 0.0,
+    "open": 42,
+    "open_tp": 10,
+    "open_precision": 23.8,
+    "expl_in_review": 0,
+    "not_exploitable_auto_closed_pct": 11.1
+   }
+  ]
+ },
+ "논문 프롬프트 단일 실행": {
+  "mean": {
+   "close": 36,
+   "close_err": 4,
+   "close_err_pct": 11.1,
+   "review": 1,
+   "review_pct": 2.0,
+   "open": 12,
+   "open_tp": 8,
+   "open_precision": 66.5,
+   "expl_in_review": 1,
+   "not_exploitable_auto_closed_pct": 88.9
+  },
+  "runs": [
+   {
+    "n": 49,
+    "exploitable": 13,
+    "close": 37,
+    "close_err": 5,
+    "close_err_pct": 13.5,
+    "close_err_ci": [
+     5.9,
+     28.0
+    ],
+    "review": 1,
+    "review_pct": 2.0,
+    "open": 11,
+    "open_tp": 7,
+    "open_precision": 63.6,
+    "expl_in_review": 1,
+    "not_exploitable_auto_closed_pct": 88.9
+   },
+   {
+    "n": 49,
+    "exploitable": 13,
+    "close": 36,
+    "close_err": 4,
+    "close_err_pct": 11.1,
+    "close_err_ci": [
+     4.4,
+     25.3
+    ],
+    "review": 1,
+    "review_pct": 2.0,
+    "open": 12,
+    "open_tp": 8,
+    "open_precision": 66.7,
+    "expl_in_review": 1,
+    "not_exploitable_auto_closed_pct": 88.9
+   },
+   {
+    "n": 49,
+    "exploitable": 13,
+    "close": 35,
+    "close_err": 3,
+    "close_err_pct": 8.6,
+    "close_err_ci": [
+     3.0,
+     22.4
+    ],
+    "review": 1,
+    "review_pct": 2.0,
+    "open": 13,
+    "open_tp": 9,
+    "open_precision": 69.2,
+    "expl_in_review": 1,
+    "not_exploitable_auto_closed_pct": 88.9
+   }
+  ]
+ },
+ "판단 프롬프트 단일 실행": {
+  "mean": {
+   "close": 36,
+   "close_err": 3.7,
+   "close_err_pct": 10.0,
+   "review": 3.3,
+   "review_pct": 6.8,
+   "open": 9.7,
+   "open_tp": 7.7,
+   "open_precision": 79.1,
+   "expl_in_review": 1.7,
+   "not_exploitable_auto_closed_pct": 89.8
+  },
+  "runs": [
+   {
+    "n": 49,
+    "exploitable": 13,
+    "close": 33,
+    "close_err": 2,
+    "close_err_pct": 6.1,
+    "close_err_ci": [
+     1.7,
+     19.6
+    ],
+    "review": 5,
+    "review_pct": 10.2,
+    "open": 11,
+    "open_tp": 9,
+    "open_precision": 81.8,
+    "expl_in_review": 2,
+    "not_exploitable_auto_closed_pct": 86.1
+   },
+   {
+    "n": 49,
+    "exploitable": 13,
+    "close": 37,
+    "close_err": 4,
+    "close_err_pct": 10.8,
+    "close_err_ci": [
+     4.3,
+     24.7
+    ],
+    "review": 3,
+    "review_pct": 6.1,
+    "open": 9,
+    "open_tp": 7,
+    "open_precision": 77.8,
+    "expl_in_review": 2,
+    "not_exploitable_auto_closed_pct": 91.7
+   },
+   {
+    "n": 49,
+    "exploitable": 13,
+    "close": 38,
+    "close_err": 5,
+    "close_err_pct": 13.2,
+    "close_err_ci": [
+     5.8,
+     27.3
+    ],
+    "review": 2,
+    "review_pct": 4.1,
+    "open": 9,
+    "open_tp": 7,
+    "open_precision": 77.8,
+    "expl_in_review": 1,
+    "not_exploitable_auto_closed_pct": 91.7
+   }
+  ]
+ },
+ "단일 실행 + 근거 검사": {
+  "mean": {
+   "close": 31,
+   "close_err": 2.7,
+   "close_err_pct": 8.4,
+   "review": 8.3,
+   "review_pct": 17.0,
+   "open": 9.7,
+   "open_tp": 7.7,
+   "open_precision": 79.1,
+   "expl_in_review": 2.7,
+   "not_exploitable_auto_closed_pct": 78.7
+  },
+  "runs": [
+   {
+    "n": 49,
+    "exploitable": 13,
+    "close": 28,
+    "close_err": 1,
+    "close_err_pct": 3.6,
+    "close_err_ci": [
+     0.6,
+     17.7
+    ],
+    "review": 10,
+    "review_pct": 20.4,
+    "open": 11,
+    "open_tp": 9,
+    "open_precision": 81.8,
+    "expl_in_review": 3,
+    "not_exploitable_auto_closed_pct": 75.0
+   },
+   {
+    "n": 49,
+    "exploitable": 13,
+    "close": 32,
+    "close_err": 3,
+    "close_err_pct": 9.4,
+    "close_err_ci": [
+     3.2,
+     24.2
+    ],
+    "review": 8,
+    "review_pct": 16.3,
+    "open": 9,
+    "open_tp": 7,
+    "open_precision": 77.8,
+    "expl_in_review": 3,
+    "not_exploitable_auto_closed_pct": 80.6
+   },
+   {
+    "n": 49,
+    "exploitable": 13,
+    "close": 33,
+    "close_err": 4,
+    "close_err_pct": 12.1,
+    "close_err_ci": [
+     4.8,
+     27.3
+    ],
+    "review": 7,
+    "review_pct": 14.3,
+    "open": 9,
+    "open_tp": 7,
+    "open_precision": 77.8,
+    "expl_in_review": 2,
+    "not_exploitable_auto_closed_pct": 80.6
+   }
+  ]
+ },
+ "두 회차 일치(근거 검사 없음)": {
+  "mean": {
+   "close": 33,
+   "close_err": 2.7,
+   "close_err_pct": 7.9,
+   "review": 4.3,
+   "review_pct": 8.8,
+   "open": 11.7,
+   "open_tp": 8.3,
+   "open_precision": 71.2,
+   "expl_in_review": 2,
+   "not_exploitable_auto_closed_pct": 84.2
+  },
+  "runs": [
+   {
+    "n": 49,
+    "exploitable": 13,
+    "close": 32,
+    "close_err": 2,
+    "close_err_pct": 6.2,
+    "close_err_ci": [
+     1.7,
+     20.1
+    ],
+    "review": 5,
+    "review_pct": 10.2,
+    "open": 12,
+    "open_tp": 9,
+    "open_precision": 75.0,
+    "expl_in_review": 2,
+    "not_exploitable_auto_closed_pct": 83.3
+   },
+   {
+    "n": 49,
+    "exploitable": 13,
+    "close": 32,
+    "close_err": 2,
+    "close_err_pct": 6.2,
+    "close_err_ci": [
+     1.7,
+     20.1
+    ],
+    "review": 5,
+    "review_pct": 10.2,
+    "open": 12,
+    "open_tp": 9,
+    "open_precision": 75.0,
+    "expl_in_review": 2,
+    "not_exploitable_auto_closed_pct": 83.3
+   },
+   {
+    "n": 49,
+    "exploitable": 13,
+    "close": 35,
+    "close_err": 4,
+    "close_err_pct": 11.4,
+    "close_err_ci": [
+     4.5,
+     26.0
+    ],
+    "review": 3,
+    "review_pct": 6.1,
+    "open": 11,
+    "open_tp": 7,
+    "open_precision": 63.6,
+    "expl_in_review": 2,
+    "not_exploitable_auto_closed_pct": 86.1
+   }
+  ]
+ },
+ "★두 회차 일치 + 근거 검사(주 구성)": {
+  "mean": {
+   "close": 26.3,
+   "close_err": 1.7,
+   "close_err_pct": 6.1,
+   "review": 11,
+   "review_pct": 22.4,
+   "open": 11.7,
+   "open_tp": 8.3,
+   "open_precision": 71.2,
+   "expl_in_review": 3,
+   "not_exploitable_auto_closed_pct": 68.5
+  },
+  "runs": [
+   {
+    "n": 49,
+    "exploitable": 13,
+    "close": 26,
+    "close_err": 1,
+    "close_err_pct": 3.8,
+    "close_err_ci": [
+     0.7,
+     18.9
+    ],
+    "review": 11,
+    "review_pct": 22.4,
+    "open": 12,
+    "open_tp": 9,
+    "open_precision": 75.0,
+    "expl_in_review": 3,
+    "not_exploitable_auto_closed_pct": 69.4
+   },
+   {
+    "n": 49,
+    "exploitable": 13,
+    "close": 24,
+    "close_err": 1,
+    "close_err_pct": 4.2,
+    "close_err_ci": [
+     0.7,
+     20.2
+    ],
+    "review": 13,
+    "review_pct": 26.5,
+    "open": 12,
+    "open_tp": 9,
+    "open_precision": 75.0,
+    "expl_in_review": 3,
+    "not_exploitable_auto_closed_pct": 63.9
+   },
+   {
+    "n": 49,
+    "exploitable": 13,
+    "close": 29,
+    "close_err": 3,
+    "close_err_pct": 10.3,
+    "close_err_ci": [
+     3.6,
+     26.4
+    ],
+    "review": 9,
+    "review_pct": 18.4,
+    "open": 11,
+    "open_tp": 7,
+    "open_precision": 63.6,
+    "expl_in_review": 3,
+    "not_exploitable_auto_closed_pct": 72.2
+   }
+  ]
+ },
+ "세 회차 일치 + 근거 검사": {
+  "mean": {
+   "close": 24,
+   "close_err": 1,
+   "close_err_pct": 4.2,
+   "review": 12,
+   "review_pct": 24.5,
+   "open": 13,
+   "open_tp": 9,
+   "open_precision": 69.2,
+   "expl_in_review": 3,
+   "not_exploitable_auto_closed_pct": 63.9
+  },
+  "runs": [
+   {
+    "n": 49,
+    "exploitable": 13,
+    "close": 24,
+    "close_err": 1,
+    "close_err_pct": 4.2,
+    "close_err_ci": [
+     0.7,
+     20.2
+    ],
+    "review": 12,
+    "review_pct": 24.5,
+    "open": 13,
+    "open_tp": 9,
+    "open_precision": 69.2,
+    "expl_in_review": 3,
+    "not_exploitable_auto_closed_pct": 63.9
+   }
+  ]
+ }
+}

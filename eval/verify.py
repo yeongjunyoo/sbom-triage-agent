@@ -99,6 +99,7 @@ def rerun_search(repo: pathlib.Path, s: dict, timeout: int = 90) -> tuple[bool, 
     pat = str(s.get("pattern") or "")
     scope = str(s.get("scope") or ".")
     globs, target = _scope_globs(scope)
+    unreadable = any(" " in x for x in _split_scope(re.sub(r"\(.*?\)", " ", scope)))
     if "**" in pat or pat.rstrip("/").endswith("/*"):
         # 정규식이 아니라 경로 글롭을 적은 경우: 파일이 있는지로 확인한다
         files = sorted(repo.glob(pat.lstrip("./"))) if not pat.startswith("/") else []
@@ -131,7 +132,7 @@ def rerun_search(repo: pathlib.Path, s: dict, timeout: int = 90) -> tuple[bool, 
     except (TypeError, ValueError):
         return True, f"건수 미기재: {pat[:60]}", None
     if claimed == 0 and actual > 0:
-        if widened:
+        if widened or unreadable:
             return False, f"범위를 읽지 못해 저장소 전체로 다시 찾으니 {actual}건: {pat[:60]} @ {scope[:60]}", actual
         return False, f"0건 주장이 틀림({actual}건): {pat[:60]} @ {scope[:60]}", actual
     if claimed > 0 and actual == 0:

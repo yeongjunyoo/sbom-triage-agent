@@ -7,7 +7,7 @@
 """
 from __future__ import annotations
 
-import pathlib, re, shutil, subprocess
+import functools, pathlib, re, shutil, subprocess
 
 RG = shutil.which("rg") or "/opt/homebrew/bin/rg"
 DOC_SUFFIX = {".md", ".rst", ".txt", ".adoc", ".html", ".htm", ".org"}
@@ -26,6 +26,7 @@ def is_prose(path: str, quote: str) -> bool:
     return bool(COMMENT.match(str(quote))) or bool(JSON_NOTE.match(str(quote)))
 
 
+@functools.lru_cache(maxsize=4096)
 def mentions_of(repo: pathlib.Path, cve: str) -> list[str]:
     """저장소에서 이 CVE 번호를 쓴 파일. 변경 기록과 잠금 파일은 뺀다."""
     r = subprocess.run([RG, "-l", "-F", "--no-messages", "--hidden", "--no-ignore", "-g", "!.git", cve, str(repo)], capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=120)

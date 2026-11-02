@@ -9,7 +9,7 @@
   2. scan     osv-scanner 로 취약점 대조                 scan.json, findings.json
   3. enrich   KEV, EPSS 결합. 규칙으로 우선순위          findings.json
   4. triage   격리된 에이전트가 코드를 읽어 판단(독립 2회) triage/<id>.json
-  5. verify   인용과 검색을 스크립트로 재현, 2회 모두 통과해야 닫음  decisions.json
+  5. verify   인용과 검색을 스크립트로 재현, 2회 모두 통과해야 닫음. 사람이 쓴 글에 기댄 닫기는 막는다(agent/guard.py)  decisions.json
   6. output   OpenVEX, 사람 검토 목록, 보고서            vex.json, report.md, audit.jsonl
 LLM 재검토는 층 제거 실험에서 잘못 닫은 건을 못 잡고 맞는 닫기만 뒤집어 뺐다.
 모델이 실패하면 조용히 넘어가지 않고 REVIEW 로 떨어진다. 코드 수정 권한은 에이전트에게 없다.
@@ -23,6 +23,9 @@ ROOT = pathlib.Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "eval"))
 from verify import parse_obj, verify  # noqa: E402
 
+sys.path.insert(0, str(ROOT / "agent"))
+from guard import evidence_guard  # noqa: E402
+
 IS_WIN = os.name == "nt"
 SUFFIX = ".exe" if IS_WIN else ""
 NO_WINDOW = 0x08000000 if IS_WIN else 0
@@ -30,6 +33,8 @@ TOOLS = ROOT / "tools"
 CACHE = ROOT / "results" / "feeds"
 KEV_URL = "https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json"
 EPSS_URL = "https://epss.empiricalsecurity.com/epss_scores-{d}.csv.gz"
+# 없다는 사실을 검색으로 증명하는 범주. 이 밖의 범주는 해석이 들어가 두 회차가 같은 오류를 반복할 수 있다(eval/inject_compare.py, eval/policy_confirm.py).
+PROOF_CATS = {"code_not_present", "code_not_reachable", "false_positive"}
 CLOSE_CATS = {
     "false_positive", "code_not_present", "code_not_reachable", "requires_configuration", "requires_dependency",
     "requires_environment", "compiler_protected", "runtime_protected", "perimeter_protected", "mitigating_control_protected",
@@ -185,7 +190,7 @@ def step_enrich(findings: list[dict], asset: dict) -> tuple[list[dict], dict]:
 
 def claude(prompt: str, cwd: pathlib.Path, raw: pathlib.Path, model: str, effort: str, timeout: int) -> dict:
     env = dict(os.environ)
-    tok = pathlib.Path(os.environ.get("LOTTE_TOKEN_FILE") or pathlib.Path.home() / ".nova" / "claude_oauth_token")
+    tok = pathlib.Path(os.environ.get("AGENT_TOKEN_FILE") or os.devnull)
     if not IS_WIN and tok.exists():
         env["CLAUDE_CODE_OAUTH_TOKEN"] = tok.read_text().strip()
     exe = str(pathlib.Path.home() / ".local" / "bin" / f"claude{SUFFIX}")
@@ -247,7 +252,14 @@ def triage_one(f: dict, repo: pathlib.Path, out: pathlib.Path, a) -> dict:
         # 실제 악용이 확인된 취약점은 에이전트가 자동으로 닫지 않는다
         d["decision"], d["why"] = "REVIEW", "실제 악용 목록(KEV) 등재 건은 사람이 닫는다"
     elif all(c in CLOSE_CATS for c in cats) and all(c["ok"] for c in checks):
-        d["decision"], d["why"] = "CLOSE", cats[0]
+        blocked = [x for o in objs for x in evidence_guard(o, repo, f["cve"])]
+        hold = [c for c in cats if c not in PROOF_CATS] if a.close_scope == "proof" else []
+        if blocked:
+            d["decision"], d["why"] = "REVIEW", "저장소 글 차단: " + blocked[0]
+        elif hold:
+            d["decision"], d["why"] = "REVIEW", "해석이 필요한 범주라 사람이 닫는다: " + hold[0]
+        else:
+            d["decision"], d["why"] = "CLOSE", cats[0]
     elif any(c is None or c == "uncertain" for c in cats):
         d["decision"], d["why"] = "REVIEW", "에이전트가 근거 부족으로 판단을 보류함"
     elif not all(c["ok"] for c in checks):
@@ -283,6 +295,23 @@ def write_vex(findings: list[dict], decisions: dict, out: pathlib.Path, product:
     (out / "vex.json").write_text(json.dumps(doc, ensure_ascii=False, indent=1), encoding="utf-8")
 
 
+def draft_notes(findings, decisions, key) -> list[str]:
+    """담당자에게 넘기는 근거 초안. 닫지 않은 건은 판단과 인용을 같이 넘긴다."""
+    L = []
+    for f in findings:
+        d = decisions.get(f["id"])
+        if not d or d["decision"] != key:
+            continue
+        L += [f"### {f['package']} {f['cve']}", "", f"- 회차별 판단: {', '.join(str(c) for c in d.get('categories') or [])}", f"- 사유: {d['why']}"]
+        if d.get("reasoning"):
+            L.append(f"- 에이전트 설명: {str(d['reasoning'])[:500]}")
+        for e in (d.get("evidence") or [])[:4]:
+            if isinstance(e, dict):
+                L.append(f"- 인용: {e.get('path')}:{e.get('line')} {str(e.get('quote')).strip()[:120]}")
+        L.append("")
+    return L
+
+
 def write_report(findings, decisions, counts, feeds, out, repo, components, wall) -> None:
     ds = list(decisions.values())
     n = {k: sum(1 for d in ds if d["decision"] == k) for k in ("OPEN", "REVIEW", "CLOSE")}
@@ -305,6 +334,8 @@ def write_report(findings, decisions, counts, feeds, out, repo, components, wall
             if d and d["decision"] == key:
                 L.append(f"| {f['package']} | {f['version']} | {f['cve']} | {'예' if f['kev'] else ''} | {f['epss']:.3f} | {', '.join(f['fixed'][:2])} | {str(d['why'])[:90]} |")
         L.append("")
+        if key != "CLOSE":
+            L += draft_notes(findings, decisions, key)
     (out / "report.md").write_text("\n".join(L), encoding="utf-8")
 
 
@@ -321,6 +352,7 @@ def main() -> int:
     ap.add_argument("--parallel", type=int, default=6)
     ap.add_argument("--triage-prompt", default="triage_v1")
     ap.add_argument("--runs", type=int, default=2)
+    ap.add_argument("--close-scope", choices=["proof", "all"], default="proof", help="proof: 없음을 증명하는 범주만 자동으로 닫는다. all: 근거 검사를 통과한 모든 범주")
     a = ap.parse_args()
     repo = pathlib.Path(a.repo).resolve()
     out = pathlib.Path(a.out).resolve()

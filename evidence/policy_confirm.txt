@@ -1,0 +1,23 @@
+{0: {'code_not_present': 3, 'requires_configuration': 6, 'code_not_reachable': 17, 'requires_environment': 2}, 1: {'code_not_reachable': 18, 'code_not_present': 2, 'requires_configuration': 7, 'requires_environment': 3, 'false_positive': 1, 'mitigating_control_protected': 1}, 2: {'code_not_reachable': 19, 'false_positive': 3, 'requires_configuration': 7, 'requires_environment': 3, 'mitigating_control_protected': 1}, 3: {'code_not_reachable': 20, 'false_positive': 2, 'requires_configuration': 7, 'requires_environment': 2, 'code_not_present': 1}, 4: {'code_not_reachable': 20, 'false_positive': 2, 'requires_configuration': 7, 'requires_environment': 2, 'code_not_present': 1, 'mitigating_control_protected': 2}}
+글 근거 차단까지 {'close': 24.8, 'close_err': 1.5, 'review': 13.2, 'open': 11, 'open_tp': 8.1, 'expl_in_review': 3.4} | 새 회차가 든 쌍 {'close': 24.9, 'close_err': 1.4, 'review': 13.4, 'open': 10.7, 'open_tp': 8, 'expl_in_review': 3.6}
+    [0, 1] 닫음 24 오류 1 검토 13 조치 12 CI (0.7, 20.2)
+    [0, 2] 닫음 23 오류 1 검토 14 조치 12 CI (0.8, 21.0)
+    [0, 3] 닫음 22 오류 1 검토 15 조치 12 CI (0.8, 21.8)
+    [0, 4] 닫음 24 오류 1 검토 14 조치 11 CI (0.7, 20.2)
+    [1, 2] 닫음 27 오류 3 검토 11 조치 11 CI (3.9, 28.1)
+    [1, 3] 닫음 23 오류 1 검토 14 조치 12 CI (0.8, 21.0)
+    [1, 4] 닫음 26 오류 1 검토 14 조치 9 CI (0.7, 18.9)
+    [2, 3] 닫음 26 오류 2 검토 12 조치 11 CI (2.1, 24.1)
+    [2, 4] 닫음 27 오류 2 검토 13 조치 9 CI (2.1, 23.4)
+    [3, 4] 닫음 26 오류 2 검토 12 조치 11 CI (2.1, 24.1)
+없음 증명 범주만 닫기 {'close': 17.5, 'close_err': 0.3, 'review': 20.5, 'open': 11, 'open_tp': 8.1, 'expl_in_review': 4.6} | 새 회차가 든 쌍 {'close': 18, 'close_err': 0.4, 'review': 20.3, 'open': 10.7, 'open_tp': 8, 'expl_in_review': 4.6}
+    [0, 1] 닫음 17 오류 0 검토 20 조치 12 CI (0, 18.4)
+    [0, 2] 닫음 15 오류 0 검토 22 조치 12 CI (0, 20.4)
+    [0, 3] 닫음 16 오류 0 검토 21 조치 12 CI (0, 19.4)
+    [0, 4] 닫음 17 오류 0 검토 21 조치 11 CI (0, 18.4)
+    [1, 2] 닫음 17 오류 0 검토 21 조치 11 CI (0, 18.4)
+    [1, 3] 닫음 17 오류 0 검토 20 조치 12 CI (0, 18.4)
+    [1, 4] 닫음 18 오류 0 검토 22 조치 9 CI (0, 17.6)
+    [2, 3] 닫음 19 오류 1 검토 19 조치 11 CI (0.9, 24.6)
+    [2, 4] 닫음 19 오류 1 검토 21 조치 9 CI (0.9, 24.6)
+    [3, 4] 닫음 20 오류 1 검토 18 조치 11 CI (0.9, 23.6)
