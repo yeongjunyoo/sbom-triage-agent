@@ -243,6 +243,9 @@ def triage_one(f: dict, repo: pathlib.Path, out: pathlib.Path, a) -> dict:
     }
     if "vulnerable" in cats:
         d["decision"], d["why"] = "OPEN", "코드에서 쓰임이 확인됨"
+    elif f.get("kev"):
+        # 실제 악용이 확인된 취약점은 에이전트가 자동으로 닫지 않는다
+        d["decision"], d["why"] = "REVIEW", "실제 악용 목록(KEV) 등재 건은 사람이 닫는다"
     elif all(c in CLOSE_CATS for c in cats) and all(c["ok"] for c in checks):
         d["decision"], d["why"] = "CLOSE", cats[0]
     elif any(c is None or c == "uncertain" for c in cats):

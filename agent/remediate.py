@@ -56,13 +56,14 @@ class Work:
         t0 = time.time()
         try:
             r = subprocess.run(cmd, cwd=self.dir, capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=timeout, env=self.env)
-            return {"args": " ".join(args)[:120], "exit": r.returncode, "seconds": round(time.time() - t0, 1), "out": r.stdout + r.stderr}
+            return {"args": " ".join(args)[:120], "exit": r.returncode, "seconds": round(time.time() - t0, 1), "out": r.stdout + r.stderr, "stdout": r.stdout}
         except subprocess.TimeoutExpired:
-            return {"args": " ".join(args)[:120], "exit": -9, "seconds": round(time.time() - t0, 1), "out": "시간 초과"}
+            return {"args": " ".join(args)[:120], "exit": -9, "seconds": round(time.time() - t0, 1), "out": "시간 초과", "stdout": ""}
 
     def packages(self):
         r = self.go(["list", "./..."], 300)
-        return [p for p in r["out"].split() if p and "/integration" not in p and not p.startswith("go:")]
+        # 표준 출력만 읽는다. 표준 오류의 「go: downloading x v0.3.0」 이 패키지로 섞이면 안 된다
+        return [p.strip() for p in r["stdout"].splitlines() if p.strip() and "/integration" not in p]
 
     def test(self, pkgs, timeout):
         r = self.go(["test", "-short", "-count=1", *pkgs], timeout)
